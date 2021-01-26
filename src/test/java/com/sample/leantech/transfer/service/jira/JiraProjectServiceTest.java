@@ -1,5 +1,6 @@
 package com.sample.leantech.transfer.service.jira;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ class JiraProjectServiceTest {
     private JiraProjectService jiraProjectService;
 
     @Test
-    public void getProjectTest(){
+    public void getProjectTest() throws JsonProcessingException {
         System.out.println(jiraProjectService.getProjects());
         Assertions.assertNotNull(jiraProjectService.getProjects());
     }
