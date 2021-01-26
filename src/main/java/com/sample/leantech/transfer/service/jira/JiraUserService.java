@@ -1,6 +1,6 @@
 package com.sample.leantech.transfer.service.jira;
 
-import com.sample.leantech.transfer.model.dto.request.JiraUserRequestDto;
+import com.sample.leantech.transfer.model.dto.request.JiraUserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -18,12 +18,12 @@ public class JiraUserService {
 
     private final RestTemplate restTemplate;
 
-    public List<JiraUserRequestDto> getUsers(String username, String startAt, String maxResults) {
+    public List<JiraUserDto> getUsers(String username, String startAt, String maxResults) {
         String url = UriComponentsBuilder.fromPath(USER_PATH_JIRA)
                 .build(username, startAt, maxResults)
                 .toString();
         return restTemplate.exchange(url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<JiraUserRequestDto>>() {}).getBody();
+                new ParameterizedTypeReference<List<JiraUserDto>>() {}).getBody();
     }
 
 }

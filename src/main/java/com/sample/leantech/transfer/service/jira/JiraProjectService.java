@@ -1,6 +1,6 @@
 package com.sample.leantech.transfer.service.jira;
 
-import com.sample.leantech.transfer.model.dto.request.JiraProjectRequestDto;
+import com.sample.leantech.transfer.model.dto.request.JiraProjectDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -17,9 +17,9 @@ public class JiraProjectService {
 
     private final RestTemplate restTemplate;
 
-    public List<JiraProjectRequestDto> getProjects() {
+    public List<JiraProjectDto> getProjects() {
         return restTemplate.exchange(PROJECT_PATH_JIRA, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<JiraProjectRequestDto>>() {}).getBody();
+                new ParameterizedTypeReference<List<JiraProjectDto>>() {}).getBody();
     }
 
 }

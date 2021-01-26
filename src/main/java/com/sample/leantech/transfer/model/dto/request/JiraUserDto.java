@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class JiraUserRequestDto {
+public class JiraUserDto {
 
     private String self;
     private String key;

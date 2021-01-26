@@ -1,6 +1,6 @@
 package com.sample.leantech.transfer.controller.jira;
 
-import com.sample.leantech.transfer.model.dto.request.JiraProjectRequestDto;
+import com.sample.leantech.transfer.model.dto.request.JiraProjectDto;
 import com.sample.leantech.transfer.service.jira.JiraProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +17,8 @@ public class ProjectController implements IJiraRequestMapping {
     private final JiraProjectService jiraProjectService;
 
     @GetMapping("/project")
-    public List<JiraProjectRequestDto> getProjects() {
-        List<JiraProjectRequestDto> projects = jiraProjectService.getProjects();
+    public List<JiraProjectDto> getProjects() {
+        List<JiraProjectDto> projects = jiraProjectService.getProjects();
         return projects;
     }
 

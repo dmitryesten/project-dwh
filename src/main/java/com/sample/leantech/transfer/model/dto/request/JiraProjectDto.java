@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class JiraProjectRequestDto {
+public class JiraProjectDto {
 
     private String expand;
     private String self;
