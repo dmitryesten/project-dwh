@@ -1,20 +1,25 @@
 package com.sample.leantech.transfer.service.jira;
 
+import com.sample.leantech.transfer.model.dto.request.JiraProjectDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class JiraProjectService {
 
-    private static final String FILE_PATH_JIRA = "/rest/api/2/project";
+    private static final String PROJECT_PATH_JIRA = "/rest/api/2/project";
 
     private final RestTemplate restTemplate;
 
-    public ResponseEntity<String> getProject(){
-        return restTemplate.getForEntity(FILE_PATH_JIRA, String.class);
+    public List<JiraProjectDto> getProjects() {
+        return restTemplate.exchange(PROJECT_PATH_JIRA, HttpMethod.GET, null,
+                new ParameterizedTypeReference<List<JiraProjectDto>>() {}).getBody();
     }
 
 }
