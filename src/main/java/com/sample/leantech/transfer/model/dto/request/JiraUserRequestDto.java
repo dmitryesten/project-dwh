@@ -1,18 +1,22 @@
 package com.sample.leantech.transfer.model.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class JiraUserRequestDto {
 
-    private final String self;
-    private final String key;
-    private final String name;
-    private final String emailAddress;
-    private final String displayName;
-    private final boolean active;
-    private final boolean deleted;
-    private final String timeZone;
-    private final String locale;
+    private String self;
+    private String key;
+    private String name;
+    private String emailAddress;
+    private String displayName;
+    private boolean active;
+    private boolean deleted;
+    private String timeZone;
+    private String locale;
 
 }
