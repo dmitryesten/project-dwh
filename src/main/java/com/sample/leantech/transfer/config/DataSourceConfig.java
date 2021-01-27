@@ -11,7 +11,6 @@ public class DataSourceConfig {
 
     @Bean
     public DataSource getDataSource(){
-
         return DataSourceBuilder.create()
                 .driverClassName("org.postgresql.Driver")
                 .url("jdbc:postgresql://localhost:5432/project_dwh")
