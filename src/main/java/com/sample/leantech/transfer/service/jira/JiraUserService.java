@@ -11,7 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JiraUserService {
 
-    private JiraUserClient jiraUserClient;
+    private final JiraUserClient jiraUserClient;
 
     public List<JiraUserDto> getUsers(String username) {
         return jiraUserClient.getUsers(username);

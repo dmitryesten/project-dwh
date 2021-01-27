@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
-public class JiraEpicClient {
+public class JiraIssueClient {
 
     private static final String EPIC_PATH_JIRA = "/rest/api/2/search?jql=project={projectName} AND issuetype=\"Epic\"";
 

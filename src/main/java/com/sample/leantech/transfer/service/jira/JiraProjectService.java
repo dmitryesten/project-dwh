@@ -11,7 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JiraProjectService {
 
-    private JiraProjectClient jiraProjectClient;
+    private final JiraProjectClient jiraProjectClient;
 
     public List<JiraProjectDto> getProjects()  {
         return jiraProjectClient.getProjects();

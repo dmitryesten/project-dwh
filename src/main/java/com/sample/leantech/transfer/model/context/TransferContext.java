@@ -12,6 +12,6 @@ public class TransferContext {
 
     private RDD<JiraProjectDto> projects;
     private RDD<JiraUserDto> users;
-    // TODO: add issues and worklows
+    // TODO: add issues and workflows
 
 }
