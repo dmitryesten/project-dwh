@@ -3,6 +3,7 @@ package com.sample.leantech.transfer.service.jira;
 import com.sample.leantech.transfer.model.context.TransferContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,6 +13,7 @@ public class TransferService {
 
     private volatile boolean working;
 
+    @Scheduled(cron = "0 0 4 * * *")
     public void transfer() {
         if (working) {
             log.info("Transfer is already started");
