@@ -1,30 +1,28 @@
 package com.sample.leantech.transfer.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
+@Setter
 @Configuration
+@ConfigurationProperties(prefix = "jira")
 public class JiraRestConfig {
 
-    @Value("${jira.hostname}")
-    private String jiraHost;
-    @Value("${jira.port}")
-    private String jiraPort;
-
-    @Value("${jira.nickname}")
-    private String jiraNickname;
-    @Value("${jira.password}")
-    private String jiraPassword;
+    private String hostname;
+    private String port;
+    private String username;
+    private String password;
 
     @Bean
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory("http://"+jiraHost+":"+jiraPort));
-        restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(jiraNickname, jiraPassword));
+        restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory("http://" + hostname + ":" + port));
+        restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(username, password));
         return restTemplate;
     }
 

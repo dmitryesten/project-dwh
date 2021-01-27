@@ -1,28 +1,25 @@
 package com.sample.leantech.transfer.config;
 
-import org.apache.spark.SparkConf;
-import org.apache.spark.SparkContext;
+import lombok.Setter;
 import org.apache.spark.sql.SparkSession;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@Setter
 @Configuration
+@ConfigurationProperties(prefix = "spark")
 public class SparkConfig {
 
-    @Value("${spark.app.name}")
-    private String sparkName;
-    @Value("${spark.master}")
-    private String sparkMaster;
+    private String appname;
+    private String master;
 
     @Bean
-    public SparkSession sparkSession(){
+    public SparkSession sparkSession() {
         return new SparkSession.Builder()
-                .appName("Consumer json of Jira")
-                .master("local")
+                .appName(appname)
+                .master(master)
                 .getOrCreate();
     }
-
-
 
 }
