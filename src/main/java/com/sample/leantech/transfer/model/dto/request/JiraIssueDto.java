@@ -11,6 +11,24 @@ public class JiraIssueDto {
 
     private String id;
     private String key;
-    private JiraIssueFieldsDto fields;
+    private Fields fields;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Fields {
+
+        private IssueType issuetype;
+        private String summary;
+
+        @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class IssueType {
+
+            private String name;
+
+        }
+    }
 
 }
