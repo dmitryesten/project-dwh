@@ -21,7 +21,7 @@ public class JiraRestConfig {
     @Bean
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory("http://" + hostname + ":" + port));
+        restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory("https://" + hostname + ":" + port));
         restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(username, password));
         return restTemplate;
     }
