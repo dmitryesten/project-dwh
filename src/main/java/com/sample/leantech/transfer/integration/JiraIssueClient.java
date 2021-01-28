@@ -24,22 +24,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JiraIssueClient {
 
-    private static final String EPIC_PATH_JIRA = "/rest/api/2/search?jql=project={projectName} AND issuetype=\"Epic\"";
+    private static final String EPIC_PATH_JIRA = "/rest/api/2/search?jql=issuetype=\"Epic\"";
     private static final String NON_EPIC_ISSUE_PATH_JIRA = "/rest/agile/1.0/epic/none/issue";
     private static final String EPIC_ISSUE_PATH_JIRA = "/rest/agile/1.0/epic/{epicId}/issue";
 
     private final RestTemplate restTemplate;
 
-    public JiraIssueResponseDto getEpics(String projectName) {
-        String url = UriComponentsBuilder.fromPath(EPIC_PATH_JIRA)
-                .buildAndExpand(projectName)
-                .toString();
-        return restTemplate.exchange(url, HttpMethod.GET, null, JiraIssueResponseDto.class).getBody();
+    public JiraIssueResponseDto getEpics() {
+        return restTemplate.exchange(EPIC_PATH_JIRA, HttpMethod.GET, null, JiraIssueResponseDto.class).getBody();
     }
 
     @Async
-    public CompletableFuture<JiraIssueResponseDto> getEpicsAsync(String projectName) {
-        return CompletableFuture.completedFuture(getEpics(projectName));
+    public CompletableFuture<JiraIssueResponseDto> getEpicsAsync() {
+        return CompletableFuture.completedFuture(getEpics());
     }
 
     public JiraIssueResponseDto getNonEpicIssues() {
