@@ -20,7 +20,8 @@ public class JiraIssueDto {
 
         private IssueType issuetype;
         private Project project;
-        private Epic epic;
+        private Parent epic;
+        private Parent parent;
         private String summary;
 
         @Data
@@ -44,9 +45,9 @@ public class JiraIssueDto {
         @Data
         @NoArgsConstructor
         @AllArgsConstructor
-        public static class Epic {
+        public static class Parent {
 
-            private Integer id;
+            private String id;
 
         }
     }
