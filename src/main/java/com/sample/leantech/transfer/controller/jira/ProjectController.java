@@ -1,10 +1,8 @@
 package com.sample.leantech.transfer.controller.jira;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sample.leantech.transfer.model.dto.request.JiraProjectDto;
 import com.sample.leantech.transfer.service.jira.JiraProjectService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,13 +14,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProjectController {
 
-    @Autowired
     private final JiraProjectService jiraProjectService;
 
     @GetMapping("/project")
-    public List<JiraProjectDto> getProjects() throws JsonProcessingException {
-        List<JiraProjectDto> projects = jiraProjectService.getProjects();
-        return projects;
+    public List<JiraProjectDto> getProjects() {
+        return jiraProjectService.getProjects();
     }
 
 }

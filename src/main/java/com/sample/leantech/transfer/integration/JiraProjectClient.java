@@ -2,6 +2,7 @@ package com.sample.leantech.transfer.integration;
 
 import com.sample.leantech.transfer.model.dto.request.JiraProjectDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Async;
