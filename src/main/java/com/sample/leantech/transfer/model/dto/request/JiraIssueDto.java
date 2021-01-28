@@ -13,14 +13,15 @@ public class JiraIssueDto {
     private String key;
     private Fields fields;
 
-    /**private String id;
-     private String expand;
-     private String self;
-     private String key;
-     private String created;
-     private String summary;
-     private String description;
-     private int timespent;
+    /**
+     * private String id;
+     * private String expand;
+     * private String self;
+     * private String key;
+     * private String created;
+     * private String summary;
+     * private String description;
+     * private int timespent;
      **/
 
     @Data
@@ -61,3 +62,4 @@ public class JiraIssueDto {
 
         }
     }
+}
