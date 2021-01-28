@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class JiraEpicResponseDto {
+public class JiraIssueResponseDto {
 
     private List<JiraIssueDto> issues;
 
