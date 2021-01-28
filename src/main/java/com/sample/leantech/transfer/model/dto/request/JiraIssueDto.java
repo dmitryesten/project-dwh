@@ -19,6 +19,8 @@ public class JiraIssueDto {
     public static class Fields {
 
         private IssueType issuetype;
+        private Project project;
+        private Epic epic;
         private String summary;
 
         @Data
@@ -27,6 +29,24 @@ public class JiraIssueDto {
         public static class IssueType {
 
             private String name;
+
+        }
+
+        @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class Project {
+
+            private String id;
+
+        }
+
+        @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class Epic {
+
+            private Integer id;
 
         }
     }
