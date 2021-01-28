@@ -10,26 +10,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.concurrent.CompletableFuture;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
-import com.sample.leantech.transfer.model.dto.request.JiraProjectDto;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
-import java.io.DataInput;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Slf4j
 @Component
