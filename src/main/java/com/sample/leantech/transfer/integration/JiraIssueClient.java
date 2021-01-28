@@ -24,7 +24,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.DataInput;
+import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @Component
@@ -76,16 +81,24 @@ public class JiraIssueClient {
 
     private final ObjectMapper objectMapper;
 
-    public String getIssues(String projectName) throws JsonProcessingException {
-        String subJsonIssues =
+    public List<JiraIssueDto> getIssues(String projectName) throws IOException {
+        String fullJsonIssues =
                 restTemplate.exchange(ISSUE_PATH_JIRA, HttpMethod.GET, null,
                         String.class, projectName).getBody();
-        System.out.println("subJsonIssues:" + subJsonIssues);
-        log.info("subJsonIssues:" + subJsonIssues);
-        JsonNode jsonNode = objectMapper.valueToTree(subJsonIssues);
-        ArrayNode arrayNode = (ArrayNode) jsonNode.get("issues");
-        return  jsonNode.get("issues").textValue();
+        JsonNode jsonIssuesNode = objectMapper.readTree(fullJsonIssues).get("issues");
 
+        return getListIssues(jsonIssuesNode);
+
+    }
+
+    private List<JiraIssueDto> getListIssues(JsonNode jsonNodeArray) throws IOException {
+        List<JiraIssueDto> listJiraIssue = new LinkedList<>();
+        if (jsonNodeArray.isArray()) {
+            for (JsonNode objNode : jsonNodeArray) {
+                listJiraIssue.add(objectMapper.readValue(objectMapper.writeValueAsString(objNode), JiraIssueDto.class));
+            }
+        }
+        return listJiraIssue;
     }
 
 }

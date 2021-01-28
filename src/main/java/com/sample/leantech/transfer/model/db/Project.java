@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Project {
-    private long id;
-    private long sid;
-    private long logId;
-    private long sourceId;
+    private Long id;
+    private Long sid;
+    private Long logId;
+    private Long sourceId;
     private String name;
 }
