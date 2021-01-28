@@ -5,6 +5,7 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
+import java.util.Properties;
 
 @Configuration
 @ConfigurationProperties(prefix = "postgres")
@@ -23,6 +24,16 @@ public class DataSourceConfig {
                 .username(user)
                 .password(password)
                 .build();
+    }
+
+    @Bean
+    public Properties getPostgresProperties() {
+        Properties properties = new Properties();
+            properties.setProperty("driver", "org.postgresql.Driver");
+            properties.setProperty("url", "jdbc:postgresql://localhost:5432/project_dwh");
+            properties.setProperty("user", "spring");
+            properties.setProperty("password", "123");
+        return properties;
     }
 
 }
