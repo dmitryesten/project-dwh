@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,7 +23,7 @@ public class JiraIssueDto {
         private Parent epic;
         private Parent parent;
         private String summary;
-        private Worklog worklog;
+        private JiraWorklogResponseDto worklog;
 
         @Data
         @NoArgsConstructor
@@ -51,15 +49,6 @@ public class JiraIssueDto {
         public static class Parent {
 
             private String id;
-
-        }
-
-        @Data
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class Worklog {
-
-            private List<JiraWorklogDto> worklogs;
 
         }
     }
