@@ -2,9 +2,13 @@ package com.sample.leantech.transfer.task.extract;
 
 import com.sample.leantech.transfer.integration.JiraProjectClient;
 import com.sample.leantech.transfer.model.context.TransferContext;
+import com.sample.leantech.transfer.model.dto.request.JiraProjectDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @Order(value = 1)
@@ -12,10 +16,12 @@ import org.springframework.stereotype.Component;
 public class ProjectExtractTask implements ExtractTask {
 
     private final JiraProjectClient jiraProjectClient;
+    private final JavaSparkContext spark;
 
     @Override
     public void extract(TransferContext ctx) {
-        // TODO: implement (get projects and save in ctx)
+        List<JiraProjectDto> projects = jiraProjectClient.getProjects();
+        ctx.setProjects(spark.parallelize(projects));
     }
 
 }

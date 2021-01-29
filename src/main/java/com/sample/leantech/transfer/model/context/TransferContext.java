@@ -3,16 +3,16 @@ package com.sample.leantech.transfer.model.context;
 import com.sample.leantech.transfer.model.dto.request.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.spark.rdd.RDD;
+import org.apache.spark.api.java.JavaRDD;
 
 @Data
 @NoArgsConstructor
 public class TransferContext {
 
-    private RDD<JiraProjectDto> projects;
-    private RDD<JiraIssueDto> epics;
-    private RDD<JiraIssueDto> issues;
-    private RDD<JiraWorklogDto> worklogs;
-    private RDD<JiraUserDto> users;
+    private JavaRDD<JiraProjectDto> projects;
+    private JavaRDD<JiraIssueDto> epics;
+    private JavaRDD<JiraIssueDto> issues;
+    private JavaRDD<JiraWorklogDto> worklogs;
+    private JavaRDD<JiraUserDto> users;
 
 }
