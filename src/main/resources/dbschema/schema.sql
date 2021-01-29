@@ -1,9 +1,11 @@
 create role spring with password '123' superuser createdb createrole login inherit;
 
-create database project_dwh owner spring encoding 'UTF-8'; 
+create database project_dwh owner spring encoding 'UTF-8';
+
+create sequence seq_table increment by 1 start with 1;
 
 create table sources (
-	id   integer,
+	id   integer default nextval('seq_table'),
 	name varchar not null,
 	constraint pk_id_sources primary key (id) 
 );
@@ -13,7 +15,7 @@ comment on column sources.name is 'source name';
 
 
 create table logs (
-	id  integer,
+	id  integer default nextval('seq_table'),
 	sid integer,
 	start_dt timestamp not null,
 	end_dt timestamp not null,
@@ -30,7 +32,7 @@ comment on column logs.result is 'result of retrieving success=true, fail=false'
 
 
 create table projects (
-	id integer,
+	id integer default nextval('seq_table'),
 	sid integer,
 	log_id integer,
 	source_id integer,
@@ -48,7 +50,7 @@ comment on column projects.name is 'project name';
 
 
 create table issues (
-	id integer,
+	id integer default nextval('seq_table'),
 	pid integer,
 	sid integer,
 	log_id integer,
@@ -76,7 +78,7 @@ comment on column issues.summery is 'summery issue';
 
 
 create table users (
-	id integer,
+	id integer default nextval('seq_table'),
 	key varchar not null,
 	log_id integer,
 	name varchar not null,
@@ -90,7 +92,7 @@ comment on column users.name is 'name user';
 
 
 create table worklogs (
-	id integer,
+	id integer default nextval('seq_table'),
 	issue_id integer,
 	log_id integer,
 	sid integer,

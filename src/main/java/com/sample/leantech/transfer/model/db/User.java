@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Project {
+public class User {
     private Integer id;
-    private Integer sid;
+    private String key;
     private Integer logId;
-    private Integer sourceId;
     private String name;
 }

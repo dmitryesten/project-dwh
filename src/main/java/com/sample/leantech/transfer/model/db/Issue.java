@@ -7,10 +7,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Project {
+public class Issue {
     private Integer id;
+    private Integer pid;
     private Integer sid;
     private Integer logId;
+    private Integer hid;
     private Integer sourceId;
+    private String type;
     private String name;
+    private String summery;
 }
