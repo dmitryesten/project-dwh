@@ -7,7 +7,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
-@Order(value = 3)
+@Order(value = 2)
 @RequiredArgsConstructor
 public class EpicExtractTask implements ExtractTask {
 

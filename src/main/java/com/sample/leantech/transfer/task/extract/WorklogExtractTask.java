@@ -6,7 +6,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
-@Order(value = 5)
+@Order(value = 4)
 @RequiredArgsConstructor
 public class WorklogExtractTask implements ExtractTask {
 
