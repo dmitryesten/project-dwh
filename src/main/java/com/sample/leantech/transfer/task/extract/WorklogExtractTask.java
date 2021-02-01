@@ -28,6 +28,8 @@ public class WorklogExtractTask implements ExtractTask {
     @Override
     public void extract(TransferContext ctx) {
         List<JiraWorklogDto> worklogs = new ArrayList<>();
+        // Во всех issue, кроме эпиков, изначально содержатся логи работы.
+        // Для эпиков приходится выполнять дополнительные запросы.
         extractNonEpicWorklogs(ctx, worklogs);
         extractEpicWorklogs(ctx, worklogs);
         ctx.setWorklogs(spark.parallelize(worklogs));
