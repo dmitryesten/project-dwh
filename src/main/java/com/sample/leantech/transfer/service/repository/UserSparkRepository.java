@@ -1,5 +1,6 @@
 package com.sample.leantech.transfer.service.repository;
 
+import com.sample.leantech.transfer.model.db.EntityDB;
 import com.sample.leantech.transfer.model.db.Project;
 import com.sample.leantech.transfer.model.db.Source;
 import com.sample.leantech.transfer.model.db.User;
@@ -11,11 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
 @Repository
-public class UserSparkRepository {
+public class UserSparkRepository implements IRepository{
 
     @Autowired
     private SparkSession sparkSession;
@@ -24,7 +26,8 @@ public class UserSparkRepository {
     @Qualifier("getPostgresProperties")
     private Properties postgresProperties;
 
-    public List<User> getUsers() {
+    @Override
+    public Collection<? extends EntityDB> get() {
         return sparkSession.read()
                 .jdbc(postgresProperties.getProperty("url"), "users", postgresProperties)
                 .toDF()
@@ -33,8 +36,10 @@ public class UserSparkRepository {
                 .collectAsList();
     }
 
-    public void save(List<User> user){
-        Dataset<User> datasetProject = sparkSession.createDataset(user, Encoders.bean(User.class));
+    @Override
+    public void save(Collection<? extends EntityDB> entities) {
+        List<User> listSource = (List<User>) entities;
+        Dataset<User> datasetProject = sparkSession.createDataset(listSource, Encoders.bean(User.class));
         datasetProject
                 .select("key", "logId", "name")
                 .withColumnRenamed("logId", "log_id")
@@ -42,6 +47,4 @@ public class UserSparkRepository {
                 .mode(SaveMode.Append)
                 .jdbc(postgresProperties.getProperty("url"), "users", postgresProperties);
     }
-
-
 }

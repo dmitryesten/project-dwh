@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Project {
+public class Project extends EntityDB {
     private Integer id;
     private Integer sid;
     private Integer logId;

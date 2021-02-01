@@ -19,7 +19,7 @@ class UserSparkRepositoryTest {
 
     @Test
     @DisplayName("Testing save and get methods of userRepository")
-    public void saveGetTest() {
+    public void testSaveGet() {
         User user = new User();
             user.setKey("Test-key-0");
             user.setLogId(null);
@@ -28,10 +28,11 @@ class UserSparkRepositoryTest {
 
         repository.save(listUser);
 
-        Assertions.assertNotNull(repository.getUsers());
+        Assertions.assertNotNull(repository.get());
 
         Assertions.assertEquals(user.getName(),
-                repository.getUsers().stream()
+                repository.get().stream()
+                        .map(User.class::cast)
                         .filter(objectUser -> objectUser.getName().equals(user.getName()))
                         .findFirst().get()
                         .getName(), "Name's user values is not equals");
