@@ -1,8 +1,10 @@
 package com.sample.leantech.transfer.task.extract;
 
-import com.sample.leantech.transfer.integration.JiraUserClient;
 import com.sample.leantech.transfer.model.context.TransferContext;
+import com.sample.leantech.transfer.model.dto.request.JiraUserDto;
+import com.sample.leantech.transfer.model.dto.request.JiraWorklogDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.spark.api.java.JavaRDD;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -11,11 +13,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserExtractTask implements ExtractTask {
 
-    private final JiraUserClient jiraUserClient;
-
     @Override
     public void extract(TransferContext ctx) {
-        // TODO: implement (get users and save in ctx)
+        JavaRDD<JiraUserDto> users = ctx.getWorklogs()
+                .map(JiraWorklogDto::getUpdateAuthor)
+                .distinct();
+        ctx.setUsers(users);
     }
 
 }
