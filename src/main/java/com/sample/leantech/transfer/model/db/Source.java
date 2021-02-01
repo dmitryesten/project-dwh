@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Source {
+public class Source extends EntityDB {
     private Integer id;
     private String name;
 }

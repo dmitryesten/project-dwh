@@ -1,7 +1,6 @@
 package com.sample.leantech.transfer.service.repository;
 
 import com.sample.leantech.transfer.model.db.Issue;
-import org.apache.hadoop.yarn.webapp.hamlet2.Hamlet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,7 @@ class IssueSparkRepositoryTest {
 
     @Test
     @DisplayName("Testing save and get methods of issueRepository")
-    public void test(){
+    public void testSaveGet(){
         Issue issue = new Issue();
             issue.setPid(null);
             issue.setSid(null);
@@ -32,12 +31,12 @@ class IssueSparkRepositoryTest {
 
         repository.save(listIssue);
 
-        Assertions.assertNotNull(repository.getIssues());
+        Assertions.assertNotNull(repository.get());
         Assertions.assertEquals(issue.getName(),
-                repository.getIssues().stream()
+                repository.get().stream()
+                        .map(Issue.class::cast)
                         .filter(objectIssue -> objectIssue.getName().equals(issue.getName()))
                         .findFirst().get().getName(), "Name's issue name values is not equals");
-
 
     }
 

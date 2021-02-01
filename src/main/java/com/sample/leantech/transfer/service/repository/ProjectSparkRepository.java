@@ -1,5 +1,6 @@
 package com.sample.leantech.transfer.service.repository;
 
+import com.sample.leantech.transfer.model.db.EntityDB;
 import com.sample.leantech.transfer.model.db.Project;
 import com.sample.leantech.transfer.model.db.Source;
 import lombok.RequiredArgsConstructor;
@@ -11,12 +12,13 @@ import org.springframework.stereotype.Repository;
 
 import java.beans.Encoder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
 @Slf4j
 @Repository
-public class ProjectSparkRepository {
+public class ProjectSparkRepository implements IRepository{
 
     @Autowired
     private SparkSession sparkSession;
@@ -25,7 +27,8 @@ public class ProjectSparkRepository {
     @Qualifier("getPostgresProperties")
     private Properties postgresProperties;
 
-    public List<Project> getProjects() {
+    @Override
+    public Collection<? extends EntityDB> get() {
         return sparkSession.read()
                 .jdbc(postgresProperties.getProperty("url"), "projects", postgresProperties)
                 .toDF()
@@ -35,9 +38,10 @@ public class ProjectSparkRepository {
                 .collectAsList();
     }
 
-
-    public void save(List<Project> project) {
-        Dataset<Project> datasetProject = sparkSession.createDataset(project, Encoders.bean(Project.class));
+    @Override
+    public void save(Collection<? extends EntityDB> entities) {
+        List<Project> listProject = (List<Project>) entities;
+        Dataset<Project> datasetProject = sparkSession.createDataset(listProject, Encoders.bean(Project.class));
         datasetProject
                 .select("sid", "logId", "sourceId", "name")
                 .withColumnRenamed("sourceId", "source_id")
@@ -46,5 +50,4 @@ public class ProjectSparkRepository {
                 .mode(SaveMode.Append)
                 .jdbc(postgresProperties.getProperty("url"), "projects", postgresProperties);
     }
-
 }

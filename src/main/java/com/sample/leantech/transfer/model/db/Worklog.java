@@ -4,17 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Issue extends EntityDB{
+public class Worklog extends EntityDB {
     private Integer id;
-    private Integer pid;
-    private Integer sid;
+    private Integer issueId;
     private Integer logId;
-    private Integer hid;
+    private Integer sid;
     private Integer sourceId;
-    private String type;
-    private String name;
-    private String summery;
+    private Timestamp updated;
+    private Integer timeSpentSecond;
+    private String username;
+    private Integer userId;
 }

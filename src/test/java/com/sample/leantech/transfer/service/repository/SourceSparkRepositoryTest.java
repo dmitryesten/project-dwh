@@ -18,7 +18,7 @@ class SourceSparkRepositoryTest {
 
     @Test
     @DisplayName("Testing save and get methods of sourceRepository")
-    public void getSaveTest() {
+    public void testSaveGet() {
         Source sourceJiraTest = new Source();
             sourceJiraTest.setName(UUID.randomUUID().toString());
         Source sourceRedmine = new Source();
@@ -28,15 +28,17 @@ class SourceSparkRepositoryTest {
 
         repository.save(listNewSource);
 
-        Assertions.assertNotNull(repository.getSource());
+        Assertions.assertNotNull(repository.get());
 
         Assertions.assertEquals(sourceJiraTest.getName(),
-                repository.getSource().stream()
+                repository.get().stream()
+                        .map(Source.class::cast)
                         .filter(objectSource -> objectSource.getName().equals(sourceJiraTest.getName()))
                         .findFirst().get().getName(), "Name's name jira values is not equals\"");
 
         Assertions.assertEquals(sourceRedmine.getName(),
-                repository.getSource().stream()
+                repository.get().stream()
+                        .map(Source.class::cast)
                         .filter(objectSource -> objectSource.getName().equals(sourceRedmine.getName()))
                         .findFirst().get().getName(), "Name's name redmine name values is not equals");
 
