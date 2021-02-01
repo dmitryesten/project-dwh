@@ -1,9 +1,12 @@
 package com.sample.leantech.transfer.service.jira;
 
 import com.sample.leantech.transfer.model.context.TransferContext;
+import com.sample.leantech.transfer.model.db.User;
 import com.sample.leantech.transfer.task.extract.ExtractTask;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +45,9 @@ public class TransferService {
 
     private void loadData(TransferContext ctx) {
         // TODO: implement
+        ModelMapper modelMapper = new ModelMapper();
+        ctx.getUsers().map(s-> modelMapper.map(s, User.class)).collect();
+
     }
 
 }
