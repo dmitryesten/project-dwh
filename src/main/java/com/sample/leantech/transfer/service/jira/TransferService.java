@@ -18,7 +18,7 @@ public class TransferService {
 
     private volatile boolean working;
 
-    @Scheduled(cron = "0 0 4 * * *")
+    @Scheduled(fixedRateString = "${transfer.milliseconds}")
     public void transfer() {
         if (working) {
             log.info("Transfer is already started");
