@@ -6,7 +6,6 @@ import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
 import com.sample.leantech.transfer.model.dto.request.JiraIssueResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.VoidFunction;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +26,7 @@ public class IssueExtractTask implements ExtractTask {
         List<JiraIssueDto> issues = new ArrayList<>();
         extractNonEpicIssues(issues);
         extractEpicIssues(ctx, issues);
-        ctx.setIssues(spark.parallelize(issues));
+        ctx.setIssues(issues);
     }
 
     private void extractNonEpicIssues(List<JiraIssueDto> issues) {
@@ -37,7 +36,7 @@ public class IssueExtractTask implements ExtractTask {
 
     private void extractEpicIssues(TransferContext ctx, List<JiraIssueDto> issues) {
         List<CompletableFuture<Boolean>> futures = new ArrayList<>();
-        ctx.getEpics().foreach((VoidFunction<JiraIssueDto>) epic -> futures.add(appendEpicIssues(epic, issues)));
+        ctx.getEpics().forEach((JiraIssueDto epic) -> futures.add(appendEpicIssues(epic, issues)));
         futures.forEach(CompletableFuture::join);
     }
 

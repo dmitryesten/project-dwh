@@ -21,7 +21,7 @@ public class EpicExtractTask implements ExtractTask {
     @Override
     public void extract(TransferContext ctx) {
         List<JiraIssueDto> projects = jiraIssueClient.getEpics().getIssues();
-        ctx.setEpics(spark.parallelize(projects));
+        ctx.setEpics(projects);
     }
 
 }

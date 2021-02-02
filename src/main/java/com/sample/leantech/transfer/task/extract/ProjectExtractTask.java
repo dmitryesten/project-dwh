@@ -21,7 +21,7 @@ public class ProjectExtractTask implements ExtractTask {
     @Override
     public void extract(TransferContext ctx) {
         List<JiraProjectDto> projects = jiraProjectClient.getProjects();
-        ctx.setProjects(spark.parallelize(projects));
+        ctx.setProjects(projects);
     }
 
 }
