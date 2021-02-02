@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class JiraIssueDto {
+public class JiraIssueDto implements Serializable {
 
     private String id;
     private String key;
@@ -16,7 +18,7 @@ public class JiraIssueDto {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Fields {
+    public static class Fields implements Serializable {
 
         private IssueType issuetype;
         private Project project;
@@ -28,7 +30,7 @@ public class JiraIssueDto {
         @Data
         @NoArgsConstructor
         @AllArgsConstructor
-        public static class IssueType {
+        public static class IssueType implements Serializable {
 
             private String name;
 
@@ -37,7 +39,7 @@ public class JiraIssueDto {
         @Data
         @NoArgsConstructor
         @AllArgsConstructor
-        public static class Project {
+        public static class Project implements Serializable {
 
             private String id;
 
@@ -46,7 +48,7 @@ public class JiraIssueDto {
         @Data
         @NoArgsConstructor
         @AllArgsConstructor
-        public static class Parent {
+        public static class Parent implements Serializable {
 
             private String id;
 
