@@ -27,7 +27,6 @@ public class TransferService {
         working = true;
         log.info("Transfer is started");
 
-        // TODO: save logs
         TransferContext ctx = new TransferContext();
         extractData(ctx);
         loadData(ctx);

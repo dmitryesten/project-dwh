@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Component
-@Order(value = 4)
+@Order(value = 5)
 @RequiredArgsConstructor
 public class WorklogExtractTask implements ExtractTask {
 

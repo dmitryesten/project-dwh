@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@Order(value = 1)
+@Order(value = 2)
 @RequiredArgsConstructor
 public class ProjectExtractTask implements ExtractTask {
 

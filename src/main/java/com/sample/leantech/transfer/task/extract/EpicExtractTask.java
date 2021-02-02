@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@Order(value = 2)
+@Order(value = 3)
 @RequiredArgsConstructor
 public class EpicExtractTask implements ExtractTask {
 

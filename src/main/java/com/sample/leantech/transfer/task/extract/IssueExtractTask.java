@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-@Order(value = 3)
+@Order(value = 4)
 @RequiredArgsConstructor
 public class IssueExtractTask implements ExtractTask {
 

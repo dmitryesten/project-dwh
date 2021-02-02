@@ -9,7 +9,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
-@Order(value = 5)
+@Order(value = 6)
 @RequiredArgsConstructor
 public class UserExtractTask implements ExtractTask {
 
