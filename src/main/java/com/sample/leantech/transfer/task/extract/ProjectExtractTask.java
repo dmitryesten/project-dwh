@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@Order(value = 1)
+@Order(value = 2)
 @RequiredArgsConstructor
 public class ProjectExtractTask implements ExtractTask {
 
@@ -21,7 +21,7 @@ public class ProjectExtractTask implements ExtractTask {
     @Override
     public void extract(TransferContext ctx) {
         List<JiraProjectDto> projects = jiraProjectClient.getProjects();
-        ctx.setProjects(spark.parallelize(projects));
+        ctx.setProjects(projects);
     }
 
 }

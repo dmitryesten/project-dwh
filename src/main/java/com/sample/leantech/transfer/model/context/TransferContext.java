@@ -3,16 +3,20 @@ package com.sample.leantech.transfer.model.context;
 import com.sample.leantech.transfer.model.dto.request.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.spark.api.java.JavaRDD;
+
+import java.time.ZonedDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 public class TransferContext {
 
-    private JavaRDD<JiraProjectDto> projects;
-    private JavaRDD<JiraIssueDto> epics;
-    private JavaRDD<JiraIssueDto> issues;
-    private JavaRDD<JiraWorklogDto> worklogs;
-    private JavaRDD<JiraUserDto> users;
+    private Long logId;
+    private ZonedDateTime startDateTime;
+    private List<JiraProjectDto> projects;
+    private List<JiraIssueDto> epics;
+    private List<JiraIssueDto> issues;
+    private List<JiraWorklogDto> worklogs;
+    private List<JiraUserDto> users;
 
 }

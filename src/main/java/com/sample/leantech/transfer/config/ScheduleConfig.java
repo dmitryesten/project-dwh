@@ -5,8 +5,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
-// TODO: uncomment when the application is ready
-//@EnableScheduling
+@EnableScheduling
 @Profile("!tests")
 public class ScheduleConfig {
 }

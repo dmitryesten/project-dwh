@@ -7,7 +7,6 @@ import com.sample.leantech.transfer.model.dto.request.JiraWorklogDto;
 import com.sample.leantech.transfer.model.dto.request.JiraWorklogResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.VoidFunction;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Component
-@Order(value = 4)
+@Order(value = 5)
 @RequiredArgsConstructor
 public class WorklogExtractTask implements ExtractTask {
 
@@ -32,16 +31,15 @@ public class WorklogExtractTask implements ExtractTask {
         // Для эпиков приходится выполнять дополнительные запросы.
         extractNonEpicWorklogs(ctx, worklogs);
         extractEpicWorklogs(ctx, worklogs);
-        ctx.setWorklogs(spark.parallelize(worklogs));
+        ctx.setWorklogs(worklogs);
     }
 
     private void extractNonEpicWorklogs(TransferContext ctx, List<JiraWorklogDto> worklogs) {
         List<JiraWorklogDto> nonEpicWorklogs = ctx.getIssues()
+                .stream()
                 .map(JiraIssueDto::getFields)
                 .map(JiraIssueDto.Fields::getWorklog)
                 .map(JiraWorklogResponseDto::getWorklogs)
-                .collect()
-                .stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
         worklogs.addAll(nonEpicWorklogs);
@@ -49,8 +47,7 @@ public class WorklogExtractTask implements ExtractTask {
 
     private void extractEpicWorklogs(TransferContext ctx, List<JiraWorklogDto> worklogs) {
         List<CompletableFuture<Boolean>> futures = new ArrayList<>();
-        ctx.getEpics().foreach((VoidFunction<JiraIssueDto>) epic ->
-                futures.add(appendEpicWorklogs(epic, worklogs)));
+        ctx.getEpics().forEach((JiraIssueDto epic) -> futures.add(appendEpicWorklogs(epic, worklogs)));
         futures.forEach(CompletableFuture::join);
     }
 

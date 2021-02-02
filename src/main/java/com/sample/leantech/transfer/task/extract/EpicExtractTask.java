@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@Order(value = 2)
+@Order(value = 3)
 @RequiredArgsConstructor
 public class EpicExtractTask implements ExtractTask {
 
@@ -21,7 +21,7 @@ public class EpicExtractTask implements ExtractTask {
     @Override
     public void extract(TransferContext ctx) {
         List<JiraIssueDto> projects = jiraIssueClient.getEpics().getIssues();
-        ctx.setEpics(spark.parallelize(projects));
+        ctx.setEpics(projects);
     }
 
 }
