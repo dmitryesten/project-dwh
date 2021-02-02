@@ -21,7 +21,7 @@ public class JiraIssueDto implements Serializable {
     public static class Fields implements Serializable {
 
         private IssueType issuetype;
-        private Project project;
+        private Parent project;
         private Parent epic;
         private Parent parent;
         private String summary;
@@ -33,15 +33,6 @@ public class JiraIssueDto implements Serializable {
         public static class IssueType implements Serializable {
 
             private String name;
-
-        }
-
-        @Data
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class Project implements Serializable {
-
-            private String id;
 
         }
 

@@ -1,33 +1,45 @@
 package com.sample.leantech.transfer.model.mapper;
 
+import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.db.Issue;
-import com.sample.leantech.transfer.model.db.Project;
 import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
-import com.sample.leantech.transfer.model.dto.request.JiraProjectDto;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
-import org.mapstruct.NullValueCheckStrategy;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 import java.io.Serializable;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @Mapper
 public interface IssueMapper extends Serializable {
 
     IssueMapper INSTANCE = Mappers.getMapper(IssueMapper.class);
+
     @Mappings({
             @Mapping(target = "id", ignore = true),
-            @Mapping(target = "sourceId", source = "jiraIssueDto.id"),
             @Mapping(target = "pid", source = "jiraIssueDto.fields.project.id"),
+            @Mapping(target = "sourceId", source = "jiraIssueDto.id"),
             @Mapping(target = "type", source = "jiraIssueDto.fields.issuetype.name"),
-            @Mapping(target = "summery", source = "jiraIssueDto.fields.summary"),
             @Mapping(target = "name", source = "jiraIssueDto.key"),
-            @Mapping(target = "hid",
-                    source = "jiraIssueDto.fields.epic.id",
-                    nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-                    defaultExpression = "java(Integer.parseInt(jiraIssueDto.getFields().getParent().getId() ))") //
+            @Mapping(target = "summery", source = "jiraIssueDto.fields.summary")
     })
-    Issue dtoToModel(JiraIssueDto jiraIssueDto);
+    Issue dtoToModel(JiraIssueDto jiraIssueDto, @Context TransferContext ctx);
+
+    @AfterMapping
+    default void afterDtoToModel(JiraIssueDto source, @MappingTarget Issue target, @Context TransferContext ctx) {
+        JiraIssueDto.Fields fields = source.getFields();
+        if (fields != null) {
+            Stream.of(fields.getParent(), fields.getEpic(), fields.getProject())
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .map(JiraIssueDto.Fields.Parent::getId)
+                    .map(Integer::valueOf)
+                    .ifPresent(target::setHid);
+        }
+        if (ctx != null) {
+            target.setSid(ctx.getSource().getValue());
+            target.setLogId(ctx.getLogId());
+        }
+    }
 
 }

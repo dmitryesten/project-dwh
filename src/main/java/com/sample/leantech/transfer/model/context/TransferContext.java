@@ -3,15 +3,17 @@ package com.sample.leantech.transfer.model.context;
 import com.sample.leantech.transfer.model.dto.request.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import scala.Serializable;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class TransferContext {
+public class TransferContext implements Serializable {
 
-    private Long logId;
+    private Source source;
+    private Integer logId;
     private ZonedDateTime startDateTime;
     private List<JiraProjectDto> projects;
     private List<JiraIssueDto> epics;
