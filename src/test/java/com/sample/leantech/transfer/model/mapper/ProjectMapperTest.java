@@ -31,7 +31,7 @@ class ProjectMapperTest {
         Assertions.assertEquals(1, listProjectConvertedRdd.size());
         Assertions.assertEquals(jiraProjectDtoTest.getName(),
                 listProjectConvertedRdd.stream()
-                        .filter(s -> s.getName().equals(getJiraProjectDto().getName()))
+                        .filter(s -> s.getName().equals(jiraProjectDtoTest.getName()))
                         .findFirst().get().getName());
 
     }
@@ -40,7 +40,11 @@ class ProjectMapperTest {
         JiraProjectDto dto = new JiraProjectDto();
         dto.setKey(UUID.randomUUID().toString());
         dto.setName("Test_jira-Project");
-        dto.setProjectTypeKey("Prohect-Test");
+        dto.setProjectTypeKey("Project-Test-Type");
+        dto.setId("123");
+        dto.setArchived(false);
+        dto.setExpand("Expand");
+        dto.setSelf("Self-Test");
         return dto;
     }
 

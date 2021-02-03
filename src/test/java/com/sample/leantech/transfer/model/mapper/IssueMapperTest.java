@@ -53,12 +53,6 @@ class IssueMapperTest {
     }
 
     @Test
-    public void test(){
-        JiraIssueDto jiraIssueDto = issueDtoNoParentAndEpic();
-        Optional.ofNullable(jiraIssueDto.getFields().getParent()).isPresent();
-    }
-
-    @Test
     public void dtoToModelIssueWithoutEpicAndParent() {
         JiraIssueDto jiraIssueDto = issueDtoNoParentAndEpic();
         TransferContext ctx = transferContext();
