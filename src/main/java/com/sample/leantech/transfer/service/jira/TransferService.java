@@ -1,5 +1,6 @@
 package com.sample.leantech.transfer.service.jira;
 
+import com.sample.leantech.transfer.model.context.Source;
 import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.task.extract.ExtractTask;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class TransferService {
         log.info("Transfer is started");
 
         TransferContext ctx = new TransferContext();
+        ctx.setSource(Source.JIRA_1);
         extractData(ctx);
         loadData(ctx);
 
