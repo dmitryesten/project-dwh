@@ -43,15 +43,8 @@ class WorklogMapperTest {
 
     private JiraUserDto userDtoFirst(){
         JiraUserDto jiraUserDtoFirst = new JiraUserDto();
-        jiraUserDtoFirst.setSelf("Test-self_test-1");
         jiraUserDtoFirst.setKey("Key-Test-1");
         jiraUserDtoFirst.setName("Name-Test-1");
-        jiraUserDtoFirst.setEmailAddress("test1@mail.ru");
-        jiraUserDtoFirst.setDisplayName("DisplayName");
-        jiraUserDtoFirst.setActive(true);
-        jiraUserDtoFirst.setDeleted(false);
-        jiraUserDtoFirst.setTimeZone("6+");
-        jiraUserDtoFirst.setLocale("RU");
         return jiraUserDtoFirst;
     }
 
