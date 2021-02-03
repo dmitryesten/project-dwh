@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-
 @SpringBootTest
 class UserMapperTest {
 
@@ -39,29 +38,15 @@ class UserMapperTest {
 
     private JiraUserDto userDtoFirst(){
         JiraUserDto jiraUserDtoFirst = new JiraUserDto();
-        jiraUserDtoFirst.setSelf("Test-self_test-1");
         jiraUserDtoFirst.setKey("Key-Test-1");
         jiraUserDtoFirst.setName("Name-Test-1");
-        jiraUserDtoFirst.setEmailAddress("test1@mail.ru");
-        jiraUserDtoFirst.setDisplayName("DisplayName");
-        jiraUserDtoFirst.setActive(true);
-        jiraUserDtoFirst.setDeleted(false);
-        jiraUserDtoFirst.setTimeZone("6+");
-        jiraUserDtoFirst.setLocale("RU");
         return jiraUserDtoFirst;
     }
 
     private JiraUserDto userDtoSecond(){
         JiraUserDto jiraUserDtoFirst = new JiraUserDto();
-        jiraUserDtoFirst.setSelf("Test-self_test-2");
         jiraUserDtoFirst.setKey("Key-Test-2");
         jiraUserDtoFirst.setName("Name-Test-2");
-        jiraUserDtoFirst.setEmailAddress("test2@mail.ru");
-        jiraUserDtoFirst.setDisplayName("DisplayName2");
-        jiraUserDtoFirst.setActive(true);
-        jiraUserDtoFirst.setDeleted(false);
-        jiraUserDtoFirst.setTimeZone("6+");
-        jiraUserDtoFirst.setLocale("RU");
         return jiraUserDtoFirst;
     }
 
