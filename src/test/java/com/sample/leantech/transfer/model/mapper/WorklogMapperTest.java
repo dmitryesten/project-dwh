@@ -2,39 +2,43 @@ package com.sample.leantech.transfer.model.mapper;
 
 import com.sample.leantech.transfer.model.context.Source;
 import com.sample.leantech.transfer.model.context.TransferContext;
-import com.sample.leantech.transfer.model.db.User;
+import com.sample.leantech.transfer.model.db.Worklog;
 import com.sample.leantech.transfer.model.dto.request.JiraUserDto;
-import org.apache.spark.api.java.JavaRDD;
+import com.sample.leantech.transfer.model.dto.request.JiraWorklogDto;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
+import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 @SpringBootTest
-class UserMapperTest {
+class WorklogMapperTest {
 
     @Autowired
     private JavaSparkContext javaSparkCtx;
 
     @Test
     public void test(){
-        List<JiraUserDto> listJiraUserDto = Arrays.asList(userDtoFirst(), userDtoSecond());
-        JavaRDD<JiraUserDto> javaRddUsers = javaSparkCtx.parallelize(listJiraUserDto);
+        JiraWorklogDto jiraWorklogDto = worklogDto();
         TransferContext ctx = transferContext();
-        Collection<User> listUserConvertedRdd = javaRddUsers.map(user ->
-                UserMapper.INSTANCE.dtoToModel(user, ctx)).collect();
+        Worklog worklog = WorklogMapper.INSTANCE.dtoToModel(jiraWorklogDto, ctx);
+        Assertions.assertNotNull(worklog);
+        Assertions.assertEquals(jiraWorklogDto.getIssueId(), String.valueOf(worklog.getIssueId()) );
+        Assertions.assertEquals(jiraWorklogDto.getUpdated().toInstant(), worklog.getUpdated().toInstant());
+    }
 
-        Assertions.assertEquals(2, listUserConvertedRdd.size());
-        Assertions.assertEquals(userDtoFirst().getKey(),
-                listUserConvertedRdd.stream()
-                        .filter(s -> s.getKey().equals(userDtoFirst().getKey()))
-                        .findFirst().get().getKey());
-
+    private JiraWorklogDto worklogDto(){
+        JiraWorklogDto jiraWorklogDto = new JiraWorklogDto();
+        jiraWorklogDto.setId("123");
+        jiraWorklogDto.setIssueId("444");
+        jiraWorklogDto.setTimeSpentSeconds(202L);
+        jiraWorklogDto.setUpdateAuthor(userDtoFirst());
+        jiraWorklogDto.setUpdated(ZonedDateTime.now());
+        Timestamp timestamp = Timestamp.valueOf(jiraWorklogDto.getUpdated().toLocalDateTime());
+        return jiraWorklogDto;
     }
 
     private JiraUserDto userDtoFirst(){
@@ -44,20 +48,6 @@ class UserMapperTest {
         jiraUserDtoFirst.setName("Name-Test-1");
         jiraUserDtoFirst.setEmailAddress("test1@mail.ru");
         jiraUserDtoFirst.setDisplayName("DisplayName");
-        jiraUserDtoFirst.setActive(true);
-        jiraUserDtoFirst.setDeleted(false);
-        jiraUserDtoFirst.setTimeZone("6+");
-        jiraUserDtoFirst.setLocale("RU");
-        return jiraUserDtoFirst;
-    }
-
-    private JiraUserDto userDtoSecond(){
-        JiraUserDto jiraUserDtoFirst = new JiraUserDto();
-        jiraUserDtoFirst.setSelf("Test-self_test-2");
-        jiraUserDtoFirst.setKey("Key-Test-2");
-        jiraUserDtoFirst.setName("Name-Test-2");
-        jiraUserDtoFirst.setEmailAddress("test2@mail.ru");
-        jiraUserDtoFirst.setDisplayName("DisplayName2");
         jiraUserDtoFirst.setActive(true);
         jiraUserDtoFirst.setDeleted(false);
         jiraUserDtoFirst.setTimeZone("6+");

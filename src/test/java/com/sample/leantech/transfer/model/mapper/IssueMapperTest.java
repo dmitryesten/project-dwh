@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest
 class IssueMapperTest {
@@ -50,12 +49,6 @@ class IssueMapperTest {
                 jiraIssueDto.getFields().getParent().getId(),
                 String.valueOf(issue.getHid())
         );
-    }
-
-    @Test
-    public void test(){
-        JiraIssueDto jiraIssueDto = issueDtoNoParentAndEpic();
-        Optional.ofNullable(jiraIssueDto.getFields().getParent()).isPresent();
     }
 
     @Test
