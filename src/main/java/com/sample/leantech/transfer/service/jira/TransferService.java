@@ -53,7 +53,8 @@ public class TransferService {
 
     private void loadData(TransferContext ctx) {
         // TODO: implement
-        Collection<User> userCollection = ctx.getUsers().stream().map(UserMapper.INSTANCE::dtoToModel).collect(Collectors.toList());
+        Collection<User> userCollection = ctx.getUsers().stream().map(user ->
+                UserMapper.INSTANCE.dtoToModel(user, ctx)).collect(Collectors.toList());
         userRepository.save(userCollection);
     }
 

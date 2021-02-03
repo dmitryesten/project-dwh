@@ -1,5 +1,7 @@
 package com.sample.leantech.transfer.model.mapper;
 
+import com.sample.leantech.transfer.model.context.Source;
+import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.db.User;
 import com.sample.leantech.transfer.model.dto.request.JiraUserDto;
 import org.apache.spark.api.java.JavaRDD;
@@ -21,20 +23,21 @@ class UserMapperTest {
 
     @Test
     public void test(){
-        List<JiraUserDto> listJiraUserDto = Arrays.asList(getUserDtoFirst(), getUserDtoSecond());
+        List<JiraUserDto> listJiraUserDto = Arrays.asList(userDtoFirst(), userDtoSecond());
         JavaRDD<JiraUserDto> javaRddUsers = javaSparkCtx.parallelize(listJiraUserDto);
-
-        Collection<User> listUserConvertedRdd = javaRddUsers.map(UserMapper.INSTANCE::dtoToModel).collect();
+        TransferContext ctx = transferContext();
+        Collection<User> listUserConvertedRdd = javaRddUsers.map(user ->
+                UserMapper.INSTANCE.dtoToModel(user, ctx)).collect();
 
         Assertions.assertEquals(2, listUserConvertedRdd.size());
-        Assertions.assertEquals(getUserDtoFirst().getKey(),
+        Assertions.assertEquals(userDtoFirst().getKey(),
                 listUserConvertedRdd.stream()
-                        .filter(s -> s.getKey().equals(getUserDtoFirst().getKey()))
+                        .filter(s -> s.getKey().equals(userDtoFirst().getKey()))
                         .findFirst().get().getKey());
 
     }
 
-    private JiraUserDto getUserDtoFirst(){
+    private JiraUserDto userDtoFirst(){
         JiraUserDto jiraUserDtoFirst = new JiraUserDto();
         jiraUserDtoFirst.setSelf("Test-self_test-1");
         jiraUserDtoFirst.setKey("Key-Test-1");
@@ -48,7 +51,7 @@ class UserMapperTest {
         return jiraUserDtoFirst;
     }
 
-    private JiraUserDto getUserDtoSecond(){
+    private JiraUserDto userDtoSecond(){
         JiraUserDto jiraUserDtoFirst = new JiraUserDto();
         jiraUserDtoFirst.setSelf("Test-self_test-2");
         jiraUserDtoFirst.setKey("Key-Test-2");
@@ -60,6 +63,13 @@ class UserMapperTest {
         jiraUserDtoFirst.setTimeZone("6+");
         jiraUserDtoFirst.setLocale("RU");
         return jiraUserDtoFirst;
+    }
+
+    private TransferContext transferContext() {
+        TransferContext ctx = new TransferContext();
+        ctx.setSource(Source.JIRA_1);
+        ctx.setLogId(1);
+        return ctx;
     }
 
 }
