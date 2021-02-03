@@ -4,8 +4,8 @@ import com.sample.leantech.transfer.model.context.Source;
 import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.db.User;
 import com.sample.leantech.transfer.model.mapper.UserMapper;
-import com.sample.leantech.transfer.service.repository.IRepository;
 import com.sample.leantech.transfer.task.extract.ExtractTask;
+import com.sample.leantech.transfer.task.load.LoadTask;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +24,9 @@ public class TransferService {
 
     private final List<ExtractTask> extractTasks;
 
-    private volatile boolean working;
+    private final List<LoadTask> loadTasks;
 
-    @Autowired @Qualifier("userSparkRepository")
-    IRepository userRepository;
+    private volatile boolean working;
 
     @Scheduled(fixedRateString = "${transfer.milliseconds}")
     public void transfer() {
@@ -52,10 +51,7 @@ public class TransferService {
     }
 
     private void loadData(TransferContext ctx) {
-        // TODO: implement
-        Collection<User> userCollection = ctx.getUsers().stream().map(user ->
-                UserMapper.INSTANCE.dtoToModel(user, ctx)).collect(Collectors.toList());
-        userRepository.save(userCollection);
+        loadTasks.forEach(task -> task.load(ctx));
     }
 
 }
