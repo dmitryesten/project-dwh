@@ -5,10 +5,8 @@ import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.db.Worklog;
 import com.sample.leantech.transfer.model.dto.request.JiraUserDto;
 import com.sample.leantech.transfer.model.dto.request.JiraWorklogDto;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.Timestamp;
@@ -16,9 +14,6 @@ import java.time.ZonedDateTime;
 
 @SpringBootTest
 class WorklogMapperTest {
-
-    @Autowired
-    private JavaSparkContext javaSparkCtx;
 
     @Test
     public void test(){

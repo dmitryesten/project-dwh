@@ -4,21 +4,15 @@ import com.sample.leantech.transfer.model.context.Source;
 import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.db.Issue;
 import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 class IssueMapperTest {
-
-    @Autowired
-    private JavaSparkContext javaSparkCtx;
 
     @Test
     public void dtoToModeEpicIssue() {
@@ -73,14 +67,15 @@ class IssueMapperTest {
     @Test
     public void testRddStreamMapping(){
         JiraIssueDto jiraIssueDto = issueEpicDto();
-        List<JiraIssueDto> listJiraProjectDto = Arrays.asList(jiraIssueDto);
-        JavaRDD<JiraIssueDto> javaRddUsers = javaSparkCtx.parallelize(listJiraProjectDto);
+        List<JiraIssueDto> issues = Arrays.asList(jiraIssueDto);
         TransferContext ctx = transferContext();
-        Collection<Issue> listProjectConvertedRdd = javaRddUsers.map(issue ->
-                IssueMapper.INSTANCE.dtoToModel(issue, ctx)).collect();
+        List<Issue> listIssuesConverted = issues
+                .stream()
+                .map(issue -> IssueMapper.INSTANCE.dtoToModel(issue, ctx))
+                .collect(Collectors.toList());
 
-        Assertions.assertNotNull(listProjectConvertedRdd);
-        //Assertions.assertEquals(1, listProjectConvertedRdd.size());
+        Assertions.assertNotNull(listIssuesConverted);
+        //Assertions.assertEquals(1, listIssuesConverted.size());
     }
 
     private JiraIssueDto issueEpicDto(){

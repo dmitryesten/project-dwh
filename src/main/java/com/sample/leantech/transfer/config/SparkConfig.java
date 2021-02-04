@@ -3,7 +3,6 @@ package com.sample.leantech.transfer.config;
 import lombok.Setter;
 import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.SparkSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -35,11 +34,6 @@ public class SparkConfig {
         return new SparkSession.Builder()
                 .sparkContext(sparkCtx)
                 .getOrCreate();
-    }
-
-    @Bean
-    public JavaSparkContext javaSparkCtx(@Autowired SparkContext sparkCtx) {
-        return JavaSparkContext.fromSparkContext(sparkCtx);
     }
 
 }
