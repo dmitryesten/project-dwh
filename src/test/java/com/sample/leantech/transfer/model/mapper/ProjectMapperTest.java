@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @SpringBootTest
@@ -36,13 +35,8 @@ class ProjectMapperTest {
 
     private JiraProjectDto jiraProjectDto(){
         JiraProjectDto dto = new JiraProjectDto();
-        dto.setKey(UUID.randomUUID().toString());
         dto.setName("Test_jira-Project");
-        dto.setProjectTypeKey("Project-Test-Type");
         dto.setId("123");
-        dto.setArchived(false);
-        dto.setExpand("Expand");
-        dto.setSelf("Self-Test");
         return dto;
     }
 

@@ -31,7 +31,7 @@ public class JiraClient {
     private final RestTemplate restTemplate;
 
     public List<JiraProjectDto> getProjects()  {
-        return restTemplate.exchange(PROJECT_PATH_JIRA, HttpMethod.GET, null,
+        return restTemplate().exchange(PROJECT_PATH_JIRA, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<JiraProjectDto>>() {}).getBody();
     }
 
@@ -41,7 +41,7 @@ public class JiraClient {
     }
 
     public JiraIssueResponseDto getEpics() {
-        return restTemplate.exchange(EPIC_PATH_JIRA, HttpMethod.GET, null, JiraIssueResponseDto.class).getBody();
+        return restTemplate().exchange(EPIC_PATH_JIRA, HttpMethod.GET, null, JiraIssueResponseDto.class).getBody();
     }
 
     @Async
@@ -50,7 +50,7 @@ public class JiraClient {
     }
 
     public JiraIssueResponseDto getNonEpicIssues() {
-        return restTemplate.exchange(NON_EPIC_ISSUE_PATH_JIRA, HttpMethod.GET, null, JiraIssueResponseDto.class).getBody();
+        return restTemplate().exchange(NON_EPIC_ISSUE_PATH_JIRA, HttpMethod.GET, null, JiraIssueResponseDto.class).getBody();
     }
 
     @Async
@@ -62,7 +62,7 @@ public class JiraClient {
         String url = UriComponentsBuilder.fromPath(EPIC_ISSUE_PATH_JIRA)
                 .buildAndExpand(epicId)
                 .toString();
-        return restTemplate.exchange(url, HttpMethod.GET, null, JiraIssueResponseDto.class).getBody();
+        return restTemplate().exchange(url, HttpMethod.GET, null, JiraIssueResponseDto.class).getBody();
     }
 
     @Async
@@ -74,12 +74,16 @@ public class JiraClient {
         String url = UriComponentsBuilder.fromPath(WORKLOG_PATH_JIRA)
                 .buildAndExpand(issueId)
                 .toString();
-        return restTemplate.exchange(url, HttpMethod.GET, null, JiraWorklogResponseDto.class).getBody();
+        return restTemplate().exchange(url, HttpMethod.GET, null, JiraWorklogResponseDto.class).getBody();
     }
 
     @Async
     public CompletableFuture<JiraWorklogResponseDto> getWorklogsAsync(String issueId) {
         return CompletableFuture.completedFuture(getWorklogs(issueId));
+    }
+
+    RestTemplate restTemplate() {
+        return restTemplate;
     }
 
 }

@@ -11,12 +11,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class JiraProjectDto implements Serializable {
 
-    private String expand;
-    private String self;
     private String id;
-    private String key;
     private String name;
-    private String projectTypeKey;
-    private boolean archived;
 
 }
