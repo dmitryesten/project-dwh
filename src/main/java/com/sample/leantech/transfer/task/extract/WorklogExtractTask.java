@@ -6,7 +6,6 @@ import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
 import com.sample.leantech.transfer.model.dto.request.JiraWorklogDto;
 import com.sample.leantech.transfer.model.dto.request.JiraWorklogResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
 public class WorklogExtractTask implements ExtractTask {
 
     private final JiraWorklogClient jiraWorklogClient;
-    private final JavaSparkContext spark;
 
     @Override
     public void extract(TransferContext ctx) {
