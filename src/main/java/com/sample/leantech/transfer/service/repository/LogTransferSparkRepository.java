@@ -2,19 +2,20 @@ package com.sample.leantech.transfer.service.repository;
 
 import com.sample.leantech.transfer.model.db.EntityDB;
 import com.sample.leantech.transfer.model.db.Issue;
-import com.sample.leantech.transfer.model.db.Project;
+import com.sample.leantech.transfer.model.db.LogTransfer;
 import com.sample.leantech.transfer.model.db.Source;
 import org.apache.spark.sql.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
 @Repository
-public class SourceSparkRepository implements IRepository {
+public class LogTransferSparkRepository implements IRepository {
 
     @Autowired
     private SparkSession sparkSession;
@@ -26,27 +27,28 @@ public class SourceSparkRepository implements IRepository {
     @Override
     public Collection<? extends EntityDB> get() {
         return sparkSession.read()
-                .jdbc(postgresProperties.getProperty("url"), "sources", postgresProperties)
+                .jdbc(postgresProperties.getProperty("url"), "logs", postgresProperties)
                 .toDF()
-                .as(Encoders.bean(Source.class))
+                .withColumnRenamed("start_dt", "startDt")
+                .withColumnRenamed("end_dt", "endDt")
+                .as(Encoders.bean(LogTransfer.class))
                 .collectAsList();
     }
 
+
     @Override
     public void save(Collection<? extends EntityDB> entities) {
-        List<Source> listSource = (List<Source>) entities;
-        Dataset<Source> datasetSource = sparkSession.createDataset(listSource, Encoders.bean(Source.class));
-
-        Dataset<Source> datasetOfDb = sparkSession.createDataset((List<Source>) get(), Encoders.bean(Source.class));
-        Dataset<Row> datasetLeftResult = datasetSource
-                .join(datasetOfDb, datasetOfDb.col("name").equalTo(datasetSource.col("name")), "left")
-                .where(datasetOfDb.col("name").isNull())
-                .select(datasetSource.col("id"), datasetSource.col("name"));
-
-        datasetLeftResult.select("name")
+        List<LogTransfer> listLogTransfer = (List<LogTransfer>) entities;
+        Dataset<LogTransfer> datasetTransfer = sparkSession.createDataset(listLogTransfer, Encoders.bean(LogTransfer.class));
+        datasetTransfer.select("sid","startDt")
+                .withColumnRenamed("startDt", "start_dt")
+                .withColumnRenamed("endDt", "end_dt")
                 .write()
                 .mode(SaveMode.Append)
-                .jdbc(postgresProperties.getProperty("url"), "sources", postgresProperties);
+                .jdbc(postgresProperties.getProperty("url"), "logs", postgresProperties);
 
     }
+
+
+
 }

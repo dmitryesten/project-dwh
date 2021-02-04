@@ -18,8 +18,8 @@ create table logs (
 	id  integer default nextval('seq_table'),
 	sid integer,
 	start_dt timestamp not null,
-	end_dt timestamp not null,
-	result boolean not null,
+	end_dt timestamp,
+	result boolean,
 	constraint pk_id_logs primary key (id),
 	constraint fk_sid_sources foreign key (sid) references sources(id)
 );

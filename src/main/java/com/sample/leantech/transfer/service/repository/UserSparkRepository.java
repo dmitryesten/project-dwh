@@ -43,8 +43,10 @@ public class UserSparkRepository implements IRepository{
         datasetProject
                 .select("key", "logId", "name")
                 .withColumnRenamed("logId", "log_id")
+                .toDF()
                 .write()
                 .mode(SaveMode.Append)
                 .jdbc(postgresProperties.getProperty("url"), "users", postgresProperties);
     }
+
 }
