@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +26,7 @@ public class JiraClient {
     private static final String NON_EPIC_ISSUE_PATH_JIRA = "/rest/agile/1.0/epic/none/issue";
     private static final String EPIC_ISSUE_PATH_JIRA = "/rest/agile/1.0/epic/{epicId}/issue";
 
-    private static final String ISSUE_PATH_JIRA = "/rest/api/2/search?jql=project={projectName}";
-
     private static final String WORKLOG_PATH_JIRA = "/rest/api/2/issue/{issueId}/worklog";
-    private static final String USER_PATH_JIRA = "/rest/api/2/user/search?username={username}";
 
     private final RestTemplate restTemplate;
 
@@ -74,15 +70,6 @@ public class JiraClient {
         return CompletableFuture.completedFuture(getEpicIssues(epicId));
     }
 
-    public List<JiraIssueDto> getIssues(String projectName) {
-        String url = UriComponentsBuilder.fromPath(ISSUE_PATH_JIRA)
-                .buildAndExpand(projectName)
-                .toString();
-        JiraIssueResponseDto responseDto = restTemplate.exchange(url, HttpMethod.GET, null,
-                JiraIssueResponseDto.class).getBody();
-        return responseDto == null ? Collections.emptyList() : responseDto.getIssues();
-    }
-
     public JiraWorklogResponseDto getWorklogs(String issueId)  {
         String url = UriComponentsBuilder.fromPath(WORKLOG_PATH_JIRA)
                 .buildAndExpand(issueId)
@@ -93,16 +80,6 @@ public class JiraClient {
     @Async
     public CompletableFuture<JiraWorklogResponseDto> getWorklogsAsync(String issueId) {
         return CompletableFuture.completedFuture(getWorklogs(issueId));
-    }
-
-    public List<JiraUserDto> getUsers(String username) {
-        return restTemplate.exchange(USER_PATH_JIRA, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<JiraUserDto>>() {}, username).getBody();
-    }
-
-    @Async
-    public CompletableFuture<List<JiraUserDto>> getUsersAsync(String username) {
-        return CompletableFuture.completedFuture(getUsers(username));
     }
 
 }
