@@ -1,6 +1,6 @@
 package com.sample.leantech.transfer.task.extract;
 
-import com.sample.leantech.transfer.integration.JiraWorklogClient;
+import com.sample.leantech.transfer.integration.JiraClient;
 import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
 import com.sample.leantech.transfer.model.dto.request.JiraWorklogDto;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class WorklogExtractTask implements ExtractTask {
 
-    private final JiraWorklogClient jiraWorklogClient;
+    private final JiraClient jiraClient;
 
     @Override
     public void extract(TransferContext ctx) {
@@ -50,7 +50,7 @@ public class WorklogExtractTask implements ExtractTask {
     }
 
     private CompletableFuture<Boolean> appendEpicWorklogs(JiraIssueDto epic, List<JiraWorklogDto> worklogs) {
-        return jiraWorklogClient.getWorklogsAsync(epic.getId())
+        return jiraClient.getWorklogsAsync(epic.getId())
                 .thenApply(JiraWorklogResponseDto::getWorklogs)
                 .thenApply(worklogs::addAll);
     }

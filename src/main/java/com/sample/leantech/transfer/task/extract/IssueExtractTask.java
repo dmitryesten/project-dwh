@@ -1,6 +1,6 @@
 package com.sample.leantech.transfer.task.extract;
 
-import com.sample.leantech.transfer.integration.JiraIssueClient;
+import com.sample.leantech.transfer.integration.JiraClient;
 import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
 import com.sample.leantech.transfer.model.dto.request.JiraIssueResponseDto;
@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class IssueExtractTask implements ExtractTask {
 
-    private final JiraIssueClient jiraIssueClient;
+    private final JiraClient jiraClient;
 
     @Override
     public void extract(TransferContext ctx) {
@@ -28,7 +28,7 @@ public class IssueExtractTask implements ExtractTask {
     }
 
     private void extractNonEpicIssues(List<JiraIssueDto> issues) {
-        List<JiraIssueDto> nonEpicIssues = jiraIssueClient.getNonEpicIssues().getIssues();
+        List<JiraIssueDto> nonEpicIssues = jiraClient.getNonEpicIssues().getIssues();
         issues.addAll(nonEpicIssues);
     }
 
@@ -39,7 +39,7 @@ public class IssueExtractTask implements ExtractTask {
     }
 
     private CompletableFuture<Boolean> appendEpicIssues(JiraIssueDto epic, List<JiraIssueDto> issues) {
-        return jiraIssueClient.getEpicIssuesAsync(epic.getId())
+        return jiraClient.getEpicIssuesAsync(epic.getId())
                 .thenApply(JiraIssueResponseDto::getIssues)
                 .thenApply(issues::addAll);
     }

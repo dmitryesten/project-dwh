@@ -1,6 +1,6 @@
 package com.sample.leantech.transfer.controller.jira;
 
-import com.sample.leantech.transfer.integration.JiraIssueClient;
+import com.sample.leantech.transfer.integration.JiraClient;
 import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,11 +15,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class IssueController {
 
-    private final JiraIssueClient jiraIssueClient;
+    private final JiraClient jiraClient;
 
     @GetMapping("/issue")
     public List<JiraIssueDto> getIssues(@RequestParam(defaultValue = ".") String projectName) {
-        return jiraIssueClient.getIssues(projectName);
+        return jiraClient.getIssues(projectName);
     }
 
 }

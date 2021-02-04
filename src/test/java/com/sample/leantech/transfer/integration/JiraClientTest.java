@@ -6,14 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class JiraIssueClientTest {
+class JiraClientTest {
 
     @Autowired
-    private JiraIssueClient jiraIssueClient;
+    private JiraClient jiraClient;
 
     @Test
     public void testIssueNode() {
-        Assertions.assertNotNull(jiraIssueClient.getIssues("MTASK"));
+        Assertions.assertNotNull(jiraClient.getIssues("MTASK"));
     }
 
 }

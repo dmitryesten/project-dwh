@@ -1,6 +1,6 @@
 package com.sample.leantech.transfer.task.extract;
 
-import com.sample.leantech.transfer.integration.JiraIssueClient;
+import com.sample.leantech.transfer.integration.JiraClient;
 import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
 import lombok.RequiredArgsConstructor;
@@ -14,11 +14,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EpicExtractTask implements ExtractTask {
 
-    private final JiraIssueClient jiraIssueClient;
+    private final JiraClient jiraClient;
 
     @Override
     public void extract(TransferContext ctx) {
-        List<JiraIssueDto> projects = jiraIssueClient.getEpics().getIssues();
+        List<JiraIssueDto> projects = jiraClient.getEpics().getIssues();
         ctx.setEpics(projects);
     }
 
