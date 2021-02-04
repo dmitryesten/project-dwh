@@ -1,6 +1,5 @@
 package com.sample.leantech.transfer.model.dto.request;
 
-import com.sample.leantech.transfer.service.jira.JiraProjectService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
