@@ -4,33 +4,28 @@ import com.sample.leantech.transfer.model.context.Source;
 import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.db.User;
 import com.sample.leantech.transfer.model.dto.request.JiraUserDto;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 class UserMapperTest {
 
-    @Autowired
-    private JavaSparkContext javaSparkCtx;
-
     @Test
     public void test(){
-        List<JiraUserDto> listJiraUserDto = Arrays.asList(userDtoFirst(), userDtoSecond());
-        JavaRDD<JiraUserDto> javaRddUsers = javaSparkCtx.parallelize(listJiraUserDto);
+        List<JiraUserDto> users = Arrays.asList(userDtoFirst(), userDtoSecond());
         TransferContext ctx = transferContext();
-        Collection<User> listUserConvertedRdd = javaRddUsers.map(user ->
-                UserMapper.INSTANCE.dtoToModel(user, ctx)).collect();
+        List<User> listUserConverted = users
+                .stream()
+                .map(user -> UserMapper.INSTANCE.dtoToModel(user, ctx))
+                .collect(Collectors.toList());
 
-        Assertions.assertEquals(2, listUserConvertedRdd.size());
+        Assertions.assertEquals(2, listUserConverted.size());
         Assertions.assertEquals(userDtoFirst().getKey(),
-                listUserConvertedRdd.stream()
+                listUserConverted.stream()
                         .filter(s -> s.getKey().equals(userDtoFirst().getKey()))
                         .findFirst().get().getKey());
 
