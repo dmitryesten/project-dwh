@@ -3,6 +3,7 @@ package com.sample.leantech.transfer.service.jira;
 import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.service.repository.IRepository;
 import com.sample.leantech.transfer.task.extract.ExtractTask;
+import com.sample.leantech.transfer.task.transform.TransformTask;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.List;
 public class TransferService {
 
     private final List<ExtractTask> extractTasks;
+    private final List<TransformTask> transformTasks;
 
     private volatile boolean working;
 
@@ -54,7 +56,7 @@ public class TransferService {
     }
 
     private void transformData(TransferContext ctx) {
-        // TODO: implement
+        transformTasks.forEach(task -> task.transform(ctx));
     }
 
     private void loadData(TransferContext ctx) {

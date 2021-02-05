@@ -29,6 +29,10 @@ public class TransferContext implements Serializable {
     public DatabaseModel databaseModel() {
         DatabaseModel databaseModel = new DatabaseModel();
         databaseModel.setLogId(logId);
+        databaseModel.setProjects(new ArrayList<>());
+        databaseModel.setIssues(new ArrayList<>());
+        databaseModel.setWorklogs(new ArrayList<>());
+        databaseModel.setUsers(new ArrayList<>());
         this.databaseModel = databaseModel;
         return databaseModel;
     }
