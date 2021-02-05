@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @SpringBootTest
-class UserMapperTest {
+class UserMapperTest extends AbstractMapperTest {
 
     @Test
     public void test(){
@@ -43,13 +43,6 @@ class UserMapperTest {
         jiraUserDtoFirst.setKey("Key-Test-2");
         jiraUserDtoFirst.setName("Name-Test-2");
         return jiraUserDtoFirst;
-    }
-
-    private TransferContext transferContext() {
-        TransferContext ctx = new TransferContext();
-        ctx.setSource(Source.JIRA_1);
-        ctx.setLogId(1);
-        return ctx;
     }
 
 }

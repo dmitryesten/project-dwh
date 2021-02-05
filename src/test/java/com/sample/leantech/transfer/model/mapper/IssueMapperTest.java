@@ -1,6 +1,5 @@
 package com.sample.leantech.transfer.model.mapper;
 
-import com.sample.leantech.transfer.model.context.Source;
 import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.db.Issue;
 import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @SpringBootTest
-class IssueMapperTest {
+class IssueMapperTest extends AbstractMapperTest {
 
     @Test
     public void dtoToModeEpicIssue() {
@@ -133,13 +132,6 @@ class IssueMapperTest {
         fields.setSummary("Test-Summery");
         jiraIssueDto.setFields(fields);
         return jiraIssueDto;
-    }
-
-    private TransferContext transferContext() {
-        TransferContext ctx = new TransferContext();
-        ctx.setSource(Source.JIRA_1);
-        ctx.setLogId(1);
-        return ctx;
     }
 
 }
