@@ -1,6 +1,6 @@
 package com.sample.leantech.transfer.model.mapper;
 
-import com.sample.leantech.transfer.model.context.TransferContext;
+import com.sample.leantech.transfer.model.context.JiraResult;
 import com.sample.leantech.transfer.model.db.Worklog;
 import com.sample.leantech.transfer.model.dto.request.JiraUserDto;
 import com.sample.leantech.transfer.model.dto.request.JiraWorklogDto;
@@ -17,8 +17,8 @@ class WorklogMapperTest extends AbstractMapperTest {
     @Test
     public void test(){
         JiraWorklogDto jiraWorklogDto = worklogDto();
-        TransferContext ctx = transferContext();
-        Worklog worklog = WorklogMapper.INSTANCE.dtoToModel(jiraWorklogDto, ctx);
+        JiraResult jiraResult = jiraResult();
+        Worklog worklog = WorklogMapper.INSTANCE.dtoToModel(jiraWorklogDto, jiraResult);
         Assertions.assertNotNull(worklog);
         Assertions.assertEquals(jiraWorklogDto.getIssueId(), String.valueOf(worklog.getIssueId()) );
         Assertions.assertEquals(jiraWorklogDto.getUpdated().toInstant(), worklog.getUpdated().toInstant());

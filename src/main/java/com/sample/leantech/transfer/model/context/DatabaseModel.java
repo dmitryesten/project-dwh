@@ -6,7 +6,6 @@ import com.sample.leantech.transfer.model.db.User;
 import com.sample.leantech.transfer.model.db.Worklog;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class DatabaseModel implements Serializable {
 
-    private TransferContext ctx;
+    private Integer logId;
     private Source source;
     private List<Project> projects;
     private List<Issue> issues;

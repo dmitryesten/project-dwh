@@ -1,6 +1,8 @@
 package com.sample.leantech.transfer.task.extract;
 
 import com.sample.leantech.transfer.integration.JiraClient;
+import com.sample.leantech.transfer.model.context.JiraResult;
+import com.sample.leantech.transfer.model.context.Source;
 import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.dto.request.*;
 import lombok.RequiredArgsConstructor;
@@ -19,29 +21,35 @@ public class JiraExtractTask implements ExtractTask {
     private final JiraClient jiraClient;
 
     @Override
+    public Source source() {
+        return Source.JIRA_1;
+    }
+
+    @Override
     public void extract(TransferContext ctx) {
-        extractProjects(ctx);
-        extractEpics(ctx);
-        extractIssues(ctx);
-        extractWorklogs(ctx);
-        extractUsers(ctx);
+        JiraResult jiraResult = ctx.jiraResult(source());
+        extractProjects(jiraResult);
+        extractEpics(jiraResult);
+        extractIssues(jiraResult);
+        extractWorklogs(jiraResult);
+        extractUsers(jiraResult);
     }
 
-    private void extractProjects(TransferContext ctx) {
+    private void extractProjects(JiraResult jiraResult) {
         List<JiraProjectDto> projects = jiraClient().getProjects();
-        ctx.setProjects(projects);
+        jiraResult.setProjects(projects);
     }
 
-    private void extractEpics(TransferContext ctx) {
+    private void extractEpics(JiraResult jiraResult) {
         List<JiraIssueDto> epics = jiraClient().getEpics().getIssues();
-        ctx.setEpics(epics);
+        jiraResult.setEpics(epics);
     }
 
-    private void extractIssues(TransferContext ctx) {
+    private void extractIssues(JiraResult jiraResult) {
         List<JiraIssueDto> issues = new ArrayList<>();
         extractNonEpicIssues(issues);
-        extractEpicIssues(ctx, issues);
-        ctx.setIssues(issues);
+        extractEpicIssues(jiraResult, issues);
+        jiraResult.setIssues(issues);
     }
 
     private void extractNonEpicIssues(List<JiraIssueDto> issues) {
@@ -49,9 +57,9 @@ public class JiraExtractTask implements ExtractTask {
         issues.addAll(nonEpicIssues);
     }
 
-    private void extractEpicIssues(TransferContext ctx, List<JiraIssueDto> issues) {
+    private void extractEpicIssues(JiraResult jiraResult, List<JiraIssueDto> issues) {
         List<CompletableFuture<Boolean>> futures = new ArrayList<>();
-        ctx.getEpics().forEach((JiraIssueDto epic) -> futures.add(appendEpicIssues(epic, issues)));
+        jiraResult.getEpics().forEach((JiraIssueDto epic) -> futures.add(appendEpicIssues(epic, issues)));
         futures.forEach(CompletableFuture::join);
     }
 
@@ -61,17 +69,17 @@ public class JiraExtractTask implements ExtractTask {
                 .thenApply(issues::addAll);
     }
 
-    private void extractWorklogs(TransferContext ctx) {
+    private void extractWorklogs(JiraResult jiraResult) {
         List<JiraWorklogDto> worklogs = new ArrayList<>();
         // Во всех issue, кроме эпиков, изначально содержатся логи работы.
         // Для эпиков приходится выполнять дополнительные запросы.
-        extractNonEpicWorklogs(ctx, worklogs);
-        extractEpicWorklogs(ctx, worklogs);
-        ctx.setWorklogs(worklogs);
+        extractNonEpicWorklogs(jiraResult, worklogs);
+        extractEpicWorklogs(jiraResult, worklogs);
+        jiraResult.setWorklogs(worklogs);
     }
 
-    private void extractNonEpicWorklogs(TransferContext ctx, List<JiraWorklogDto> worklogs) {
-        List<JiraWorklogDto> nonEpicWorklogs = ctx.getIssues()
+    private void extractNonEpicWorklogs(JiraResult jiraResult, List<JiraWorklogDto> worklogs) {
+        List<JiraWorklogDto> nonEpicWorklogs = jiraResult.getIssues()
                 .stream()
                 .map(JiraIssueDto::getFields)
                 .map(JiraIssueDto.Fields::getWorklog)
@@ -81,9 +89,10 @@ public class JiraExtractTask implements ExtractTask {
         worklogs.addAll(nonEpicWorklogs);
     }
 
-    private void extractEpicWorklogs(TransferContext ctx, List<JiraWorklogDto> worklogs) {
+    private void extractEpicWorklogs(JiraResult jiraResult, List<JiraWorklogDto> worklogs) {
         List<CompletableFuture<Boolean>> futures = new ArrayList<>();
-        ctx.getEpics().forEach((JiraIssueDto epic) -> futures.add(appendEpicWorklogs(epic, worklogs)));
+        jiraResult.getEpics().forEach((JiraIssueDto epic) ->
+                futures.add(appendEpicWorklogs(epic, worklogs)));
         futures.forEach(CompletableFuture::join);
     }
 
@@ -93,13 +102,13 @@ public class JiraExtractTask implements ExtractTask {
                 .thenApply(worklogs::addAll);
     }
 
-    private void extractUsers(TransferContext ctx) {
-        List<JiraUserDto> users = ctx.getWorklogs()
+    private void extractUsers(JiraResult jiraResult) {
+        List<JiraUserDto> users = jiraResult.getWorklogs()
                 .stream()
                 .map(JiraWorklogDto::getUpdateAuthor)
                 .distinct()
                 .collect(Collectors.toList());
-        ctx.setUsers(users);
+        jiraResult.setUsers(users);
     }
 
     JiraClient jiraClient() {

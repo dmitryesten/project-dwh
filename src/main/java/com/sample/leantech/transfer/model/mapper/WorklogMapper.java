@@ -1,6 +1,6 @@
 package com.sample.leantech.transfer.model.mapper;
 
-import com.sample.leantech.transfer.model.context.TransferContext;
+import com.sample.leantech.transfer.model.context.JiraResult;
 import com.sample.leantech.transfer.model.db.Worklog;
 import com.sample.leantech.transfer.model.dto.request.JiraWorklogDto;
 import org.mapstruct.*;
@@ -18,10 +18,10 @@ public interface WorklogMapper {
             @Mapping(target = "updated", source = "jiraWorklogDto.updated"),
             @Mapping(target = "timeSpentSecond", source = "jiraWorklogDto.timeSpentSeconds")
     })
-    Worklog dtoToModel(JiraWorklogDto jiraWorklogDto, @Context TransferContext ctx);
+    Worklog dtoToModel(JiraWorklogDto jiraWorklogDto, @Context JiraResult jiraResult);
 
     @AfterMapping
-    default void afterDtoToModel(JiraWorklogDto source, @MappingTarget Worklog target, @Context TransferContext ctx) {
+    default void afterDtoToModel(JiraWorklogDto source, @MappingTarget Worklog target, @Context JiraResult ctx) {
         if (ctx != null) {
             target.setSid(ctx.getSource().getValue());
             target.setLogId(ctx.getLogId());

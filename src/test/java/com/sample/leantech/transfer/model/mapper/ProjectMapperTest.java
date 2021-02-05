@@ -1,6 +1,6 @@
 package com.sample.leantech.transfer.model.mapper;
 
-import com.sample.leantech.transfer.model.context.TransferContext;
+import com.sample.leantech.transfer.model.context.JiraResult;
 import com.sample.leantech.transfer.model.db.Project;
 import com.sample.leantech.transfer.model.dto.request.JiraProjectDto;
 import org.junit.jupiter.api.Assertions;
@@ -18,10 +18,10 @@ class ProjectMapperTest extends AbstractMapperTest {
     public void test(){
         JiraProjectDto jiraProjectDtoTest = jiraProjectDto();
         List<JiraProjectDto> projects = Arrays.asList(jiraProjectDtoTest);
-        TransferContext ctx = transferContext();
+        JiraResult jiraResult = jiraResult();
         List<Project> listProjectConverted = projects
                 .stream()
-                .map(project -> ProjectMapper.INSTANCE.dtoToModel(project, ctx))
+                .map(project -> ProjectMapper.INSTANCE.dtoToModel(project, jiraResult))
                 .collect(Collectors.toList());
 
         Assertions.assertEquals(1, listProjectConverted.size());
