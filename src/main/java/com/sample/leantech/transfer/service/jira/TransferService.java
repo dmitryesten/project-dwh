@@ -37,7 +37,7 @@ public class TransferService {
         log.info("Transfer is started");
 
         Integer logId = generateLogId();
-        TransferContext ctx = TransferContext.transferContext(logId);
+        TransferContext ctx = new TransferContext(logId);
         extractData(ctx);
         transformData(ctx);
         loadData(ctx);

@@ -22,7 +22,7 @@ public interface ProjectMapper {
     default void afterDtoToModel(JiraProjectDto source, @MappingTarget Project target, @Context JiraResult ctx) {
         if (ctx != null) {
             target.setSid(ctx.getSource().getValue());
-            target.setLogId(ctx.getLogId());
+            target.setLogId(ctx.getParentLogId());
         }
     }
 

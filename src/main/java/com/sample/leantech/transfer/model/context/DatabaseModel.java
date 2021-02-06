@@ -6,16 +6,24 @@ import com.sample.leantech.transfer.model.db.User;
 import com.sample.leantech.transfer.model.db.Worklog;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 public class DatabaseModel {
 
-    private Integer logId;
-    private Source source;
-    private List<Project> projects;
-    private List<Issue> issues;
-    private List<Worklog> worklogs;
-    private List<User> users;
+    private final Integer parentLogId;
+    private final List<Project> projects;
+    private final List<Issue> issues;
+    private final List<Worklog> worklogs;
+    private final List<User> users;
+
+    DatabaseModel(Integer parentLogId) {
+        this.parentLogId = parentLogId;
+        this.projects = new ArrayList<>();
+        this.issues = new ArrayList<>();
+        this.worklogs = new ArrayList<>();
+        this.users = new ArrayList<>();
+    }
 
 }

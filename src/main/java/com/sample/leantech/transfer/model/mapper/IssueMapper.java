@@ -37,7 +37,7 @@ public interface IssueMapper {
         }
         if (ctx != null) {
             target.setSid(ctx.getSource().getValue());
-            target.setLogId(ctx.getLogId());
+            target.setLogId(ctx.getParentLogId());
         }
     }
 

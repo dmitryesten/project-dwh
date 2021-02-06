@@ -21,7 +21,7 @@ public interface UserMapper {
     @AfterMapping
     default void afterDtoToModel(JiraUserDto source, @MappingTarget User target, @Context JiraResult ctx) {
         if (ctx != null) {
-            target.setLogId(ctx.getLogId());
+            target.setLogId(ctx.getParentLogId());
         }
     }
 

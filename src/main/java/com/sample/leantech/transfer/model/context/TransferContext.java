@@ -10,37 +10,22 @@ import java.util.List;
 @Data
 public class TransferContext {
 
-    private Integer logId;
-    private ZonedDateTime startDateTime;
-    private List<JiraResult> jiraResults;
-    private DatabaseModel databaseModel;
+    private final Integer logId;
+    private final ZonedDateTime startDateTime;
+    private final List<JiraResult> jiraResults;
+    private final DatabaseModel databaseModel;
 
-    public JiraResult jiraResult(Source source) {
-        JiraResult jiraResult = new JiraResult();
-        jiraResult.setLogId(logId);
-        jiraResult.setSource(source);
+    public TransferContext(Integer logId) {
+        this.logId = logId;
+        this.startDateTime = ZonedDateTime.now(Clock.systemUTC());
+        this.jiraResults = new ArrayList<>();
+        this.databaseModel = new DatabaseModel(logId);
+    }
+
+    public JiraResult addJiraResult(Source source) {
+        JiraResult jiraResult = new JiraResult(logId, source);
         jiraResults.add(jiraResult);
         return jiraResult;
-    }
-
-    public DatabaseModel databaseModel() {
-        DatabaseModel databaseModel = new DatabaseModel();
-        databaseModel.setLogId(logId);
-        databaseModel.setProjects(new ArrayList<>());
-        databaseModel.setIssues(new ArrayList<>());
-        databaseModel.setWorklogs(new ArrayList<>());
-        databaseModel.setUsers(new ArrayList<>());
-        this.databaseModel = databaseModel;
-        return databaseModel;
-    }
-
-    public static TransferContext transferContext(Integer logId) {
-        TransferContext ctx = new TransferContext();
-        ctx.logId = logId;
-        ctx.startDateTime = ZonedDateTime.now(Clock.systemUTC());
-        ctx.jiraResults = new ArrayList<>();
-        ctx.databaseModel = ctx.databaseModel();
-        return ctx;
     }
 
 }

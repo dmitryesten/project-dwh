@@ -24,7 +24,7 @@ public interface WorklogMapper {
     default void afterDtoToModel(JiraWorklogDto source, @MappingTarget Worklog target, @Context JiraResult ctx) {
         if (ctx != null) {
             target.setSid(ctx.getSource().getValue());
-            target.setLogId(ctx.getLogId());
+            target.setLogId(ctx.getParentLogId());
         }
     }
 
