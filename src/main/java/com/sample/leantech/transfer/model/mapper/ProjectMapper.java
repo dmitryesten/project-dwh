@@ -6,10 +6,8 @@ import com.sample.leantech.transfer.model.dto.request.JiraProjectDto;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
-import java.io.Serializable;
-
 @Mapper(uses = ConvertMapper.class)
-public interface ProjectMapper extends Serializable {
+public interface ProjectMapper {
 
     ProjectMapper INSTANCE = Mappers.getMapper(ProjectMapper.class);
 

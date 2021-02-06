@@ -5,14 +5,11 @@ import com.sample.leantech.transfer.model.db.Project;
 import com.sample.leantech.transfer.model.db.User;
 import com.sample.leantech.transfer.model.db.Worklog;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-public class DatabaseModel implements Serializable {
+public class DatabaseModel {
 
     private Integer logId;
     private Source source;

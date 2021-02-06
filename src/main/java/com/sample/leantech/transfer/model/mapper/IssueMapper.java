@@ -6,12 +6,11 @@ import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
-import java.io.Serializable;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 @Mapper
-public interface IssueMapper extends Serializable {
+public interface IssueMapper {
 
     IssueMapper INSTANCE = Mappers.getMapper(IssueMapper.class);
 

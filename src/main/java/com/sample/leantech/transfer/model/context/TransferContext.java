@@ -1,17 +1,14 @@
 package com.sample.leantech.transfer.model.context;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-public class TransferContext implements Serializable {
+public class TransferContext {
 
     private Integer logId;
     private ZonedDateTime startDateTime;

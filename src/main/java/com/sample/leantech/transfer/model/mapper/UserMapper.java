@@ -6,10 +6,8 @@ import com.sample.leantech.transfer.model.dto.request.JiraUserDto;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
-import java.io.Serializable;
-
 @Mapper
-public interface UserMapper extends Serializable {
+public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
