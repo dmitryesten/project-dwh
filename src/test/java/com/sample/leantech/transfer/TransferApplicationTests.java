@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
-@ActiveProfiles("tests,default")
+@ActiveProfiles(value = {"tests", "default"})
 class TransferApplicationTests {
 
 	@Test
