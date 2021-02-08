@@ -11,17 +11,10 @@ import java.util.List;
 @Data
 public class JiraResult {
 
-    private final Integer parentLogId;
-    private final Source source;
     private List<JiraProjectDto> projects;
     private List<JiraIssueDto> epics;
     private List<JiraIssueDto> issues;
     private List<JiraWorklogDto> worklogs;
     private List<JiraUserDto> users;
-
-    JiraResult(Integer parentLogId, Source source) {
-        this.parentLogId = parentLogId;
-        this.source = source;
-    }
 
 }

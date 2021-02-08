@@ -9,7 +9,7 @@ public class JiraTransferContext extends TransferContext {
 
     public JiraTransferContext(Integer logId, Source source) {
         super(logId, source);
-        this.jiraResult = new JiraResult(logId, source);
+        this.jiraResult = new JiraResult();
     }
 
 }

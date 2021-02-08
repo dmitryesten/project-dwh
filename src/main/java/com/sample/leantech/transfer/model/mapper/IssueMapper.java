@@ -1,6 +1,6 @@
 package com.sample.leantech.transfer.model.mapper;
 
-import com.sample.leantech.transfer.model.context.JiraResult;
+import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.db.Issue;
 import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
 import org.mapstruct.*;
@@ -22,10 +22,10 @@ public interface IssueMapper {
             @Mapping(target = "name", source = "jiraIssueDto.key"),
             @Mapping(target = "summery", source = "jiraIssueDto.fields.summary")
     })
-    Issue dtoToModel(JiraIssueDto jiraIssueDto, @Context JiraResult jiraResult);
+    Issue dtoToModel(JiraIssueDto jiraIssueDto, @Context TransferContext ctx);
 
     @AfterMapping
-    default void afterDtoToModel(JiraIssueDto source, @MappingTarget Issue target, @Context JiraResult ctx) {
+    default void afterDtoToModel(JiraIssueDto source, @MappingTarget Issue target, @Context TransferContext ctx) {
         JiraIssueDto.Fields fields = source.getFields();
         if (fields != null) {
             Stream.of(fields.getParent(), fields.getEpic())
@@ -37,7 +37,7 @@ public interface IssueMapper {
         }
         if (ctx != null) {
             target.setSid(ctx.getSource().getValue());
-            target.setLogId(ctx.getParentLogId());
+            target.setLogId(ctx.getLogId());
         }
     }
 

@@ -24,48 +24,46 @@ public class JiraTransformTask implements TransformTask<JiraTransferContext> {
 
     @Override
     public void transform(JiraTransferContext ctx) {
-        JiraResult jiraResult = ctx.getJiraResult();
-        DatabaseModel databaseModel = ctx.getDatabaseModel();
-        transform(jiraResult, databaseModel);
+        transformProjects(ctx);
+        transformIssues(ctx);
+        transformWorklogs(ctx);
+        transformUsers(ctx);
     }
 
-    private void transform(JiraResult jiraResult, DatabaseModel databaseModel) {
-        transformProjects(jiraResult, databaseModel);
-        transformIssues(jiraResult, databaseModel);
-        transformWorklogs(jiraResult, databaseModel);
-        transformUsers(jiraResult, databaseModel);
-    }
-
-    private void transformProjects(JiraResult jiraResult, DatabaseModel databaseModel) {
-        List<Project> projects = jiraResult.getProjects()
+    private void transformProjects(JiraTransferContext ctx) {
+        List<Project> projects = ctx.getJiraResult()
+                .getProjects()
                 .stream()
-                .map(project -> ProjectMapper.INSTANCE.dtoToModel(project, jiraResult))
+                .map(project -> ProjectMapper.INSTANCE.dtoToModel(project, ctx))
                 .collect(Collectors.toList());
-        databaseModel.getProjects().addAll(projects);
+        ctx.getDatabaseModel().getProjects().addAll(projects);
     }
 
-    private void transformIssues(JiraResult jiraResult, DatabaseModel databaseModel) {
-        List<Issue> issues = jiraResult.getIssues()
+    private void transformIssues(JiraTransferContext ctx) {
+        List<Issue> issues = ctx.getJiraResult()
+                .getIssues()
                 .stream()
-                .map(issue -> IssueMapper.INSTANCE.dtoToModel(issue, jiraResult))
+                .map(issue -> IssueMapper.INSTANCE.dtoToModel(issue, ctx))
                 .collect(Collectors.toList());
-        databaseModel.getIssues().addAll(issues);
+        ctx.getDatabaseModel().getIssues().addAll(issues);
     }
 
-    private void transformWorklogs(JiraResult jiraResult, DatabaseModel databaseModel) {
-        List<Worklog> worklogs = jiraResult.getWorklogs()
+    private void transformWorklogs(JiraTransferContext ctx) {
+        List<Worklog> worklogs = ctx.getJiraResult()
+                .getWorklogs()
                 .stream()
-                .map(worklog -> WorklogMapper.INSTANCE.dtoToModel(worklog, jiraResult))
+                .map(worklog -> WorklogMapper.INSTANCE.dtoToModel(worklog, ctx))
                 .collect(Collectors.toList());
-        databaseModel.getWorklogs().addAll(worklogs);
+        ctx.getDatabaseModel().getWorklogs().addAll(worklogs);
     }
 
-    private void transformUsers(JiraResult jiraResult, DatabaseModel databaseModel) {
-        List<User> users = jiraResult.getUsers()
+    private void transformUsers(JiraTransferContext ctx) {
+        List<User> users = ctx.getJiraResult()
+                .getUsers()
                 .stream()
-                .map(user -> UserMapper.INSTANCE.dtoToModel(user, jiraResult))
+                .map(user -> UserMapper.INSTANCE.dtoToModel(user, ctx))
                 .collect(Collectors.toList());
-        databaseModel.getUsers().addAll(users);
+        ctx.getDatabaseModel().getUsers().addAll(users);
     }
 
 }
