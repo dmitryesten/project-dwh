@@ -1,17 +1,16 @@
 package com.sample.leantech.transfer.model.mapper;
 
-import com.sample.leantech.transfer.model.context.TransferContext;
+import com.sample.leantech.transfer.model.context.JiraResult;
 import com.sample.leantech.transfer.model.db.Issue;
 import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
-import java.io.Serializable;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 @Mapper
-public interface IssueMapper extends Serializable {
+public interface IssueMapper {
 
     IssueMapper INSTANCE = Mappers.getMapper(IssueMapper.class);
 
@@ -23,10 +22,10 @@ public interface IssueMapper extends Serializable {
             @Mapping(target = "name", source = "jiraIssueDto.key"),
             @Mapping(target = "summery", source = "jiraIssueDto.fields.summary")
     })
-    Issue dtoToModel(JiraIssueDto jiraIssueDto, @Context TransferContext ctx);
+    Issue dtoToModel(JiraIssueDto jiraIssueDto, @Context JiraResult jiraResult);
 
     @AfterMapping
-    default void afterDtoToModel(JiraIssueDto source, @MappingTarget Issue target, @Context TransferContext ctx) {
+    default void afterDtoToModel(JiraIssueDto source, @MappingTarget Issue target, @Context JiraResult ctx) {
         JiraIssueDto.Fields fields = source.getFields();
         if (fields != null) {
             Stream.of(fields.getParent(), fields.getEpic(), fields.getProject())
@@ -38,7 +37,7 @@ public interface IssueMapper extends Serializable {
         }
         if (ctx != null) {
             target.setSid(ctx.getSource().getValue());
-            target.setLogId(ctx.getLogId());
+            target.setLogId(ctx.getParentLogId());
         }
     }
 

@@ -1,7 +1,6 @@
 package com.sample.leantech.transfer.model.mapper;
 
-import com.sample.leantech.transfer.model.context.Source;
-import com.sample.leantech.transfer.model.context.TransferContext;
+import com.sample.leantech.transfer.model.context.JiraResult;
 import com.sample.leantech.transfer.model.db.Worklog;
 import com.sample.leantech.transfer.model.dto.request.JiraUserDto;
 import com.sample.leantech.transfer.model.dto.request.JiraWorklogDto;
@@ -13,13 +12,13 @@ import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 
 @SpringBootTest
-class WorklogMapperTest {
+class WorklogMapperTest extends AbstractMapperTest {
 
     @Test
     public void test(){
         JiraWorklogDto jiraWorklogDto = worklogDto();
-        TransferContext ctx = transferContext();
-        Worklog worklog = WorklogMapper.INSTANCE.dtoToModel(jiraWorklogDto, ctx);
+        JiraResult jiraResult = jiraResult();
+        Worklog worklog = WorklogMapper.INSTANCE.dtoToModel(jiraWorklogDto, jiraResult);
         Assertions.assertNotNull(worklog);
         Assertions.assertEquals(jiraWorklogDto.getIssueId(), String.valueOf(worklog.getIssueId()) );
         Assertions.assertEquals(jiraWorklogDto.getUpdated().toInstant(), worklog.getUpdated().toInstant());
@@ -41,13 +40,6 @@ class WorklogMapperTest {
         jiraUserDtoFirst.setKey("Key-Test-1");
         jiraUserDtoFirst.setName("Name-Test-1");
         return jiraUserDtoFirst;
-    }
-
-    private TransferContext transferContext() {
-        TransferContext ctx = new TransferContext();
-        ctx.setSource(Source.JIRA_1);
-        ctx.setLogId(1);
-        return ctx;
     }
 
 }

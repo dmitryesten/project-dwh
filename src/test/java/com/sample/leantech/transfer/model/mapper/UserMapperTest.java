@@ -1,7 +1,6 @@
 package com.sample.leantech.transfer.model.mapper;
 
-import com.sample.leantech.transfer.model.context.Source;
-import com.sample.leantech.transfer.model.context.TransferContext;
+import com.sample.leantech.transfer.model.context.JiraResult;
 import com.sample.leantech.transfer.model.db.User;
 import com.sample.leantech.transfer.model.dto.request.JiraUserDto;
 import org.junit.jupiter.api.Assertions;
@@ -12,15 +11,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @SpringBootTest
-class UserMapperTest {
+class UserMapperTest extends AbstractMapperTest {
 
     @Test
     public void test(){
         List<JiraUserDto> users = Arrays.asList(userDtoFirst(), userDtoSecond());
-        TransferContext ctx = transferContext();
+        JiraResult jiraResult = jiraResult();
         List<User> listUserConverted = users
                 .stream()
-                .map(user -> UserMapper.INSTANCE.dtoToModel(user, ctx))
+                .map(user -> UserMapper.INSTANCE.dtoToModel(user, jiraResult))
                 .collect(Collectors.toList());
 
         Assertions.assertEquals(2, listUserConverted.size());
@@ -43,13 +42,6 @@ class UserMapperTest {
         jiraUserDtoFirst.setKey("Key-Test-2");
         jiraUserDtoFirst.setName("Name-Test-2");
         return jiraUserDtoFirst;
-    }
-
-    private TransferContext transferContext() {
-        TransferContext ctx = new TransferContext();
-        ctx.setSource(Source.JIRA_1);
-        ctx.setLogId(1);
-        return ctx;
     }
 
 }

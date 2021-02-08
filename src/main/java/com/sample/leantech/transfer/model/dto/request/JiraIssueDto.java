@@ -1,24 +1,16 @@
 package com.sample.leantech.transfer.model.dto.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class JiraIssueDto implements Serializable {
+public class JiraIssueDto {
 
     private String id;
     private String key;
     private Fields fields;
 
     @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Fields implements Serializable {
+    public static class Fields {
 
         private IssueType issuetype;
         private Parent project;
@@ -28,18 +20,14 @@ public class JiraIssueDto implements Serializable {
         private JiraWorklogResponseDto worklog;
 
         @Data
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class IssueType implements Serializable {
+        public static class IssueType {
 
             private String name;
 
         }
 
         @Data
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class Parent implements Serializable {
+        public static class Parent {
 
             private String id;
 

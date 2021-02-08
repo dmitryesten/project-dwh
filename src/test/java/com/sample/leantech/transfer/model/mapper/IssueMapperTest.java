@@ -1,7 +1,6 @@
 package com.sample.leantech.transfer.model.mapper;
 
-import com.sample.leantech.transfer.model.context.Source;
-import com.sample.leantech.transfer.model.context.TransferContext;
+import com.sample.leantech.transfer.model.context.JiraResult;
 import com.sample.leantech.transfer.model.db.Issue;
 import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
 import org.junit.jupiter.api.Assertions;
@@ -12,13 +11,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @SpringBootTest
-class IssueMapperTest {
+class IssueMapperTest extends AbstractMapperTest {
 
     @Test
     public void dtoToModeEpicIssue() {
         JiraIssueDto jiraIssueDto = issueEpicDto();
-        TransferContext ctx = transferContext();
-        Issue issue = IssueMapper.INSTANCE.dtoToModel(jiraIssueDto, ctx);
+        JiraResult jiraResult = jiraResult();
+        Issue issue = IssueMapper.INSTANCE.dtoToModel(jiraIssueDto, jiraResult);
         Assertions.assertEquals(jiraIssueDto.getId(), String.valueOf(issue.getSourceId()));
         Assertions.assertEquals(jiraIssueDto.getKey(), issue.getName());
         Assertions.assertEquals(
@@ -30,8 +29,8 @@ class IssueMapperTest {
     @Test
     public void dtoToModelParentIssue() {
         JiraIssueDto jiraIssueDto = issueParentDto();
-        TransferContext ctx = transferContext();
-        Issue issue = IssueMapper.INSTANCE.dtoToModel(jiraIssueDto, ctx);
+        JiraResult jiraResult = jiraResult();
+        Issue issue = IssueMapper.INSTANCE.dtoToModel(jiraIssueDto, jiraResult);
 
         Assertions.assertEquals(jiraIssueDto.getId(), String.valueOf(issue.getSourceId()));
         Assertions.assertEquals(jiraIssueDto.getKey(), issue.getName());
@@ -48,8 +47,8 @@ class IssueMapperTest {
     @Test
     public void dtoToModelIssueWithoutEpicAndParent() {
         JiraIssueDto jiraIssueDto = issueDtoNoParentAndEpic();
-        TransferContext ctx = transferContext();
-        Issue issue = IssueMapper.INSTANCE.dtoToModel(jiraIssueDto, ctx);
+        JiraResult jiraResult = jiraResult();
+        Issue issue = IssueMapper.INSTANCE.dtoToModel(jiraIssueDto, jiraResult);
 
         Assertions.assertEquals(jiraIssueDto.getId(), String.valueOf(issue.getSourceId()));
         Assertions.assertEquals(jiraIssueDto.getKey(), issue.getName());
@@ -68,10 +67,10 @@ class IssueMapperTest {
     public void testRddStreamMapping(){
         JiraIssueDto jiraIssueDto = issueEpicDto();
         List<JiraIssueDto> issues = Arrays.asList(jiraIssueDto);
-        TransferContext ctx = transferContext();
+        JiraResult jiraResult = jiraResult();
         List<Issue> listIssuesConverted = issues
                 .stream()
-                .map(issue -> IssueMapper.INSTANCE.dtoToModel(issue, ctx))
+                .map(issue -> IssueMapper.INSTANCE.dtoToModel(issue, jiraResult))
                 .collect(Collectors.toList());
 
         Assertions.assertNotNull(listIssuesConverted);
@@ -133,13 +132,6 @@ class IssueMapperTest {
         fields.setSummary("Test-Summery");
         jiraIssueDto.setFields(fields);
         return jiraIssueDto;
-    }
-
-    private TransferContext transferContext() {
-        TransferContext ctx = new TransferContext();
-        ctx.setSource(Source.JIRA_1);
-        ctx.setLogId(1);
-        return ctx;
     }
 
 }

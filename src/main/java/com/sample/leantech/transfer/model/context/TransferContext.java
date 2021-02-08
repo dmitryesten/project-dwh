@@ -1,24 +1,31 @@
 package com.sample.leantech.transfer.model.context;
 
-import com.sample.leantech.transfer.model.dto.request.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
+import java.time.Clock;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-public class TransferContext implements Serializable {
+public class TransferContext {
 
-    private Source source;
-    private Integer logId;
-    private ZonedDateTime startDateTime;
-    private List<JiraProjectDto> projects;
-    private List<JiraIssueDto> epics;
-    private List<JiraIssueDto> issues;
-    private List<JiraWorklogDto> worklogs;
-    private List<JiraUserDto> users;
+    private final Integer logId;
+    private final ZonedDateTime startDateTime;
+    private final List<JiraResult> jiraResults;
+    private final DatabaseModel databaseModel;
+
+    public TransferContext(Integer logId) {
+        this.logId = logId;
+        this.startDateTime = ZonedDateTime.now(Clock.systemUTC());
+        this.jiraResults = new ArrayList<>();
+        this.databaseModel = new DatabaseModel(logId);
+    }
+
+    public JiraResult addJiraResult(Source source) {
+        JiraResult jiraResult = new JiraResult(logId, source);
+        jiraResults.add(jiraResult);
+        return jiraResult;
+    }
 
 }
