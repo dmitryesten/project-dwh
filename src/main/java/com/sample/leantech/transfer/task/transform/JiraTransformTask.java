@@ -24,9 +24,9 @@ public class JiraTransformTask implements TransformTask<JiraTransferContext> {
 
     @Override
     public void transform(JiraTransferContext ctx) {
-        List<JiraResult> jiraResults = ctx.getJiraResults();
+        JiraResult jiraResult = ctx.getJiraResult();
         DatabaseModel databaseModel = ctx.getDatabaseModel();
-        jiraResults.forEach(jiraResult -> transform(jiraResult, databaseModel));
+        transform(jiraResult, databaseModel);
     }
 
     private void transform(JiraResult jiraResult, DatabaseModel databaseModel) {

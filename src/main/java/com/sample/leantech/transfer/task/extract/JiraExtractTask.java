@@ -30,7 +30,7 @@ public class JiraExtractTask implements ExtractTask<JiraTransferContext> {
 
     @Override
     public void extract(JiraTransferContext ctx) {
-        JiraResult jiraResult = ctx.addJiraResult(source());
+        JiraResult jiraResult = ctx.getJiraResult();
         extractProjects(jiraResult);
         extractEpics(jiraResult);
         extractIssues(jiraResult);
