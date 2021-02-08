@@ -4,7 +4,6 @@ import com.sample.leantech.transfer.model.context.Source;
 import com.sample.leantech.transfer.model.db.LogTransfer;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +14,7 @@ import java.time.Instant;
 import java.util.Arrays;
 
 @SpringBootTest
-class LogTransferSparkRepositoryTest {
-
-    @Autowired
-    private SparkSession sparkSession;
+class LogTransferSparkRepositoryTest extends AbstractRepositoryTest {
 
     @Autowired
     private LogTransferSparkRepository logTransferSparkRepository;

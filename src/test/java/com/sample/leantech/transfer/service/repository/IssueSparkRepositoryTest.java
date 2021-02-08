@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.*;
 
 @SpringBootTest
-class IssueSparkRepositoryTest {
+class IssueSparkRepositoryTest extends AbstractRepositoryTest {
 
     @Autowired
     private IssueSparkRepository repository;
