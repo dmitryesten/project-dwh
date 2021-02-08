@@ -4,10 +4,7 @@ import com.sample.leantech.transfer.model.db.EntityDB;
 import com.sample.leantech.transfer.model.db.Issue;
 import com.sample.leantech.transfer.model.db.Project;
 import com.sample.leantech.transfer.model.db.Source;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoders;
-import org.apache.spark.sql.SaveMode;
-import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -26,15 +23,6 @@ public class SourceSparkRepository implements IRepository {
     @Qualifier("getPostgresProperties")
     private Properties postgresProperties;
 
-    public void save(List<Source> sources) {
-        Dataset<Source> datasetSource = sparkSession.createDataset(sources, Encoders.bean(Source.class));
-        datasetSource
-                .select("name")
-                .write()
-                .mode(SaveMode.Append)
-                .jdbc(postgresProperties.getProperty("url"), "sources", postgresProperties);
-    }
-
     @Override
     public Collection<? extends EntityDB> get() {
         return sparkSession.read()
@@ -48,10 +36,17 @@ public class SourceSparkRepository implements IRepository {
     public void save(Collection<? extends EntityDB> entities) {
         List<Source> listSource = (List<Source>) entities;
         Dataset<Source> datasetSource = sparkSession.createDataset(listSource, Encoders.bean(Source.class));
-        datasetSource
-                .select("name")
+
+        Dataset<Source> datasetOfDb = sparkSession.createDataset((List<Source>) get(), Encoders.bean(Source.class));
+        Dataset<Row> datasetLeftResult = datasetSource
+                .join(datasetOfDb, datasetOfDb.col("name").equalTo(datasetSource.col("name")), "left")
+                .where(datasetOfDb.col("name").isNull())
+                .select(datasetSource.col("id"), datasetSource.col("name"));
+
+        datasetLeftResult.select("name")
                 .write()
                 .mode(SaveMode.Append)
                 .jdbc(postgresProperties.getProperty("url"), "sources", postgresProperties);
+
     }
 }

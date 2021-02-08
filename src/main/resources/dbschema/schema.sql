@@ -18,8 +18,8 @@ create table logs (
 	id  integer default nextval('seq_table'),
 	sid integer,
 	start_dt timestamp not null,
-	end_dt timestamp not null,
-	result boolean not null,
+	end_dt timestamp,
+	result boolean,
 	constraint pk_id_logs primary key (id),
 	constraint fk_sid_sources foreign key (sid) references sources(id)
 );
@@ -62,8 +62,8 @@ create table issues (
 	constraint pk_id_issues primary key (id),
 	constraint fk_id_project foreign key (pid) references projects(id),
 	constraint fk_id_source foreign key (sid) references sources(id),
-	constraint fk_id_logs_issues foreign key (log_id) references logs(id),
-	constraint fk_id_parent_issues foreign key (hid) references issues(id)
+	constraint fk_id_logs_issues foreign key (log_id) references logs(id)
+	--,constraint fk_id_parent_issues foreign key (hid) references issues(id)
 );
 comment on table issues is 'Table about issues from source data';
 comment on column issues.id is 'issues id';
@@ -103,7 +103,7 @@ create table worklogs (
 	user_id integer,
 	constraint pk_id_worklogs primary key (id),
 	constraint fk_id_issues foreign key (issue_id) references issues(id),
-	constraint fk_id_logs_worklogs foreign key (issue_id) references logs(id),
+	constraint fk_id_logs_worklogs foreign key (log_id) references logs(id),
 	constraint fk_id_sources_worklogs foreign key (sid) references sources(id),
 	constraint fk_id_users_worklogs foreign key (user_id) references users(id)
 );
@@ -115,7 +115,10 @@ comment on column worklogs.source_id is 'inside id of source data entity';
 comment on column worklogs.updated_dt is 'time of updated worklogs';
 comment on column worklogs.time_spent is 'time spending by worklogs';
 comment on column worklogs.username is 'username';
-comment on column worklogs.username is 'user id of source data';
+comment on column worklogs.user_id is 'user id of source data';
+
+
+INSERT INTO public.sources("id", "name") VALUES(1, 'JIRA_1');
 
 
 

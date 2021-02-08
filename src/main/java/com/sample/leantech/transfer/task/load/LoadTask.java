@@ -6,4 +6,8 @@ public interface LoadTask {
 
     void load(TransferContext ctx);
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> task
