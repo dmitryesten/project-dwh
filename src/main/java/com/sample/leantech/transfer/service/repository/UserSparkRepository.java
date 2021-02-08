@@ -1,8 +1,6 @@
 package com.sample.leantech.transfer.service.repository;
 
 import com.sample.leantech.transfer.model.db.EntityDB;
-import com.sample.leantech.transfer.model.db.Project;
-import com.sample.leantech.transfer.model.db.Source;
 import com.sample.leantech.transfer.model.db.User;
 import org.apache.spark.sql.*;
 import org.springframework.beans.factory.annotation.Autowired;
