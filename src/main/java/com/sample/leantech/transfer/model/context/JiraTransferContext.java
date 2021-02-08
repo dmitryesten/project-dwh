@@ -10,8 +10,8 @@ public class JiraTransferContext extends TransferContext {
     @Getter
     private final List<JiraResult> jiraResults;
 
-    public JiraTransferContext(Integer logId) {
-        super(logId);
+    public JiraTransferContext(Integer logId, Source source) {
+        super(logId, source);
         this.jiraResults = new ArrayList<>();
     }
 

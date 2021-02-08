@@ -2,8 +2,12 @@ package com.sample.leantech.transfer.service.jira;
 
 import com.sample.leantech.transfer.model.context.Source;
 import com.sample.leantech.transfer.model.context.TransferContext;
+import com.sample.leantech.transfer.task.extract.ExtractTask;
+import com.sample.leantech.transfer.task.load.LoadTask;
+import com.sample.leantech.transfer.task.transform.TransformTask;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,8 +27,8 @@ public abstract class TransferService<T extends TransferContext> {
         workStatuses.put(source, true);
         log.info("Transfer is started for " + source.name());
 
-        Integer logId = generateLogId();
-        T ctx = createTransferContext(logId, source);
+        Integer logId = logId();
+        T ctx = transferContext(logId, source);
         extractData(ctx);
         transformData(ctx);
         loadData(ctx);
@@ -33,14 +37,30 @@ public abstract class TransferService<T extends TransferContext> {
         workStatuses.put(source, false);
     }
 
-    abstract T createTransferContext(Integer logId, Source source);
+    abstract T transferContext(Integer logId, Source source);
 
-    abstract Integer generateLogId();
+    abstract Integer logId();
 
-    abstract void extractData(T ctx);
+    abstract List<ExtractTask<T>> extractTasks();
 
-    abstract void transformData(T ctx);
+    abstract List<TransformTask<T>> transformTasks();
 
-    abstract void loadData(T ctx);
+    abstract List<LoadTask> loadTasks();
+
+    void extractData(T ctx) {
+        extractTasks().stream()
+                .filter(task -> task.source() == ctx.getSource())
+                .forEach(task -> task.extract(ctx));
+    };
+
+    void transformData(T ctx) {
+        transformTasks().stream()
+                .filter(task -> task.source() == ctx.getSource())
+                .forEach(task -> task.transform(ctx));
+    };
+
+    void loadData(T ctx) {
+        loadTasks().forEach(task -> task.load(ctx));
+    }
 
 }

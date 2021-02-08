@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-@Component
+@Component("jiraExtractTask")
 public class JiraExtractTask implements ExtractTask<JiraTransferContext> {
 
     @Autowired

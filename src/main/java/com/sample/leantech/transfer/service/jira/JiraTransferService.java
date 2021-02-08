@@ -5,19 +5,27 @@ import com.sample.leantech.transfer.model.context.Source;
 import com.sample.leantech.transfer.task.extract.ExtractTask;
 import com.sample.leantech.transfer.task.load.LoadTask;
 import com.sample.leantech.transfer.task.transform.TransformTask;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service("jiraService")
-@RequiredArgsConstructor
 public class JiraTransferService extends TransferService<JiraTransferContext> {
 
-    private final List<ExtractTask<JiraTransferContext>> extractTasks;
-    private final List<TransformTask<JiraTransferContext>> transformTasks;
-    private final List<LoadTask> loadTasks;
+    @Autowired
+    @Qualifier("jiraExtractTasks")
+    private List<ExtractTask<JiraTransferContext>> jiraExtractTasks;
+
+    @Autowired
+    @Qualifier("jiraTransformTasks")
+    private List<TransformTask<JiraTransferContext>> jiraTransformTasks;
+
+    @Autowired
+    @Qualifier("loadTasks")
+    private List<LoadTask> loadTasks;
 
     @Scheduled(fixedRateString = "${transfer.jira.milliseconds}")
     @Override
@@ -26,30 +34,28 @@ public class JiraTransferService extends TransferService<JiraTransferContext> {
     }
 
     @Override
-    JiraTransferContext createTransferContext(Integer logId, Source source) {
-        return new JiraTransferContext(logId);
+    JiraTransferContext transferContext(Integer logId, Source source) {
+        return new JiraTransferContext(logId, source);
     }
 
-    Integer generateLogId() {
-        // TODO: implement
+    Integer logId() {
+        // TODO: implement logId generation
         return null;
     }
 
-    void extractData(JiraTransferContext ctx) {
-        extractTasks.stream()
-                // TODO: get from ctx
-                .filter(task -> task.source() == Source.JIRA)
-                .forEach(task -> task.extract(ctx));
+    @Override
+    List<ExtractTask<JiraTransferContext>> extractTasks() {
+        return jiraExtractTasks;
     }
 
-    void transformData(JiraTransferContext ctx) {
-        transformTasks.stream()
-                .filter(task -> task.source() == Source.JIRA)
-                .forEach(task -> task.transform(ctx));
+    @Override
+    List<TransformTask<JiraTransferContext>> transformTasks() {
+        return jiraTransformTasks;
     }
 
-    void loadData(JiraTransferContext ctx) {
-        loadTasks.forEach(task -> task.load(ctx));
+    @Override
+    List<LoadTask> loadTasks() {
+        return loadTasks;
     }
 
 }

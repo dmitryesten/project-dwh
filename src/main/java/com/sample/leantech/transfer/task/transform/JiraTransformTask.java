@@ -9,14 +9,12 @@ import com.sample.leantech.transfer.model.mapper.IssueMapper;
 import com.sample.leantech.transfer.model.mapper.ProjectMapper;
 import com.sample.leantech.transfer.model.mapper.UserMapper;
 import com.sample.leantech.transfer.model.mapper.WorklogMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-@RequiredArgsConstructor
+@Component("jiraTransformTask")
 public class JiraTransformTask implements TransformTask<JiraTransferContext> {
 
     @Override
