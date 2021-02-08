@@ -1,10 +1,10 @@
 /** DELETE ALL ROWS
-delete from worklogs;
-delete from users;
-delete from issues;
-delete from projects;
-delete from logs;
-delete from sources;
+truncate table worklogs cascade;
+truncate table users cascade;
+truncate table issues cascade;
+truncate table projects cascade;
+truncate table logs cascade;
+truncate table sources cascade;
 */
 
 /** DROP TABLES

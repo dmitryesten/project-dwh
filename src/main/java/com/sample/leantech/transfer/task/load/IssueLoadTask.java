@@ -16,11 +16,11 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-//@Slf4j
-//@Order(4)
+@Slf4j
+@Order(4)
 @Component
 @RequiredArgsConstructor
-public class IssueLoadTask {
+public class IssueLoadTask implements LoadTask  {
 
     @Autowired
     @Qualifier("issueSparkRepository")

@@ -62,8 +62,8 @@ create table issues (
 	constraint pk_id_issues primary key (id),
 	constraint fk_id_project foreign key (pid) references projects(id),
 	constraint fk_id_source foreign key (sid) references sources(id),
-	constraint fk_id_logs_issues foreign key (log_id) references logs(id),
-	constraint fk_id_parent_issues foreign key (hid) references issues(id)
+	constraint fk_id_logs_issues foreign key (log_id) references logs(id)
+	--,constraint fk_id_parent_issues foreign key (hid) references issues(id)
 );
 comment on table issues is 'Table about issues from source data';
 comment on column issues.id is 'issues id';
