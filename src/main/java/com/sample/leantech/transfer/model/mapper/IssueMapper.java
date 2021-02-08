@@ -28,7 +28,7 @@ public interface IssueMapper {
     default void afterDtoToModel(JiraIssueDto source, @MappingTarget Issue target, @Context JiraResult ctx) {
         JiraIssueDto.Fields fields = source.getFields();
         if (fields != null) {
-            Stream.of(fields.getParent(), fields.getEpic(), fields.getProject())
+            Stream.of(fields.getParent(), fields.getEpic())
                     .filter(Objects::nonNull)
                     .findFirst()
                     .map(JiraIssueDto.Fields.Parent::getId)
