@@ -1,5 +1,6 @@
 package com.sample.leantech.transfer.service.jira;
 
+import com.sample.leantech.transfer.model.context.Source;
 import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.task.extract.ExtractTask;
 import com.sample.leantech.transfer.task.load.LoadTask;
@@ -10,6 +11,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -20,16 +23,20 @@ public class TransferService {
     private final List<TransformTask> transformTasks;
     private final List<LoadTask> loadTasks;
 
-    private volatile boolean working;
+    private final Map<Source, Boolean> workStatuses = new ConcurrentHashMap<>();
 
-    @Scheduled(fixedRateString = "${transfer.milliseconds}")
+    @Scheduled(fixedRateString = "${transfer.jira.milliseconds}")
     public void transfer() {
-        if (working) {
-            log.info("Transfer is already started");
+        transfer(Source.JIRA);
+    }
+
+    private void transfer(Source source) {
+        if (workStatuses.getOrDefault(source, false)) {
+            log.info("Transfer is already started for " + source.name());
             return;
         }
-        working = true;
-        log.info("Transfer is started");
+        workStatuses.put(source, true);
+        log.info("Transfer is started for " + source.name());
 
         Integer logId = generateLogId();
         TransferContext ctx = new TransferContext(logId);
@@ -37,8 +44,8 @@ public class TransferService {
         transformData(ctx);
         loadData(ctx);
 
-        log.info("Transfer is finished");
-        working = false;
+        log.info("Transfer is finished for " + source.name());
+        workStatuses.put(source, false);
     }
 
     private Integer generateLogId() {

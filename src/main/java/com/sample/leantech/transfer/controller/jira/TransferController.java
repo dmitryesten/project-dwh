@@ -5,13 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/jira")
+@RequestMapping("/transfers")
 @RequiredArgsConstructor
 public class TransferController {
 
     private final TransferService transferService;
 
-    @PostMapping("/transfer")
+    @PostMapping("/jira")
     public void transfer() {
         transferService.transfer();
     }

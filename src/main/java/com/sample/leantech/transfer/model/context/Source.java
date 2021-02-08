@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Source {
-    JIRA_1(1);
+    JIRA(1);
 
     @Getter
     private final Integer value;

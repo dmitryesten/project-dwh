@@ -22,7 +22,7 @@ public class JiraExtractTask implements ExtractTask {
 
     @Override
     public Source source() {
-        return Source.JIRA_1;
+        return Source.JIRA;
     }
 
     @Override

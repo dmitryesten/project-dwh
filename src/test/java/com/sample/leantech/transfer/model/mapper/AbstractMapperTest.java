@@ -10,7 +10,7 @@ public abstract class AbstractMapperTest {
 
     JiraResult jiraResult() {
         TransferContext ctx = new TransferContext(1);
-        return ctx.addJiraResult(Source.JIRA_1);
+        return ctx.addJiraResult(Source.JIRA);
     }
 
 }

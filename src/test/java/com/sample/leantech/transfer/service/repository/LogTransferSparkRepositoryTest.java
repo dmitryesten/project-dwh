@@ -59,7 +59,7 @@ class LogTransferSparkRepositoryTest {
     }
 
     private Integer getIdCreatedTestSource() {
-        return Source.JIRA_1.getValue();
+        return Source.JIRA.getValue();
     }
 
 }
