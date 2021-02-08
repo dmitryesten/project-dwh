@@ -21,7 +21,7 @@ import java.util.Optional;
 @Order(2)
 @Component
 @RequiredArgsConstructor
-public class LogLoadTask implements LoadTask {
+public class LogOpenLoadTask implements LoadTask {
 
     @Autowired
     @Qualifier("logTransferSparkRepository")
