@@ -30,6 +30,7 @@ public class ProjectLoadTask implements LoadTask {
     public void load(TransferContext ctx) {
         Collection<Project> projectCollection = ctx.getProjects().stream()
                         .map(project -> ProjectMapper.INSTANCE.dtoToModel(project, ctx))
+                        .peek(project -> project.setLogId(ctx.getLogId()))
                         .collect(Collectors.toList());
         projectSparkRepository.save(projectCollection);
     }

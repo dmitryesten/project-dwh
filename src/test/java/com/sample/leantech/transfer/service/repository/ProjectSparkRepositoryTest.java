@@ -23,10 +23,10 @@ class ProjectSparkRepositoryTest {
     @DisplayName("Testing save and get methods of projectRepository")
     void testSaveGet() {
         Project project = new Project();
-            project.setSid(null);
+            project.setSid(1);
             project.setLogId(null);
-            project.setSourceId(null);
-            project.setName(UUID.randomUUID().toString());
+            project.setSourceId(1);
+            project.setName("Project-Name-Test-0. Updated 1");
         List<Project> listProject = Arrays.asList(project);
 
         repository.save(listProject);
@@ -39,6 +39,8 @@ class ProjectSparkRepositoryTest {
                         .map(Project.class::cast)
                         .filter(objectProject -> objectProject.getName().equals(project.getName()))
                         .findFirst().get().getName(), "Name's project name values is not equals");
+
+
     }
 
 }

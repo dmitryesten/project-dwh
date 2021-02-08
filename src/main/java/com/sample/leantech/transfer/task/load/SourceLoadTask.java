@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 @Order(1)
 @Component
 @RequiredArgsConstructor
+
 public class SourceLoadTask implements LoadTask {
 
     @Autowired @Qualifier("sourceSparkRepository")
@@ -27,6 +28,7 @@ public class SourceLoadTask implements LoadTask {
     @Override
     public void load(TransferContext ctx) {
         Source source = new Source();
+            source.setId(ctx.getSource().getValue());
             source.setName(ctx.getSource().name());
         Collection<Source> sourcesCollection = Arrays.asList(source);
         log.info("Save source");
@@ -37,6 +39,5 @@ public class SourceLoadTask implements LoadTask {
                         .filter(src -> src.getName().equals(source.getName()))
                 .findFirst().get().getId();
         log.info("Saved sourced id = " + sourceId);
-        //ctx.setSourcedId(sourceId)
     }
 }

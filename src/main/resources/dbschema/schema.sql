@@ -118,6 +118,9 @@ comment on column worklogs.username is 'username';
 comment on column worklogs.username is 'user id of source data';
 
 
+INSERT INTO public.sources("id", "name") VALUES(1, 'JIRA_1');
+
+
 
 
 

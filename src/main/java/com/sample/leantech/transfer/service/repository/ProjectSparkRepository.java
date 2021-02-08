@@ -27,22 +27,42 @@ public class ProjectSparkRepository implements IRepository{
     @Qualifier("getPostgresProperties")
     private Properties postgresProperties;
 
-    @Override
-    public Collection<? extends EntityDB> get() {
+    public Dataset<Project> getDataset() {
         return sparkSession.read()
                 .jdbc(postgresProperties.getProperty("url"), "projects", postgresProperties)
                 .toDF()
                 .withColumnRenamed("source_id", "sourceId")
                 .withColumnRenamed("log_id", "logId")
-                .as(Encoders.bean(Project.class))
-                .collectAsList();
+                .as(Encoders.bean(Project.class));
+    }
+
+    @Override
+    public Collection<? extends EntityDB> get() {
+        return getDataset().collectAsList();
     }
 
     @Override
     public void save(Collection<? extends EntityDB> entities) {
-        List<Project> listProject = (List<Project>) entities;
-        Dataset<Project> datasetProject = sparkSession.createDataset(listProject, Encoders.bean(Project.class));
-        datasetProject
+        Dataset<Project> datasetProject = sparkSession.createDataset((List<Project>) entities, Encoders.bean(Project.class));
+        Dataset<Project> datasetOfDb = getDataset();
+        Dataset<Row> datasetLeftResult;
+
+        if(datasetOfDb.isEmpty()) {
+            datasetLeftResult = datasetProject.toDF();
+        } else {
+            datasetLeftResult = datasetProject
+                    .join(datasetOfDb, datasetOfDb.col("sourceId").equalTo(datasetProject.col("sourceId")), "left")
+                    .where((datasetOfDb.col("sourceId").isNull())
+                            .or(datasetOfDb.col("name").notEqual(datasetProject.col("name"))
+                                    .and(datasetOfDb.col("sourceId").equalTo(datasetProject.col("sourceId"))))
+                    )
+                    .select(datasetProject.col("logId"),
+                            datasetProject.col("sid"),
+                            datasetProject.col("sourceId"),
+                            datasetProject.col("name"));
+        }
+
+        datasetLeftResult
                 .select("sid", "logId", "sourceId", "name")
                 .withColumnRenamed("sourceId", "source_id")
                 .withColumnRenamed("logId", "log_id")
