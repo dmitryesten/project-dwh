@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 
 @Slf4j
-@Order(3)
+@Order(2)
 @Component
 @RequiredArgsConstructor
 public class ProjectLoadTask implements LoadTask {

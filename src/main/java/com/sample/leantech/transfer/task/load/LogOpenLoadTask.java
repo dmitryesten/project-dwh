@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Slf4j
-@Order(2)
+@Order(1)
 @Component
 @RequiredArgsConstructor
 public class LogOpenLoadTask implements LoadTask {
