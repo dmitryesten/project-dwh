@@ -1,51 +1,45 @@
 package com.sample.leantech.transfer.service.jira;
 
-import com.sample.leantech.transfer.model.context.JiraTransferContext;
 import com.sample.leantech.transfer.model.context.Source;
-import com.sample.leantech.transfer.task.extract.ExtractTask;
-import com.sample.leantech.transfer.task.load.LoadTask;
-import com.sample.leantech.transfer.task.transform.TransformTask;
-import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import com.sample.leantech.transfer.model.context.TransferContext;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-@Service
-@RequiredArgsConstructor
-public class TransferService extends AbstractTransferService<JiraTransferContext> {
+@Slf4j
+public abstract class TransferService<T extends TransferContext> {
 
-    private final List<ExtractTask<JiraTransferContext>> extractTasks;
-    private final List<TransformTask<JiraTransferContext>> transformTasks;
-    private final List<LoadTask> loadTasks;
+    private final Map<Source, Boolean> workStatuses = new ConcurrentHashMap<>();
 
-    @Scheduled(fixedRateString = "${transfer.jira.milliseconds}")
-    public void transfer() {
-        transfer(Source.JIRA);
+    public abstract void transfer();
+
+    void transfer(Source source) {
+        if (workStatuses.getOrDefault(source, false)) {
+            log.info("Transfer is already started for " + source.name());
+            return;
+        }
+        workStatuses.put(source, true);
+        log.info("Transfer is started for " + source.name());
+
+        Integer logId = generateLogId();
+        T ctx = createTransferContext(logId, source);
+        extractData(ctx);
+        transformData(ctx);
+        loadData(ctx);
+
+        log.info("Transfer is finished for " + source.name());
+        workStatuses.put(source, false);
     }
 
-    @Override
-    JiraTransferContext createTransferContext(Integer logId, Source source) {
-        return new JiraTransferContext(logId);
-    }
+    abstract T createTransferContext(Integer logId, Source source);
 
-    Integer generateLogId() {
-        // TODO: implement
-        return null;
-    }
+    abstract Integer generateLogId();
 
-    void extractData(JiraTransferContext ctx) {
-        extractTasks.stream()
-                .filter(task -> task.source() == Source.JIRA)
-                .forEach(task -> task.extract(ctx));
-    }
+    abstract void extractData(T ctx);
 
-    void transformData(JiraTransferContext ctx) {
-        transformTasks.forEach(task -> task.transform(ctx));
-    }
+    abstract void transformData(T ctx);
 
-    void loadData(JiraTransferContext ctx) {
-        loadTasks.forEach(task -> task.load(ctx));
-    }
+    abstract void loadData(T ctx);
 
 }
