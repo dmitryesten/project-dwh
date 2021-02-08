@@ -3,6 +3,7 @@ package com.sample.leantech.transfer.config;
 import com.sample.leantech.transfer.model.context.JiraTransferContext;
 import com.sample.leantech.transfer.task.extract.ExtractTask;
 import com.sample.leantech.transfer.task.load.LoadTask;
+import com.sample.leantech.transfer.task.prepare.PrepareTask;
 import com.sample.leantech.transfer.task.transform.TransformTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +16,9 @@ import java.util.List;
 public class TaskConfig {
 
     @Autowired
+    private List<PrepareTask> prepareTasks;
+
+    @Autowired
     @Qualifier("jiraExtractTask")
     private ExtractTask<JiraTransferContext> jiraExtractTask;
 
@@ -24,6 +28,11 @@ public class TaskConfig {
 
     @Autowired
     private List<LoadTask> loadTasks;
+
+    @Bean("prepareTasks")
+    public List<PrepareTask> prepareTasks() {
+        return prepareTasks;
+    }
 
     @Bean("jiraExtractTasks")
     public List<ExtractTask<JiraTransferContext>> jiraExtractTasks() {

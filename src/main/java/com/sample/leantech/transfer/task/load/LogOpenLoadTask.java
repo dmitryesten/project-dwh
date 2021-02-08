@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
 
 @Slf4j
 @Order(1)
@@ -34,14 +33,6 @@ public class LogOpenLoadTask implements LoadTask {
         log.info("Запись логс");
         logTransferSparkRepository.save(logTransferCollection);
         log.info("Завершение записи");
-        int idLogs = logTransferSparkRepository.get()
-                .stream()
-                .map(LogTransfer.class::cast)
-                .filter(s -> Optional.ofNullable(s.getEndDt()).isEmpty())
-                .findFirst()
-                .get()
-                .getId();
-        log.info("Id созданного лога = "+ idLogs );
     }
 
 }
