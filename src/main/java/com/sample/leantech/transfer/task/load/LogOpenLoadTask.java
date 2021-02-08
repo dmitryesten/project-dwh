@@ -27,7 +27,7 @@ public class LogOpenLoadTask implements LoadTask {
     IRepository logTransferSparkRepository;
 
     public void load(TransferContext ctx) {
-        LogTransfer logTransfer = new LogTransfer();
+        /*LogTransfer logTransfer = new LogTransfer();
         logTransfer.setSid(ctx.getSource().getValue());
         logTransfer.setStartDt(Timestamp.from(Instant.now()));
         Collection<LogTransfer> logTransferCollection = Arrays.asList(logTransfer);
@@ -41,7 +41,7 @@ public class LogOpenLoadTask implements LoadTask {
         ctx.setLogId(
                 logTransferSparkRepository.get().stream()
                         .map(LogTransfer.class::cast).filter(s -> Optional.ofNullable(s.getEndDt()).isEmpty())
-                .findFirst().get().getId());
+                .findFirst().get().getId());*/
     }
 
 }
