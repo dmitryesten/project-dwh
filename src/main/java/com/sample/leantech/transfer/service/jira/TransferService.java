@@ -26,7 +26,7 @@ public class TransferService {
     private final Map<Source, Boolean> workStatuses = new ConcurrentHashMap<>();
 
     @Scheduled(fixedRateString = "${transfer.jira.milliseconds}")
-    public void transfer() {
+    public void transferJira() {
         transfer(Source.JIRA);
     }
 
