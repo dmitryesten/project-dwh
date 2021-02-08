@@ -5,7 +5,6 @@ import com.sample.leantech.transfer.model.context.Source;
 import com.sample.leantech.transfer.task.extract.ExtractTask;
 import com.sample.leantech.transfer.task.load.LoadTask;
 import com.sample.leantech.transfer.task.transform.TransformTask;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -15,17 +14,11 @@ import java.util.List;
 @Service("jiraService")
 public class JiraTransferService extends TransferService<JiraTransferContext> {
 
-    @Autowired
-    @Qualifier("jiraExtractTasks")
-    private List<ExtractTask<JiraTransferContext>> jiraExtractTasks;
-
-    @Autowired
-    @Qualifier("jiraTransformTasks")
-    private List<TransformTask<JiraTransferContext>> jiraTransformTasks;
-
-    @Autowired
-    @Qualifier("loadTasks")
-    private List<LoadTask> loadTasks;
+    public JiraTransferService(@Qualifier("jiraExtractTasks") List<ExtractTask<JiraTransferContext>> jiraExtractTasks,
+                               @Qualifier("jiraTransformTasks") List<TransformTask<JiraTransferContext>> jiraTransformTasks,
+                               @Qualifier("loadTasks") List<LoadTask> loadTasks) {
+        super(jiraExtractTasks, jiraTransformTasks, loadTasks);
+    }
 
     @Scheduled(fixedRateString = "${transfer.jira.milliseconds}")
     @Override
@@ -41,21 +34,6 @@ public class JiraTransferService extends TransferService<JiraTransferContext> {
     Integer logId() {
         // TODO: implement logId generation
         return null;
-    }
-
-    @Override
-    List<ExtractTask<JiraTransferContext>> extractTasks() {
-        return jiraExtractTasks;
-    }
-
-    @Override
-    List<TransformTask<JiraTransferContext>> transformTasks() {
-        return jiraTransformTasks;
-    }
-
-    @Override
-    List<LoadTask> loadTasks() {
-        return loadTasks;
     }
 
 }
