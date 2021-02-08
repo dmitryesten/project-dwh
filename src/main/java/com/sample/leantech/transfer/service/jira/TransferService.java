@@ -1,13 +1,11 @@
 package com.sample.leantech.transfer.service.jira;
 
 import com.sample.leantech.transfer.model.context.TransferContext;
-import com.sample.leantech.transfer.service.repository.IRepository;
 import com.sample.leantech.transfer.task.extract.ExtractTask;
+import com.sample.leantech.transfer.task.load.LoadTask;
 import com.sample.leantech.transfer.task.transform.TransformTask;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +18,9 @@ public class TransferService {
 
     private final List<ExtractTask> extractTasks;
     private final List<TransformTask> transformTasks;
+    private final List<LoadTask> loadTasks;
 
     private volatile boolean working;
-
-    @Autowired
-    @Qualifier("userSparkRepository")
-    IRepository userRepository;
 
     @Scheduled(fixedRateString = "${transfer.milliseconds}")
     public void transfer() {
@@ -60,7 +55,7 @@ public class TransferService {
     }
 
     private void loadData(TransferContext ctx) {
-        // TODO: implement
+        loadTasks.forEach(task -> task.load(ctx));
     }
 
 }
