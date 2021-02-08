@@ -65,10 +65,9 @@ public class IssueSparkRepository implements IRepository {
         } else {
             datasetLeftResult = datasetIssue
                     .join(datasetIssueOfDb,
-                            datasetIssueOfDb.col("sourceId").equalTo(datasetIssueOfDb.col("sourceId")),
+                            datasetIssueOfDb.col("sourceId").equalTo(datasetIssue.col("sourceId")),
                             "left")
                     .where((datasetIssueOfDb.col("sourceId").isNull())
-
                     ).select(datasetIssue.col("pid"),
                             datasetIssue.col("sid"),
                             datasetIssue.col("logId"),
@@ -87,7 +86,6 @@ public class IssueSparkRepository implements IRepository {
                             .or(datasetIssueOfDb.col("summery").notEqual(datasetIssue.col("summery"))
                                     .and(datasetIssueOfDb.col("sourceId").equalTo(datasetIssueOfDb.col("sourceId"))))
              */
-            datasetLeftResult.show();
             datasetLeftResult =
                     datasetLeftResult
                     .join(datasetProject, datasetProject.col("sourceId").equalTo(datasetIssue.col("pid")))
@@ -100,7 +98,6 @@ public class IssueSparkRepository implements IRepository {
                             datasetIssue.col("name"),
                             datasetIssue.col("summery"))
                     .withColumnRenamed("id", "pid");
-            datasetLeftResult.show();
         }
 
         datasetLeftResult
