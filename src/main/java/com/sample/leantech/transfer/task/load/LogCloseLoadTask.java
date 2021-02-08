@@ -21,6 +21,7 @@ public class LogCloseLoadTask implements LoadTask {
 
     @Override
     public void load(TransferContext ctx) {
-
+        // TODO: implement
     }
+
 }
