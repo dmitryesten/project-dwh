@@ -1,8 +1,6 @@
 package com.sample.leantech.transfer.task.transform;
 
-import com.sample.leantech.transfer.model.context.DatabaseModel;
-import com.sample.leantech.transfer.model.context.JiraResult;
-import com.sample.leantech.transfer.model.context.TransferContext;
+import com.sample.leantech.transfer.model.context.*;
 import com.sample.leantech.transfer.model.db.Issue;
 import com.sample.leantech.transfer.model.db.Project;
 import com.sample.leantech.transfer.model.db.User;
@@ -19,10 +17,15 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class JiraTransformTask implements TransformTask {
+public class JiraTransformTask implements TransformTask<JiraTransferContext> {
 
     @Override
-    public void transform(TransferContext ctx) {
+    public Source source() {
+        return Source.JIRA;
+    }
+
+    @Override
+    public void transform(JiraTransferContext ctx) {
         List<JiraResult> jiraResults = ctx.getJiraResults();
         DatabaseModel databaseModel = ctx.getDatabaseModel();
         jiraResults.forEach(jiraResult -> transform(jiraResult, databaseModel));

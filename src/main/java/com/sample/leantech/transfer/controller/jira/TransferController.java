@@ -13,7 +13,7 @@ public class TransferController {
 
     @PostMapping("/jira")
     public void transfer() {
-        transferService.transferJira();
+        transferService.transfer();
     }
 
 }

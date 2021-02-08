@@ -2,8 +2,8 @@ package com.sample.leantech.transfer.task.extract;
 
 import com.sample.leantech.transfer.integration.JiraClient;
 import com.sample.leantech.transfer.model.context.JiraResult;
+import com.sample.leantech.transfer.model.context.JiraTransferContext;
 import com.sample.leantech.transfer.model.context.Source;
-import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.dto.request.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class JiraExtractTask implements ExtractTask {
+public class JiraExtractTask implements ExtractTask<JiraTransferContext> {
 
     private final JiraClient jiraClient;
 
@@ -26,7 +26,7 @@ public class JiraExtractTask implements ExtractTask {
     }
 
     @Override
-    public void extract(TransferContext ctx) {
+    public void extract(JiraTransferContext ctx) {
         JiraResult jiraResult = ctx.addJiraResult(source());
         extractProjects(jiraResult);
         extractEpics(jiraResult);
