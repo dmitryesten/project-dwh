@@ -40,19 +40,19 @@ public class JiraExtractTask implements ExtractTask<JiraTransferContext> {
 
     private void extractProjects(JiraResult jiraResult) {
         List<JiraProjectDto> projects = jiraClient.getProjects();
-        jiraResult.setProjects(projects);
+        jiraResult.getProjects().addAll(projects);
     }
 
     private void extractEpics(JiraResult jiraResult) {
         List<JiraIssueDto> epics = jiraClient.getEpics().getIssues();
-        jiraResult.setEpics(epics);
+        jiraResult.getEpics().addAll(epics);
     }
 
     private void extractIssues(JiraResult jiraResult) {
         List<JiraIssueDto> issues = new ArrayList<>();
         extractNonEpicIssues(issues);
         extractEpicIssues(jiraResult, issues);
-        jiraResult.setIssues(issues);
+        jiraResult.getIssues().addAll(issues);
     }
 
     private void extractNonEpicIssues(List<JiraIssueDto> issues) {
@@ -78,7 +78,7 @@ public class JiraExtractTask implements ExtractTask<JiraTransferContext> {
         // Для эпиков приходится выполнять дополнительные запросы.
         extractNonEpicWorklogs(jiraResult, worklogs);
         extractEpicWorklogs(jiraResult, worklogs);
-        jiraResult.setWorklogs(worklogs);
+        jiraResult.getWorklogs().addAll(worklogs);
     }
 
     private void extractNonEpicWorklogs(JiraResult jiraResult, List<JiraWorklogDto> worklogs) {
@@ -111,7 +111,7 @@ public class JiraExtractTask implements ExtractTask<JiraTransferContext> {
                 .map(JiraWorklogDto::getUpdateAuthor)
                 .distinct()
                 .collect(Collectors.toList());
-        jiraResult.setUsers(users);
+        jiraResult.getUsers().addAll(users);
     }
 
 }
