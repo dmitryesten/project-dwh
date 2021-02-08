@@ -1,7 +1,8 @@
 package com.sample.leantech.transfer.integration;
 
 import com.sample.leantech.transfer.model.dto.request.*;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Async;
@@ -16,8 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 @Slf4j
-@Component
-@RequiredArgsConstructor
+@Component("jiraClient")
 public class JiraClient {
 
     private static final String PROJECT_PATH_JIRA = "/rest/api/2/project";
@@ -28,7 +28,9 @@ public class JiraClient {
 
     private static final String WORKLOG_PATH_JIRA = "/rest/api/2/issue/{issueId}/worklog";
 
-    private final RestTemplate restTemplate;
+    @Autowired
+    @Qualifier("jiraRestTemplate")
+    private RestTemplate jiraRestTemplate;
 
     public List<JiraProjectDto> getProjects()  {
         return restTemplate().exchange(PROJECT_PATH_JIRA, HttpMethod.GET, null,
@@ -83,7 +85,7 @@ public class JiraClient {
     }
 
     RestTemplate restTemplate() {
-        return restTemplate;
+        return jiraRestTemplate;
     }
 
 }

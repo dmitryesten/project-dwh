@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 public class TransferController {
 
     @Autowired
-    @Qualifier("jira")
+    @Qualifier("jiraService")
     private TransferService jiraTransferService;
 
     @PostMapping("/jira")

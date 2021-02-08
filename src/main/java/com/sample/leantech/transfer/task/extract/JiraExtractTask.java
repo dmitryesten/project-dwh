@@ -5,7 +5,8 @@ import com.sample.leantech.transfer.model.context.JiraResult;
 import com.sample.leantech.transfer.model.context.JiraTransferContext;
 import com.sample.leantech.transfer.model.context.Source;
 import com.sample.leantech.transfer.model.dto.request.*;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,10 +16,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
 public class JiraExtractTask implements ExtractTask<JiraTransferContext> {
 
-    private final JiraClient jiraClient;
+    @Autowired
+    @Qualifier("jiraClient")
+    private JiraClient jiraClient;
 
     @Override
     public Source source() {

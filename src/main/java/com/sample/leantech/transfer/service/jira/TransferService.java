@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public abstract class TransferService<T extends TransferContext> {
 
+    // TODO: fix
     private final Map<Source, Boolean> workStatuses = new ConcurrentHashMap<>();
 
     public abstract void transfer();
