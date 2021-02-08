@@ -5,7 +5,6 @@ import com.sample.leantech.transfer.model.context.JiraResult;
 import com.sample.leantech.transfer.model.context.JiraTransferContext;
 import com.sample.leantech.transfer.model.context.Source;
 import com.sample.leantech.transfer.model.dto.request.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -18,9 +17,11 @@ import java.util.stream.Collectors;
 @Component("jiraExtractTask")
 public class JiraExtractTask implements ExtractTask<JiraTransferContext> {
 
-    @Autowired
-    @Qualifier("jiraClient")
-    private JiraClient jiraClient;
+    private final JiraClient jiraClient;
+
+    public JiraExtractTask(@Qualifier("jiraClient") JiraClient jiraClient) {
+        this.jiraClient = jiraClient;
+    }
 
     @Override
     public Source source() {
@@ -38,12 +39,12 @@ public class JiraExtractTask implements ExtractTask<JiraTransferContext> {
     }
 
     private void extractProjects(JiraResult jiraResult) {
-        List<JiraProjectDto> projects = jiraClient().getProjects();
+        List<JiraProjectDto> projects = jiraClient.getProjects();
         jiraResult.setProjects(projects);
     }
 
     private void extractEpics(JiraResult jiraResult) {
-        List<JiraIssueDto> epics = jiraClient().getEpics().getIssues();
+        List<JiraIssueDto> epics = jiraClient.getEpics().getIssues();
         jiraResult.setEpics(epics);
     }
 
@@ -55,7 +56,7 @@ public class JiraExtractTask implements ExtractTask<JiraTransferContext> {
     }
 
     private void extractNonEpicIssues(List<JiraIssueDto> issues) {
-        List<JiraIssueDto> nonEpicIssues = jiraClient().getNonEpicIssues().getIssues();
+        List<JiraIssueDto> nonEpicIssues = jiraClient.getNonEpicIssues().getIssues();
         issues.addAll(nonEpicIssues);
     }
 
@@ -66,7 +67,7 @@ public class JiraExtractTask implements ExtractTask<JiraTransferContext> {
     }
 
     private CompletableFuture<Boolean> appendEpicIssues(JiraIssueDto epic, List<JiraIssueDto> issues) {
-        return jiraClient().getEpicIssuesAsync(epic.getId())
+        return jiraClient.getEpicIssuesAsync(epic.getId())
                 .thenApply(JiraIssueResponseDto::getIssues)
                 .thenApply(issues::addAll);
     }
@@ -99,7 +100,7 @@ public class JiraExtractTask implements ExtractTask<JiraTransferContext> {
     }
 
     private CompletableFuture<Boolean> appendEpicWorklogs(JiraIssueDto epic, List<JiraWorklogDto> worklogs) {
-        return jiraClient().getWorklogsAsync(epic.getId())
+        return jiraClient.getWorklogsAsync(epic.getId())
                 .thenApply(JiraWorklogResponseDto::getWorklogs)
                 .thenApply(worklogs::addAll);
     }
@@ -111,10 +112,6 @@ public class JiraExtractTask implements ExtractTask<JiraTransferContext> {
                 .distinct()
                 .collect(Collectors.toList());
         jiraResult.setUsers(users);
-    }
-
-    JiraClient jiraClient() {
-        return jiraClient;
     }
 
 }
