@@ -33,8 +33,7 @@ public abstract class TransferService<T extends TransferContext> {
         workStatuses.put(source, true);
         log.info("Transfer is started for " + source.name());
 
-        Integer logId = logId();
-        T ctx = transferContext(logId, source);
+        T ctx = transferContext(source);
         extractData(ctx);
         transformData(ctx);
         loadData(ctx);
@@ -43,9 +42,7 @@ public abstract class TransferService<T extends TransferContext> {
         workStatuses.put(source, false);
     }
 
-    abstract T transferContext(Integer logId, Source source);
-
-    abstract Integer logId();
+    abstract T transferContext(Source source);
 
     void extractData(T ctx) {
         extractTasks.stream()

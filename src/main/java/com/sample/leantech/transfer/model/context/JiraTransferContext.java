@@ -7,8 +7,8 @@ public class JiraTransferContext extends TransferContext {
     @Getter
     private final JiraResult jiraResult;
 
-    public JiraTransferContext(Integer logId, Source source) {
-        super(logId, source);
+    public JiraTransferContext(Source source) {
+        super(source);
         this.jiraResult = new JiraResult();
     }
 

@@ -2,22 +2,17 @@ package com.sample.leantech.transfer.model.context;
 
 import lombok.Data;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
-
 @Data
 public class TransferContext {
 
-    final Integer logId;
-    final Source source;
-    private final ZonedDateTime startDateTime;
+    private final Source source;
+    private final LogInfo logInfo;
     private final DatabaseModel databaseModel;
 
-    public TransferContext(Integer logId, Source source) {
-        this.logId = logId;
+    public TransferContext(Source source) {
         this.source = source;
-        this.startDateTime = ZonedDateTime.now(Clock.systemUTC());
-        this.databaseModel = new DatabaseModel(logId);
+        this.logInfo = new LogInfo();
+        this.databaseModel = new DatabaseModel();
     }
 
 }

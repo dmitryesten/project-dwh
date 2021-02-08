@@ -9,7 +9,9 @@ import org.springframework.test.context.ActiveProfiles;
 public abstract class AbstractMapperTest {
 
     TransferContext transferContext() {
-        return new JiraTransferContext(1, Source.JIRA);
+        TransferContext ctx = new JiraTransferContext(Source.JIRA);
+        ctx.getLogInfo().setLogId(1);
+        return ctx;
     }
 
 }

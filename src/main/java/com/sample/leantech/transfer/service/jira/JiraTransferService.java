@@ -27,13 +27,8 @@ public class JiraTransferService extends TransferService<JiraTransferContext> {
     }
 
     @Override
-    JiraTransferContext transferContext(Integer logId, Source source) {
-        return new JiraTransferContext(logId, source);
-    }
-
-    Integer logId() {
-        // TODO: implement logId generation
-        return null;
+    JiraTransferContext transferContext(Source source) {
+        return new JiraTransferContext(source);
     }
 
 }

@@ -27,9 +27,9 @@ public class LogOpenLoadTask implements LoadTask {
 
     public void load(TransferContext ctx) {
         LogTransfer logTransfer = new LogTransfer();
-        logTransfer.setId(ctx.getLogId());
+        logTransfer.setId(ctx.getLogInfo().getLogId());
         logTransfer.setSid(ctx.getSource().getValue());
-        logTransfer.setStartDt(Timestamp.from(ctx.getStartDateTime().toInstant()));
+        logTransfer.setStartDt(Timestamp.from(ctx.getLogInfo().getStartDateTime().toInstant()));
         Collection<LogTransfer> logTransferCollection = Arrays.asList(logTransfer);
         log.info("Запись логс");
         logTransferSparkRepository.save(logTransferCollection);
