@@ -10,7 +10,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@Order(6)
+@Order(5)
 @Component
 @RequiredArgsConstructor
 public class LogCloseLoadTask implements LoadTask {
