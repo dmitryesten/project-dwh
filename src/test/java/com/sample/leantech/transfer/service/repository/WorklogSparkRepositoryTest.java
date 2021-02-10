@@ -13,9 +13,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-
 @SpringBootTest
-class WorklogSparkRepositoryTest {
+class WorklogSparkRepositoryTest extends AbstractRepositoryTest {
 
     @Autowired
     private WorklogSparkRepository repository;

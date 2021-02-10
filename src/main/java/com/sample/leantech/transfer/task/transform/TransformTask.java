@@ -1,9 +1,12 @@
 package com.sample.leantech.transfer.task.transform;
 
+import com.sample.leantech.transfer.model.context.Source;
 import com.sample.leantech.transfer.model.context.TransferContext;
 
-public interface TransformTask {
+public interface TransformTask<T extends TransferContext> {
 
-    void transform(TransferContext ctx);
+    Source source();
+
+    void transform(T ctx);
 
 }

@@ -2,10 +2,10 @@ package com.sample.leantech.transfer.task.extract;
 
 import com.sample.leantech.transfer.integration.JiraClient;
 import com.sample.leantech.transfer.model.context.JiraResult;
+import com.sample.leantech.transfer.model.context.JiraTransferContext;
 import com.sample.leantech.transfer.model.context.Source;
-import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.dto.request.*;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -14,20 +14,23 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-@Component
-@RequiredArgsConstructor
-public class JiraExtractTask implements ExtractTask {
+@Component("jiraExtractTask")
+public class JiraExtractTask implements ExtractTask<JiraTransferContext> {
 
     private final JiraClient jiraClient;
 
-    @Override
-    public Source source() {
-        return Source.JIRA_1;
+    public JiraExtractTask(@Qualifier("jiraClient") JiraClient jiraClient) {
+        this.jiraClient = jiraClient;
     }
 
     @Override
-    public void extract(TransferContext ctx) {
-        JiraResult jiraResult = ctx.addJiraResult(source());
+    public Source source() {
+        return Source.JIRA;
+    }
+
+    @Override
+    public void extract(JiraTransferContext ctx) {
+        JiraResult jiraResult = ctx.getJiraResult();
         extractProjects(jiraResult);
         extractEpics(jiraResult);
         extractIssues(jiraResult);
@@ -36,24 +39,24 @@ public class JiraExtractTask implements ExtractTask {
     }
 
     private void extractProjects(JiraResult jiraResult) {
-        List<JiraProjectDto> projects = jiraClient().getProjects();
-        jiraResult.setProjects(projects);
+        List<JiraProjectDto> projects = jiraClient.getProjects();
+        jiraResult.getProjects().addAll(projects);
     }
 
     private void extractEpics(JiraResult jiraResult) {
-        List<JiraIssueDto> epics = jiraClient().getEpics().getIssues();
-        jiraResult.setEpics(epics);
+        List<JiraIssueDto> epics = jiraClient.getEpics().getIssues();
+        jiraResult.getEpics().addAll(epics);
     }
 
     private void extractIssues(JiraResult jiraResult) {
         List<JiraIssueDto> issues = new ArrayList<>();
         extractNonEpicIssues(issues);
         extractEpicIssues(jiraResult, issues);
-        jiraResult.setIssues(issues);
+        jiraResult.getIssues().addAll(issues);
     }
 
     private void extractNonEpicIssues(List<JiraIssueDto> issues) {
-        List<JiraIssueDto> nonEpicIssues = jiraClient().getNonEpicIssues().getIssues();
+        List<JiraIssueDto> nonEpicIssues = jiraClient.getNonEpicIssues().getIssues();
         issues.addAll(nonEpicIssues);
     }
 
@@ -64,7 +67,7 @@ public class JiraExtractTask implements ExtractTask {
     }
 
     private CompletableFuture<Boolean> appendEpicIssues(JiraIssueDto epic, List<JiraIssueDto> issues) {
-        return jiraClient().getEpicIssuesAsync(epic.getId())
+        return jiraClient.getEpicIssuesAsync(epic.getId())
                 .thenApply(JiraIssueResponseDto::getIssues)
                 .thenApply(issues::addAll);
     }
@@ -75,7 +78,7 @@ public class JiraExtractTask implements ExtractTask {
         // Для эпиков приходится выполнять дополнительные запросы.
         extractNonEpicWorklogs(jiraResult, worklogs);
         extractEpicWorklogs(jiraResult, worklogs);
-        jiraResult.setWorklogs(worklogs);
+        jiraResult.getWorklogs().addAll(worklogs);
     }
 
     private void extractNonEpicWorklogs(JiraResult jiraResult, List<JiraWorklogDto> worklogs) {
@@ -97,7 +100,7 @@ public class JiraExtractTask implements ExtractTask {
     }
 
     private CompletableFuture<Boolean> appendEpicWorklogs(JiraIssueDto epic, List<JiraWorklogDto> worklogs) {
-        return jiraClient().getWorklogsAsync(epic.getId())
+        return jiraClient.getWorklogsAsync(epic.getId())
                 .thenApply(JiraWorklogResponseDto::getWorklogs)
                 .thenApply(worklogs::addAll);
     }
@@ -108,11 +111,7 @@ public class JiraExtractTask implements ExtractTask {
                 .map(JiraWorklogDto::getUpdateAuthor)
                 .distinct()
                 .collect(Collectors.toList());
-        jiraResult.setUsers(users);
-    }
-
-    JiraClient jiraClient() {
-        return jiraClient;
+        jiraResult.getUsers().addAll(users);
     }
 
 }

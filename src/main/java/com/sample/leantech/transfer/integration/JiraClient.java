@@ -1,7 +1,7 @@
 package com.sample.leantech.transfer.integration;
 
 import com.sample.leantech.transfer.model.dto.request.*;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Async;
@@ -16,8 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 @Slf4j
-@Component
-@RequiredArgsConstructor
+@Component("jiraClient")
 public class JiraClient {
 
     private static final String PROJECT_PATH_JIRA = "/rest/api/2/project";
@@ -28,10 +27,14 @@ public class JiraClient {
 
     private static final String WORKLOG_PATH_JIRA = "/rest/api/2/issue/{issueId}/worklog";
 
-    private final RestTemplate restTemplate;
+    private final RestTemplate jiraRestTemplate;
+
+    public JiraClient(@Qualifier("jiraRestTemplate") RestTemplate jiraRestTemplate) {
+        this.jiraRestTemplate = jiraRestTemplate;
+    }
 
     public List<JiraProjectDto> getProjects()  {
-        return restTemplate().exchange(PROJECT_PATH_JIRA, HttpMethod.GET, null,
+        return jiraRestTemplate.exchange(PROJECT_PATH_JIRA, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<JiraProjectDto>>() {}).getBody();
     }
 
@@ -41,7 +44,7 @@ public class JiraClient {
     }
 
     public JiraIssueResponseDto getEpics() {
-        return restTemplate().exchange(EPIC_PATH_JIRA, HttpMethod.GET, null, JiraIssueResponseDto.class).getBody();
+        return jiraRestTemplate.exchange(EPIC_PATH_JIRA, HttpMethod.GET, null, JiraIssueResponseDto.class).getBody();
     }
 
     @Async
@@ -50,7 +53,7 @@ public class JiraClient {
     }
 
     public JiraIssueResponseDto getNonEpicIssues() {
-        return restTemplate().exchange(NON_EPIC_ISSUE_PATH_JIRA, HttpMethod.GET, null, JiraIssueResponseDto.class).getBody();
+        return jiraRestTemplate.exchange(NON_EPIC_ISSUE_PATH_JIRA, HttpMethod.GET, null, JiraIssueResponseDto.class).getBody();
     }
 
     @Async
@@ -62,7 +65,7 @@ public class JiraClient {
         String url = UriComponentsBuilder.fromPath(EPIC_ISSUE_PATH_JIRA)
                 .buildAndExpand(epicId)
                 .toString();
-        return restTemplate().exchange(url, HttpMethod.GET, null, JiraIssueResponseDto.class).getBody();
+        return jiraRestTemplate.exchange(url, HttpMethod.GET, null, JiraIssueResponseDto.class).getBody();
     }
 
     @Async
@@ -74,16 +77,12 @@ public class JiraClient {
         String url = UriComponentsBuilder.fromPath(WORKLOG_PATH_JIRA)
                 .buildAndExpand(issueId)
                 .toString();
-        return restTemplate().exchange(url, HttpMethod.GET, null, JiraWorklogResponseDto.class).getBody();
+        return jiraRestTemplate.exchange(url, HttpMethod.GET, null, JiraWorklogResponseDto.class).getBody();
     }
 
     @Async
     public CompletableFuture<JiraWorklogResponseDto> getWorklogsAsync(String issueId) {
         return CompletableFuture.completedFuture(getWorklogs(issueId));
-    }
-
-    RestTemplate restTemplate() {
-        return restTemplate;
     }
 
 }

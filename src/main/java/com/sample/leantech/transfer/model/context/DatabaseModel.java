@@ -12,14 +12,12 @@ import java.util.List;
 @Data
 public class DatabaseModel {
 
-    private final Integer parentLogId;
     private final List<Project> projects;
     private final List<Issue> issues;
     private final List<Worklog> worklogs;
     private final List<User> users;
 
-    DatabaseModel(Integer parentLogId) {
-        this.parentLogId = parentLogId;
+    DatabaseModel() {
         this.projects = new ArrayList<>();
         this.issues = new ArrayList<>();
         this.worklogs = new ArrayList<>();

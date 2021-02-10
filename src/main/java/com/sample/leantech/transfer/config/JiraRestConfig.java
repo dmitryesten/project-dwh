@@ -18,8 +18,8 @@ public class JiraRestConfig {
     private String username;
     private String password;
 
-    @Bean
-    public RestTemplate restTemplate() {
+    @Bean("jiraRestTemplate")
+    public RestTemplate jiraRestTemplate() {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory("https://" + hostname));
         restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(username, password));

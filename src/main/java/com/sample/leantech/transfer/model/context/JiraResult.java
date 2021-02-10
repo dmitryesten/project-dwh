@@ -6,22 +6,24 @@ import com.sample.leantech.transfer.model.dto.request.JiraUserDto;
 import com.sample.leantech.transfer.model.dto.request.JiraWorklogDto;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 public class JiraResult {
 
-    private final Integer parentLogId;
-    private final Source source;
     private List<JiraProjectDto> projects;
     private List<JiraIssueDto> epics;
     private List<JiraIssueDto> issues;
     private List<JiraWorklogDto> worklogs;
     private List<JiraUserDto> users;
 
-    JiraResult(Integer parentLogId, Source source) {
-        this.parentLogId = parentLogId;
-        this.source = source;
+    public JiraResult() {
+        this.projects = new ArrayList<>();
+        this.epics = new ArrayList<>();
+        this.issues = new ArrayList<>();
+        this.worklogs = new ArrayList<>();
+        this.users = new ArrayList<>();
     }
 
 }

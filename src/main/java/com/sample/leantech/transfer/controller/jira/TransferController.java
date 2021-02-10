@@ -1,19 +1,22 @@
 package com.sample.leantech.transfer.controller.jira;
 
 import com.sample.leantech.transfer.service.jira.TransferService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/jira")
-@RequiredArgsConstructor
+@RequestMapping("/transfers")
 public class TransferController {
 
-    private final TransferService transferService;
+    private final TransferService jiraTransferService;
 
-    @PostMapping("/transfer")
+    public TransferController(@Qualifier("jiraService") TransferService jiraTransferService) {
+        this.jiraTransferService = jiraTransferService;
+    }
+
+    @PostMapping("/jira")
     public void transfer() {
-        transferService.transfer();
+        jiraTransferService.transfer();
     }
 
 }
