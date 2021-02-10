@@ -17,11 +17,13 @@ comment on column sources.name is 'source name';
 
 create table logs (
 	id  integer default nextval('seq_table'),
+	hid integer,
 	sid integer,
-	start_dt timestamp not null,
+	start_dt timestamp ,
 	end_dt timestamp,
 	result boolean,
 	constraint pk_id_logs primary key (id),
+	constraint fk_hid_id foreign key (hid) references logs(id),
 	constraint fk_sid_sources foreign key (sid) references sources(id)
 );
 comment on table logs is 'Table with data about retrieving data from source';
