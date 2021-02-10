@@ -27,17 +27,6 @@ public class SourceLoadTask implements LoadTask {
 
     @Override
     public void load(TransferContext ctx) {
-        Source source = new Source();
-            source.setId(ctx.getSource().getValue());
-            source.setName(ctx.getSource().name());
-        Collection<Source> sourcesCollection = Arrays.asList(source);
-        log.info("Save source");
-        sourceRepository.save(sourcesCollection);
-        log.info("Saved source");
-        int sourceId = sourceRepository.get().stream()
-                        .map(Source.class::cast)
-                        .filter(src -> src.getName().equals(source.getName()))
-                .findFirst().get().getId();
-        log.info("Saved sourced id = " + sourceId);
+
     }
 }

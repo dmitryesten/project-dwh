@@ -17,7 +17,7 @@ class IssueSparkRepositoryTest {
 
     @Test
     @DisplayName("Testing save and get methods of issueRepository")
-    public void testSaveGet(){
+    public void testSaveGet() {
         Issue issue = new Issue();
             issue.setPid(null);
             issue.setSid(null);
@@ -40,5 +40,14 @@ class IssueSparkRepositoryTest {
 
     }
 
+    @Test
+    public void testGroupedIssues() {
+        Assertions.assertNotNull(repository.getGroupedIssueMaxTimeBySourceId());
+    }
+
+    @Test
+    public void testJoinIssueAndGroupedIssue() {
+        Assertions.assertNotNull(repository.getIssueWithMaxTimeBySourceId());
+    }
 
 }
