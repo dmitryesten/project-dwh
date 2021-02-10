@@ -7,6 +7,7 @@ create sequence seq_table increment by 1 start with 1;
 create table sources (
 	id   integer default nextval('seq_table'),
 	name varchar not null,
+	create_dt timestamp default current_timestamp,
 	constraint pk_id_sources primary key (id) 
 );
 comment on table sources is 'Table with data about sources data (jira, redmin and etc)';
@@ -16,11 +17,13 @@ comment on column sources.name is 'source name';
 
 create table logs (
 	id  integer default nextval('seq_table'),
+	hid integer,
 	sid integer,
-	start_dt timestamp not null,
+	start_dt timestamp ,
 	end_dt timestamp,
 	result boolean,
 	constraint pk_id_logs primary key (id),
+	constraint fk_hid_id foreign key (hid) references logs(id),
 	constraint fk_sid_sources foreign key (sid) references sources(id)
 );
 comment on table logs is 'Table with data about retrieving data from source';
@@ -37,6 +40,7 @@ create table projects (
 	log_id integer,
 	source_id integer,
 	name varchar,
+	create_dt timestamp default current_timestamp,
 	constraint pk_id_projects primary key (id),
 	constraint fk_sid_sources foreign key (sid) references sources(id),
 	constraint fk_id_logs_projects foreign key (log_id) references logs(id)
@@ -59,6 +63,7 @@ create table issues (
 	type varchar not null,
 	name varchar not null,
 	summery varchar,
+	create_dt timestamp default current_timestamp,
 	constraint pk_id_issues primary key (id),
 	constraint fk_id_project foreign key (pid) references projects(id),
 	constraint fk_id_source foreign key (sid) references sources(id),
@@ -82,6 +87,7 @@ create table users (
 	key varchar not null,
 	log_id integer,
 	name varchar not null,
+	create_dt timestamp default current_timestamp,
 	constraint pk_id_users primary key (id),
 	constraint fk_id_logs_users foreign key (log_id) references logs(id)
 );
@@ -101,6 +107,7 @@ create table worklogs (
 	time_spent integer,
 	username varchar,
 	user_id integer,
+	create_dt timestamp default current_timestamp,
 	constraint pk_id_worklogs primary key (id),
 	constraint fk_id_issues foreign key (issue_id) references issues(id),
 	constraint fk_id_logs_worklogs foreign key (log_id) references logs(id),

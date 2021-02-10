@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+
+import static org.apache.spark.sql.functions.col;
+import static org.apache.spark.sql.functions.max;
+
 @Slf4j
 @Repository
 public class IssueSparkRepository implements IRepository {
@@ -31,6 +34,7 @@ public class IssueSparkRepository implements IRepository {
                 .toDF()
                 .withColumnRenamed("log_id", "logId")
                 .withColumnRenamed("source_id", "sourceId")
+                .withColumnRenamed("create_dt", "createDt")
                 .as(Encoders.bean(Issue.class));
     }
 
@@ -41,11 +45,9 @@ public class IssueSparkRepository implements IRepository {
 
     @Override
     public void save(Collection<? extends EntityDB> entities) {
-        List<Issue> listIssue = (List<Issue>) entities;
-        Dataset<Issue> datasetIssue = sparkSession.createDataset(listIssue, Encoders.bean(Issue.class));
-        Dataset<Issue> datasetIssueOfDb = getDataset();
+        Dataset<Issue> datasetIssue = sparkSession.createDataset((List<Issue>) entities, Encoders.bean(Issue.class));
+        Dataset<Issue> datasetIssueOfDb = getIssueWithMaxTimeBySourceId();
         Dataset<Project> datasetProject = projectSparkRepository.getDataset();
-        datasetProject.show();
         Dataset<Row> datasetLeftResult;
 
 
@@ -68,6 +70,9 @@ public class IssueSparkRepository implements IRepository {
                             datasetIssueOfDb.col("sourceId").equalTo(datasetIssue.col("sourceId")),
                             "left")
                     .where((datasetIssueOfDb.col("sourceId").isNull())
+                            .or(datasetIssueOfDb.col("summery").notEqual(datasetIssue.col("summery"))
+                            .or(datasetIssueOfDb.col("type").notEqual(datasetIssue.col("type"))
+                            .or(datasetIssueOfDb.col("name").notEqual(datasetIssue.col("name")) )))
                     ).select(datasetIssue.col("pid"),
                             datasetIssue.col("sid"),
                             datasetIssue.col("logId"),
@@ -76,28 +81,20 @@ public class IssueSparkRepository implements IRepository {
                             datasetIssue.col("type"),
                             datasetIssue.col("name"),
                             datasetIssue.col("summery"));
-            /*
-            .or(datasetIssueOfDb.col("hid").notEqual(datasetIssue.col("hid"))
-                                    .and(datasetIssueOfDb.col("sourceId").equalTo(datasetIssueOfDb.col("sourceId"))))
-                            .or(datasetIssueOfDb.col("type").notEqual(datasetIssue.col("type"))
-                                    .and(datasetIssueOfDb.col("sourceId").equalTo(datasetIssueOfDb.col("sourceId"))))
-                            .or(datasetIssueOfDb.col("name").notEqual(datasetIssue.col("name"))
-                                    .and(datasetIssueOfDb.col("sourceId").equalTo(datasetIssueOfDb.col("sourceId"))))
-                            .or(datasetIssueOfDb.col("summery").notEqual(datasetIssue.col("summery"))
-                                    .and(datasetIssueOfDb.col("sourceId").equalTo(datasetIssueOfDb.col("sourceId"))))
-             */
+
             datasetLeftResult =
                     datasetLeftResult
-                    .join(datasetProject, datasetProject.col("sourceId").equalTo(datasetIssue.col("pid")))
-                    .select(datasetProject.col("id"),
-                            datasetIssue.col("sid"),
-                            datasetIssue.col("logId"),
-                            datasetIssue.col("sourceId"),
-                            datasetIssue.col("hid"),
-                            datasetIssue.col("type"),
-                            datasetIssue.col("name"),
-                            datasetIssue.col("summery"))
-                    .withColumnRenamed("id", "pid");
+                            .join(datasetProject, datasetProject.col("sourceId").equalTo(datasetIssue.col("pid")))
+                            .select(datasetProject.col("id"),
+                                    datasetIssue.col("sid"),
+                                    datasetIssue.col("logId"),
+                                    datasetIssue.col("sourceId"),
+                                    datasetIssue.col("hid"),
+                                    datasetIssue.col("type"),
+                                    datasetIssue.col("name"),
+                                    datasetIssue.col("summery"))
+                            .withColumnRenamed("id", "pid");
+
         }
 
         datasetLeftResult
@@ -108,4 +105,31 @@ public class IssueSparkRepository implements IRepository {
                 .mode(SaveMode.Append)
                 .jdbc(postgresProperties.getProperty("url"), "issues", postgresProperties);
     }
+
+    public Dataset<Row> getGroupedIssueMaxTimeBySourceId() {
+        return getDataset()
+                .groupBy(col("sourceId"))
+                .agg(max("createDt").as("createDt"));
+
+    }
+
+    public Dataset<Issue> getIssueWithMaxTimeBySourceId() {
+        Dataset<Row> groupedIssues = getGroupedIssueMaxTimeBySourceId();
+        Dataset<Issue> issues = getDataset();
+        return issues.join(groupedIssues,
+                        issues.col("sourceId").equalTo(groupedIssues.col("sourceId"))
+                        .and(issues.col("createDt").equalTo(groupedIssues.col("createDt"))))
+                .select(issues.col("id"),
+                        issues.col("pid"),
+                        issues.col("sid"),
+                        issues.col("logId"),
+                        issues.col("sourceId"),
+                        issues.col("hid"),
+                        issues.col("type"),
+                        issues.col("name"),
+                        issues.col("summery"),
+                        issues.col("createDt"))
+                .as(Encoders.bean(Issue.class));
+    }
+
 }

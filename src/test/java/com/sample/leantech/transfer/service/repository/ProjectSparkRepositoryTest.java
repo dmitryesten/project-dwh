@@ -43,4 +43,14 @@ class ProjectSparkRepositoryTest {
 
     }
 
+    @Test
+    public void testGroupedProject() {
+        Assertions.assertNotNull(repository.getGroupedProjectMaxTimeBySourceId());
+    }
+
+    @Test
+    public void testGetProjectsWithMaxTimeBySourceId() {
+        Assertions.assertNotNull(repository.getProjectsWithMaxTimeBySourceId());
+    }
+
 }

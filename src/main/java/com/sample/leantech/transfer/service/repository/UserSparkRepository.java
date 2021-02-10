@@ -13,6 +13,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
+import static org.apache.spark.sql.functions.col;
+import static org.apache.spark.sql.functions.max;
+
 @Repository
 public class UserSparkRepository implements IRepository{
 
@@ -61,6 +64,12 @@ public class UserSparkRepository implements IRepository{
                 .write()
                 .mode(SaveMode.Append)
                 .jdbc(postgresProperties.getProperty("url"), "users", postgresProperties);
+    }
+
+    public Dataset<Row> getGroupedProjectMaxTimeBySourceId() {
+        return getDataset()
+                .groupBy(col("sourceId"))
+                .agg(max("createDt").as("createDt"));
     }
 
 }
