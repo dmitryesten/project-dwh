@@ -1,7 +1,6 @@
 package com.sample.leantech.transfer.service.repository;
 
 import com.sample.leantech.transfer.model.db.EntityDB;
-import com.sample.leantech.transfer.model.db.Issue;
 import com.sample.leantech.transfer.model.db.Project;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.sql.*;
@@ -45,7 +44,7 @@ public class ProjectSparkRepository implements IRepository{
     @Override
     public void save(Collection<? extends EntityDB> entities) {
         Dataset<Project> datasetProject = sparkSession.createDataset((List<Project>) entities, Encoders.bean(Project.class));
-        Dataset<Project> datasetOfDb = getProjectsWithMaxTimeBySourceId();
+        Dataset<Project> datasetOfDb = getProjectsWithMaxLogIdBySourceId();
         Dataset<Row> datasetLeftResult;
 
         if(datasetOfDb.isEmpty()) {
@@ -71,18 +70,18 @@ public class ProjectSparkRepository implements IRepository{
                 .jdbc(postgresProperties.getProperty("url"), "projects", postgresProperties);
     }
 
-    public Dataset<Row> getGroupedProjectMaxTimeBySourceId() {
+    public Dataset<Row> getGroupedProjectMaxLogIdBySourceId() {
         return getDataset()
                 .groupBy(col("sourceId"))
-                .agg(max("createDt").as("createDt"));
+                .agg(max("logId").as("logId"));
     }
 
-    public Dataset<Project> getProjectsWithMaxTimeBySourceId() {
-        Dataset<Row> groupedProject = getGroupedProjectMaxTimeBySourceId();
+    public Dataset<Project> getProjectsWithMaxLogIdBySourceId() {
+        Dataset<Row> groupedProject = getGroupedProjectMaxLogIdBySourceId();
         Dataset<Project> datasetProject = getDataset();
         return datasetProject.join(groupedProject,
                 datasetProject.col("sourceId").equalTo(groupedProject.col("sourceId"))
-                        .and(datasetProject.col("createDt").equalTo(groupedProject.col("createDt"))))
+                        .and(datasetProject.col("logId").equalTo(groupedProject.col("logId"))))
                 .select(datasetProject.col("id"),
                         datasetProject.col("sid"),
                         datasetProject.col("logId"),

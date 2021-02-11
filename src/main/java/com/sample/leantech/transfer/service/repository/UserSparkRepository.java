@@ -41,15 +41,16 @@ public class UserSparkRepository implements IRepository{
     public void save(Collection<? extends EntityDB> entities) {
         List<User> listUserOfResourceData = (List<User>) entities;
         Dataset<User> datasetUsers = sparkSession.createDataset(listUserOfResourceData, Encoders.bean(User.class));
-        Dataset<User> getDatasetOfDb = getDataset();
+        Dataset<User> getDatasetOfDb = getUserWithMaxLogIdBySourceId();
         Dataset<Row> datasetLeftResult;
 
         if(getDatasetOfDb.isEmpty()){
             datasetLeftResult = datasetUsers.toDF();
         } else {
             datasetLeftResult = datasetUsers
-                    .join(getDatasetOfDb, getDatasetOfDb.col("name").equalTo(datasetUsers.col("name")), "left")
-                    .where(getDatasetOfDb.col("name").isNull())
+                    .join(getDatasetOfDb, getDatasetOfDb.col("key").equalTo(datasetUsers.col("key")), "left")
+                    .where( (getDatasetOfDb.col("key").isNull())
+                            .or(getDatasetOfDb.col("name").notEqual(datasetUsers.col("name"))))
                     .select(datasetUsers.col("key"),
                             datasetUsers.col("logId"),
                             datasetUsers.col("name"));
@@ -64,10 +65,23 @@ public class UserSparkRepository implements IRepository{
                 .jdbc(postgresProperties.getProperty("url"), "users", postgresProperties);
     }
 
-    public Dataset<Row> getGroupedProjectMaxTimeBySourceId() {
+    public Dataset<Row> getGroupedUserMaxLogIdByKey() {
         return getDataset()
-                .groupBy(col("sourceId"))
-                .agg(max("createDt").as("createDt"));
+                .groupBy(col("key"))
+                .agg(max("logId").as("logId"));
+    }
+
+    public Dataset<User> getUserWithMaxLogIdBySourceId() {
+        Dataset<Row> groupedProject = getGroupedUserMaxLogIdByKey();
+        Dataset<User> datasetProject = getDataset();
+        return datasetProject.join(groupedProject,
+                datasetProject.col("key").equalTo(groupedProject.col("key"))
+                        .and(datasetProject.col("logId").equalTo(groupedProject.col("logId"))))
+                .select(datasetProject.col("id"),
+                        datasetProject.col("key"),
+                        datasetProject.col("logId"),
+                        datasetProject.col("name"))
+                .as(Encoders.bean(User.class));
     }
 
 }

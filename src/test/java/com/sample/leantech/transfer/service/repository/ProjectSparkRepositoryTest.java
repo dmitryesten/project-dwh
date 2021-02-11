@@ -42,12 +42,12 @@ class ProjectSparkRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void testGroupedProject() {
-        Assertions.assertNotNull(repository.getGroupedProjectMaxTimeBySourceId());
+        Assertions.assertNotNull(repository.getGroupedProjectMaxLogIdBySourceId());
     }
 
     @Test
     public void testGetProjectsWithMaxTimeBySourceId() {
-        Assertions.assertNotNull(repository.getProjectsWithMaxTimeBySourceId());
+        Assertions.assertNotNull(repository.getProjectsWithMaxLogIdBySourceId());
     }
 
 }

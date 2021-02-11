@@ -3,6 +3,7 @@ package com.sample.leantech.transfer.service.repository;
 import com.sample.leantech.transfer.model.db.User;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,21 +27,12 @@ class UserSparkRepositoryTest extends AbstractRepositoryTest {
             user.setLogId(null);
             user.setName("Name-Key-000");
 
-        List<User> listUser = Arrays.asList(user);
-        Dataset<User> listOfJira = sparkSession.createDataset(listUser, Encoders.bean(User.class));
-        listOfJira.show();
+        repository.save(Arrays.asList(user));
+
+        Assertions.assertNotNull(repository.get());
+
         Dataset<User> datasetOfDb =
                 sparkSession.createDataset((List<User>) repository.get(), Encoders.bean(User.class));
-        datasetOfDb.show();
-
-        listOfJira.join(datasetOfDb, "key").show();
-
-        //datasetOfJira.toDF().show();
-
-
-        //repository.save(listUser);
-
-       /* Assertions.assertNotNull(repository.get());
 
         Assertions.assertEquals(user.getName(),
                 repository.get().stream()
@@ -48,9 +40,19 @@ class UserSparkRepositoryTest extends AbstractRepositoryTest {
                         .filter(objectUser -> objectUser.getName().equals(user.getName()))
                         .findFirst().get()
                         .getName(), "Name's user values is not equals");
-       */
 
+    }
 
+    @Test
+    public void testGroupedUsers() {
+        repository.getGroupedUserMaxLogIdByKey().show();
+        Assertions.assertNotNull(repository.getGroupedUserMaxLogIdByKey());
+    }
+
+    @Test
+    public void testGetUsersWithJoinedByMaxLogid() {
+        repository.getUserWithMaxLogIdBySourceId().show();
+        Assertions.assertNotNull(repository.getGroupedUserMaxLogIdByKey());
     }
 
 }

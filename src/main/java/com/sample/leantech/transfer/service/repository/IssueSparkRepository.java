@@ -28,7 +28,7 @@ public class IssueSparkRepository implements IRepository {
     @Autowired
     ProjectSparkRepository projectSparkRepository;
 
-    public Dataset<Issue> getDataset(){
+    public Dataset<Issue> getDataset() {
         return sparkSession.read()
                 .jdbc(postgresProperties.getProperty("url"), "issues", postgresProperties)
                 .toDF()
@@ -46,7 +46,7 @@ public class IssueSparkRepository implements IRepository {
     @Override
     public void save(Collection<? extends EntityDB> entities) {
         Dataset<Issue> datasetIssue = sparkSession.createDataset((List<Issue>) entities, Encoders.bean(Issue.class));
-        Dataset<Issue> datasetIssueOfDb = getIssueWithMaxTimeBySourceId();
+        Dataset<Issue> datasetIssueOfDb = getIssueWithMaxLogIdBySourceId();
         Dataset<Project> datasetProject = projectSparkRepository.getDataset();
         Dataset<Row> datasetLeftResult;
 
@@ -106,19 +106,18 @@ public class IssueSparkRepository implements IRepository {
                 .jdbc(postgresProperties.getProperty("url"), "issues", postgresProperties);
     }
 
-    public Dataset<Row> getGroupedIssueMaxTimeBySourceId() {
+    public Dataset<Row> getGroupedIssueMaxLogIdBySourceId() {
         return getDataset()
                 .groupBy(col("sourceId"))
-                .agg(max("createDt").as("createDt"));
-
+                .agg(max("logId").as("logId"));
     }
 
-    public Dataset<Issue> getIssueWithMaxTimeBySourceId() {
-        Dataset<Row> groupedIssues = getGroupedIssueMaxTimeBySourceId();
+    public Dataset<Issue> getIssueWithMaxLogIdBySourceId() {
+        Dataset<Row> groupedIssues = getGroupedIssueMaxLogIdBySourceId();
         Dataset<Issue> issues = getDataset();
         return issues.join(groupedIssues,
                         issues.col("sourceId").equalTo(groupedIssues.col("sourceId"))
-                        .and(issues.col("createDt").equalTo(groupedIssues.col("createDt"))))
+                        .and(issues.col("logId").equalTo(groupedIssues.col("logId"))))
                 .select(issues.col("id"),
                         issues.col("pid"),
                         issues.col("sid"),

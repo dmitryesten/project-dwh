@@ -42,12 +42,14 @@ class IssueSparkRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void testGroupedIssues() {
-        Assertions.assertNotNull(repository.getGroupedIssueMaxTimeBySourceId());
+        repository.getGroupedIssueMaxLogIdBySourceId().show();
+        Assertions.assertNotNull(repository.getGroupedIssueMaxLogIdBySourceId());
     }
 
     @Test
     public void testJoinIssueAndGroupedIssue() {
-        Assertions.assertNotNull(repository.getIssueWithMaxTimeBySourceId());
+        repository.getIssueWithMaxLogIdBySourceId().show();
+        Assertions.assertNotNull(repository.getIssueWithMaxLogIdBySourceId());
     }
 
 }

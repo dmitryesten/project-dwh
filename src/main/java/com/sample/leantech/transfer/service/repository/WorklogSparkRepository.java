@@ -1,9 +1,6 @@
 package com.sample.leantech.transfer.service.repository;
 
-import com.sample.leantech.transfer.model.db.EntityDB;
-import com.sample.leantech.transfer.model.db.Issue;
-import com.sample.leantech.transfer.model.db.User;
-import com.sample.leantech.transfer.model.db.Worklog;
+import com.sample.leantech.transfer.model.db.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.sql.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +10,9 @@ import org.springframework.stereotype.Repository;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.apache.spark.sql.functions.col;
+import static org.apache.spark.sql.functions.max;
 
 @Slf4j
 @Repository
@@ -28,7 +28,7 @@ public class WorklogSparkRepository implements IRepository {
     @Autowired
     IssueSparkRepository issueSparkRepository;
 
-    public Dataset<Worklog> getDataset(){
+    public Dataset<Worklog> getDataset() {
         return sparkSession.read()
                 .jdbc(postgresProperties.getProperty("url"), "worklogs", postgresProperties)
                 .toDF()
@@ -50,7 +50,7 @@ public class WorklogSparkRepository implements IRepository {
     public void save(Collection<? extends EntityDB> entities) {
         List<Worklog> list = (List<Worklog>) entities;
         Dataset<Worklog> datasetWorklog = sparkSession.createDataset(list, Encoders.bean(Worklog.class));
-        Dataset<Worklog> datasetWorklogOfDb = getDataset();
+        Dataset<Worklog> datasetWorklogOfDb = getWorklogWithMaxLogIdBySourceId();
         Dataset<Issue> datasetIssueOfDb = issueSparkRepository.getDataset();
         Dataset<Row> datasetLeftResult;
 
@@ -70,8 +70,10 @@ public class WorklogSparkRepository implements IRepository {
             log.info("Dataset of DB is not empty");
             datasetLeftResult = datasetWorklog.join(datasetWorklogOfDb,
                     datasetWorklog.col("sourceId").equalTo(datasetWorklogOfDb.col("sourceId")), "left")
-                    .where(datasetWorklogOfDb.col("sourceId").isNull())
-                    .select(datasetWorklog.col("issueId"),
+                    .where((datasetWorklogOfDb.col("sourceId").isNull())
+                            .or(datasetWorklogOfDb.col("timeSpentSecond").notEqual(datasetWorklog.col("timeSpentSecond")))
+                            .or(datasetWorklogOfDb.col("updated").notEqual(datasetWorklog.col("updated")))
+                    ).select(datasetWorklog.col("issueId"),
                             datasetWorklog.col("logId"),
                             datasetWorklog.col("sid"),
                             datasetWorklog.col("sourceId"),
@@ -104,4 +106,29 @@ public class WorklogSparkRepository implements IRepository {
                 .mode(SaveMode.Append)
                 .jdbc(postgresProperties.getProperty("url"), "worklogs", postgresProperties);
     }
+
+    public Dataset<Row> getGroupedWorklogMaxLogIdBySourceId() {
+        return getDataset()
+                .groupBy(col("sourceId"))
+                .agg(max("logId").as("logId"));
+    }
+
+    public Dataset<Worklog> getWorklogWithMaxLogIdBySourceId() {
+        Dataset<Row> groupedWorklog = getGroupedWorklogMaxLogIdBySourceId();
+        Dataset<Worklog> datasetProject = getDataset();
+        return datasetProject.join(groupedWorklog,
+                datasetProject.col("sourceId").equalTo(groupedWorklog.col("sourceId"))
+                        .and(datasetProject.col("logId").equalTo(groupedWorklog.col("logId"))))
+                .select(datasetProject.col("id"),
+                        datasetProject.col("issueId"),
+                        datasetProject.col("logId"),
+                        datasetProject.col("sid"),
+                        datasetProject.col("sourceId"),
+                        datasetProject.col("updated"),
+                        datasetProject.col("timeSpentSecond"),
+                        datasetProject.col("username"),
+                        datasetProject.col("userId"))
+                .as(Encoders.bean(Worklog.class));
+    }
+
 }
