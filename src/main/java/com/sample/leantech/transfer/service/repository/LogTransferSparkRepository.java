@@ -1,17 +1,19 @@
 package com.sample.leantech.transfer.service.repository;
 
 import com.sample.leantech.transfer.model.db.EntityDB;
-import com.sample.leantech.transfer.model.db.Issue;
 import com.sample.leantech.transfer.model.db.LogTransfer;
 import org.apache.spark.sql.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+
+import static org.apache.spark.sql.functions.col;
+import static org.apache.spark.sql.functions.max;
 
 @Repository
 public class LogTransferSparkRepository implements IRepository {
@@ -51,6 +53,30 @@ public class LogTransferSparkRepository implements IRepository {
 
     }
 
+    protected Row getIdMaxOpenLog() {
+        return sparkSession.read()
+                .jdbc(postgresProperties.getProperty("url"), "logs", postgresProperties)
+                .toDF()
+                .withColumnRenamed("start_dt", "startDt")
+                .withColumnRenamed("end_dt", "endDt")
+                .where((col("endDt").isNull()).and(col("result").isNull()))
+                .agg(max("id")).first();
+    }
+
+    public Dataset<Row> getOpenLogTransfer() {
+        return sparkSession.read()
+                .jdbc(postgresProperties.getProperty("url"), "logs", postgresProperties)
+                .where(col("id").equalTo(getIdMaxOpenLog().get(0)));
+    }
+
+    public void closeOpenLogTransfer(LogTransfer logTransfer) {
+        Dataset<LogTransfer> datasetCloseLogTransfer = sparkSession.createDataset(Arrays.asList(logTransfer),  Encoders.bean(LogTransfer.class));
+        datasetCloseLogTransfer.select("hid", "sid", "endDt", "result")
+                .withColumnRenamed("endDt", "end_dt")
+                .write()
+                .mode(SaveMode.Append)
+                .jdbc(postgresProperties.getProperty("url"), "logs", postgresProperties);
+    }
 
 
 }

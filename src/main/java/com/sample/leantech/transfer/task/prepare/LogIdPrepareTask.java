@@ -47,7 +47,7 @@ public class LogIdPrepareTask implements PrepareTask {
         Integer currentLogId = logTransferSparkRepository.get()
                 .stream()
                 .map(LogTransfer.class::cast)
-                .filter(logTransfer -> logTransfer.getEndDt() == null)
+                .filter(logTransfer -> logTransfer.getEndDt() == null && logTransfer.getResult() == null)
                 .map(LogTransfer::getId)
                 .max(Comparator.naturalOrder())
                 .orElseThrow(() -> new IllegalStateException("Log ID not created"));

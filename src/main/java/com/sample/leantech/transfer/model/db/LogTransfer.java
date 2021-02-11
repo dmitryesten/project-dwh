@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class LogTransfer extends EntityDB {
     private Integer id;
+    private Integer hid;
     private Integer sid;
     private Timestamp startDt;
     private Timestamp endDt;

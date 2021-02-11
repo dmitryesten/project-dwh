@@ -33,12 +33,46 @@ class LogTransferSparkRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void testSave() {
-        logTransferSparkRepository.save(Arrays.asList(getTransfer()));
+        logTransferSparkRepository.save(Arrays.asList(getOpenLogTransfer()));
         logTransferSparkRepository.save(Arrays.asList(getTransferFullRow()));
         Assertions.assertNotNull(logTransferSparkRepository.get());
     }
 
-    private LogTransfer getTransfer() {
+    @Test
+    public void testGetMax() {
+        logTransferSparkRepository.getIdMaxOpenLog();
+        Assertions.assertNotNull(logTransferSparkRepository.getIdMaxOpenLog());
+    }
+
+    @Test
+    public void testGetOpenLogTransfer() {
+        logTransferSparkRepository.getOpenLogTransfer().show();
+        Assertions.assertNotNull(logTransferSparkRepository.getOpenLogTransfer());
+    }
+
+    @Test
+    public void closeLog(){
+        LogTransfer openLogTransfer = getOpenLogTransfer();
+        logTransferSparkRepository.save(Arrays.asList(openLogTransfer));
+
+        LogTransfer closeLogTransfer = new LogTransfer();
+            Integer hid = logTransferSparkRepository.getIdMaxOpenLog().getInt(0);
+            closeLogTransfer.setHid(hid);
+            closeLogTransfer.setEndDt(Timestamp.from(Instant.now()));
+            closeLogTransfer.setSid(1);
+            closeLogTransfer.setResult(true);
+
+        logTransferSparkRepository.closeOpenLogTransfer(closeLogTransfer);
+
+        Assertions.assertNotNull(hid);
+    }
+
+    @Test
+    public void test2() {
+        System.out.println(logTransferSparkRepository.getIdMaxOpenLog().getInt(0));
+    }
+
+    private LogTransfer getOpenLogTransfer() {
         LogTransfer logTransfer = new LogTransfer();
         logTransfer.setSid(getIdCreatedTestSource());
         logTransfer.setStartDt(Timestamp.from(Instant.now()));
