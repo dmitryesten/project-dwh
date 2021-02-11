@@ -34,7 +34,7 @@ public class LogCloseLoadTask implements LoadTask {
             closeLogTransfer.setEndDt(Timestamp.from(Instant.now()));
             closeLogTransfer.setResult(true);
             logTransferSparkRepository.closeOpenLogTransfer(closeLogTransfer);
-        } catch (Exception e){
+        } catch (Exception e) {
             closeLogTransfer.setEndDt(Timestamp.from(Instant.now()));
             closeLogTransfer.setResult(false);
             logTransferSparkRepository.closeOpenLogTransfer(closeLogTransfer);
