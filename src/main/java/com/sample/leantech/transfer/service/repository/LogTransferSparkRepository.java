@@ -69,14 +69,14 @@ public class LogTransferSparkRepository implements IRepository {
                 .where(col("id").equalTo(getIdMaxOpenLog().get(0)));
     }
 
-    public void closeOpenLogTransfer(LogTransfer logTransfer) {
-        Dataset<LogTransfer> datasetCloseLogTransfer = sparkSession.createDataset(Arrays.asList(logTransfer),  Encoders.bean(LogTransfer.class));
+    public void closeOpenedLogTransfer(LogTransfer logTransfer) {
+        Dataset<LogTransfer> datasetCloseLogTransfer = sparkSession.createDataset(List.of(logTransfer),
+                Encoders.bean(LogTransfer.class));
         datasetCloseLogTransfer.select("hid", "sid", "endDt", "result")
                 .withColumnRenamed("endDt", "end_dt")
                 .write()
                 .mode(SaveMode.Append)
                 .jdbc(postgresProperties.getProperty("url"), "logs", postgresProperties);
     }
-
 
 }

@@ -56,32 +56,50 @@ public abstract class TransferService<T extends TransferContext> {
     abstract T transferContext(Source source);
 
     void prepareData(T ctx) {
-        prepareTasks.forEach(task -> task.prepare(ctx));
+        try {
+            prepareTasks.forEach(task -> task.prepare(ctx));
+        } catch (Exception e) {
+            onError(ctx, e, "Prepare");
+        }
     }
 
     void extractData(T ctx) {
-        extractTasks.stream()
-                .filter(task -> task.source() == ctx.getSource())
-                .forEach(task -> task.extract(ctx));
+        try {
+            extractTasks.stream()
+                    .filter(task -> task.source() == ctx.getSource())
+                    .forEach(task -> task.extract(ctx));
+        } catch (Exception e) {
+            onError(ctx, e, "Extract");
+        }
     }
 
     void transformData(T ctx) {
-        transformTasks.stream()
-                .filter(task -> task.source() == ctx.getSource())
-                .forEach(task -> task.transform(ctx));
+        try {
+            transformTasks.stream()
+                    .filter(task -> task.source() == ctx.getSource())
+                    .forEach(task -> task.transform(ctx));
+        } catch (Exception e) {
+            onError(ctx, e, "Transform");
+        }
     }
 
     void loadData(T ctx) {
         try {
             loadTasks.forEach(task -> task.load(ctx));
         } catch (Exception e) {
-            LogTransfer closeFailLogTransfer = new LogTransfer();
-            closeFailLogTransfer.setHid(ctx.getLogInfo().getLogId());
-            closeFailLogTransfer.setEndDt(Timestamp.from(Instant.now()));
-            closeFailLogTransfer.setResult(false);
-
-            logTransferSparkRepository.closeOpenLogTransfer(closeFailLogTransfer);
+            onError(ctx, e, "Load");
         }
+    }
+
+    private void onError(T ctx, Exception ex, String code) {
+        // TODO: use exception and code to save error details (what happened and when)
+        // TODO: use enum with code
+        // TODO: is SID necessary?
+        LogTransfer closeFailLogTransfer = new LogTransfer();
+        closeFailLogTransfer.setHid(ctx.getLogInfo().getLogId());
+        closeFailLogTransfer.setEndDt(Timestamp.from(Instant.now()));
+        closeFailLogTransfer.setResult(false);
+        logTransferSparkRepository.closeOpenedLogTransfer(closeFailLogTransfer);
     }
 
 }

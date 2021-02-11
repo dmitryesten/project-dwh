@@ -2,7 +2,6 @@ package com.sample.leantech.transfer.task.load;
 
 import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.db.LogTransfer;
-import com.sample.leantech.transfer.service.repository.IRepository;
 import com.sample.leantech.transfer.service.repository.LogTransferSparkRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,19 +26,11 @@ public class LogCloseLoadTask implements LoadTask {
     @Override
     public void load(TransferContext ctx) {
         LogTransfer closeLogTransfer = new LogTransfer();
-            closeLogTransfer.setHid(ctx.getLogInfo().getLogId());
-            closeLogTransfer.setSid(ctx.getSource().getValue());
-
-        try {
-            closeLogTransfer.setEndDt(Timestamp.from(Instant.now()));
-            closeLogTransfer.setResult(true);
-            logTransferSparkRepository.closeOpenLogTransfer(closeLogTransfer);
-        } catch (Exception e) {
-            closeLogTransfer.setEndDt(Timestamp.from(Instant.now()));
-            closeLogTransfer.setResult(false);
-            logTransferSparkRepository.closeOpenLogTransfer(closeLogTransfer);
-        }
-
+        closeLogTransfer.setHid(ctx.getLogInfo().getLogId());
+        closeLogTransfer.setSid(ctx.getSource().getValue());
+        closeLogTransfer.setEndDt(Timestamp.from(Instant.now()));
+        closeLogTransfer.setResult(true);
+        logTransferSparkRepository.closeOpenedLogTransfer(closeLogTransfer);
     }
 
 }

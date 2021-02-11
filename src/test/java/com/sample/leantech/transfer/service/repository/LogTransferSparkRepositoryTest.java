@@ -56,13 +56,13 @@ class LogTransferSparkRepositoryTest extends AbstractRepositoryTest {
         logTransferSparkRepository.save(Arrays.asList(openLogTransfer));
 
         LogTransfer closeLogTransfer = new LogTransfer();
-            Integer hid = logTransferSparkRepository.getIdMaxOpenLog().getInt(0);
-            closeLogTransfer.setHid(hid);
-            closeLogTransfer.setEndDt(Timestamp.from(Instant.now()));
-            closeLogTransfer.setSid(1);
-            closeLogTransfer.setResult(true);
+        Integer hid = logTransferSparkRepository.getIdMaxOpenLog().getInt(0);
+        closeLogTransfer.setHid(hid);
+        closeLogTransfer.setEndDt(Timestamp.from(Instant.now()));
+        closeLogTransfer.setSid(1);
+        closeLogTransfer.setResult(true);
 
-        logTransferSparkRepository.closeOpenLogTransfer(closeLogTransfer);
+        logTransferSparkRepository.closeOpenedLogTransfer(closeLogTransfer);
 
         Assertions.assertNotNull(hid);
     }
