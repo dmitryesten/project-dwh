@@ -2,13 +2,18 @@ package com.sample.leantech.transfer.service.jira;
 
 import com.sample.leantech.transfer.model.context.Source;
 import com.sample.leantech.transfer.model.context.TransferContext;
+import com.sample.leantech.transfer.model.db.LogTransfer;
+import com.sample.leantech.transfer.service.repository.LogTransferSparkRepository;
 import com.sample.leantech.transfer.task.extract.ExtractTask;
 import com.sample.leantech.transfer.task.load.LoadTask;
 import com.sample.leantech.transfer.task.prepare.PrepareTask;
 import com.sample.leantech.transfer.task.transform.TransformTask;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,6 +26,9 @@ public abstract class TransferService<T extends TransferContext> {
     private final List<ExtractTask<T>> extractTasks;
     private final List<TransformTask<T>> transformTasks;
     private final List<LoadTask> loadTasks;
+
+    @Autowired
+    private LogTransferSparkRepository logTransferSparkRepository;
 
     // TODO: fix
     private final Map<Source, Boolean> workStatuses = new ConcurrentHashMap<>();
@@ -64,7 +72,16 @@ public abstract class TransferService<T extends TransferContext> {
     }
 
     void loadData(T ctx) {
-        loadTasks.forEach(task -> task.load(ctx));
+        try {
+            loadTasks.forEach(task -> task.load(ctx));
+        } catch (Exception e) {
+            LogTransfer closeFailLogTransfer = new LogTransfer();
+            closeFailLogTransfer.setHid(ctx.getLogInfo().getLogId());
+            closeFailLogTransfer.setEndDt(Timestamp.from(Instant.now()));
+            closeFailLogTransfer.setResult(false);
+
+            logTransferSparkRepository.closeOpenLogTransfer(closeFailLogTransfer);
+        }
     }
 
 }
