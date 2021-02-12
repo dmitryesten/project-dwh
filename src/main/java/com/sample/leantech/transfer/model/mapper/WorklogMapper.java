@@ -8,11 +8,11 @@ import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(uses = ConvertMapper.class)
-public abstract class WorklogMapper {
+public interface WorklogMapper {
 
-    public static WorklogMapper INSTANCE = Mappers.getMapper(WorklogMapper.class);
+    WorklogMapper INSTANCE = Mappers.getMapper(WorklogMapper.class);
 
-    private static final String KEY_STRING_PART_REGEX = "[^\\d]";
+    UserMapper USER_MAPPER = Mappers.getMapper(UserMapper.class);
 
     @Mappings({
             @Mapping(target = "id", ignore = true),
@@ -21,15 +21,14 @@ public abstract class WorklogMapper {
             @Mapping(target = "updated", source = "jiraWorklogDto.updated"),
             @Mapping(target = "timeSpentSecond", source = "jiraWorklogDto.timeSpentSeconds")
     })
-    public abstract Worklog dtoToModel(JiraWorklogDto jiraWorklogDto, @Context TransferContext ctx);
+    Worklog dtoToModel(JiraWorklogDto jiraWorklogDto, @Context TransferContext ctx);
 
     @AfterMapping
-    void afterDtoToModel(JiraWorklogDto source, @MappingTarget Worklog target, @Context TransferContext ctx) {
+    default void afterDtoToModel(JiraWorklogDto source, @MappingTarget Worklog target, @Context TransferContext ctx) {
         JiraUserDto jiraUserDto = source.getUpdateAuthor();
         if (jiraUserDto != null) {
-            // Keys have "JIRAUSER10901" format
-            String userId = jiraUserDto.getKey().replaceAll(KEY_STRING_PART_REGEX, "");
-            target.setUserId(Integer.valueOf(userId));
+            String userKey = USER_MAPPER.truncatedUserKey(jiraUserDto.getKey());
+            target.setUserId(Integer.valueOf(userKey));
         }
         if (ctx != null) {
             target.setSid(ctx.getSource().getValue());
