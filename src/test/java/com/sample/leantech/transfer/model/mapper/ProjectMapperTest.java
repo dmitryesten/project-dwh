@@ -3,39 +3,32 @@ package com.sample.leantech.transfer.model.mapper;
 import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.db.Project;
 import com.sample.leantech.transfer.model.dto.request.JiraProjectDto;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class ProjectMapperTest extends AbstractMapperTest {
 
     @Test
-    public void test(){
-        JiraProjectDto jiraProjectDtoTest = jiraProjectDto();
-        List<JiraProjectDto> projects = Arrays.asList(jiraProjectDtoTest);
+    public void testDtoToModel() {
+        JiraProjectDto projectDto = jiraProjectDto();
         TransferContext ctx = transferContext();
-        List<Project> listProjectConverted = projects
-                .stream()
-                .map(project -> ProjectMapper.INSTANCE.dtoToModel(project, ctx))
-                .collect(Collectors.toList());
 
-        Assertions.assertEquals(1, listProjectConverted.size());
-        Assertions.assertEquals(jiraProjectDtoTest.getName(),
-                listProjectConverted.stream()
-                        .filter(s -> s.getName().equals(jiraProjectDtoTest.getName()))
-                        .findFirst().get().getName());
+        Project project = ProjectMapper.INSTANCE.dtoToModel(projectDto, ctx);
 
+        assertThat(project.getId()).isNull();
+        assertThat(project.getSid()).isEqualTo(ctx.getSource().getValue());
+        assertThat(project.getLogId()).isEqualTo(ctx.getLogInfo().getLogId());
+        assertThat(project.getSourceId()).isEqualTo(Integer.valueOf(projectDto.getId()));
+        assertThat(project.getName()).isEqualTo(projectDto.getName());
     }
 
     private JiraProjectDto jiraProjectDto(){
         JiraProjectDto dto = new JiraProjectDto();
-        dto.setName("Test_jira-Project");
         dto.setId("123");
+        dto.setName("Test_jira-Project");
         return dto;
     }
 

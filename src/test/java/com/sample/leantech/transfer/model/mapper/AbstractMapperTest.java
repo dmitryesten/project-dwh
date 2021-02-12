@@ -8,9 +8,11 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles(value = {"tests", "default"})
 public abstract class AbstractMapperTest {
 
+    static final Integer LOG_ID = 1;
+
     TransferContext transferContext() {
         TransferContext ctx = new JiraTransferContext(Source.JIRA);
-        ctx.getLogInfo().setLogId(1);
+        ctx.getLogInfo().setLogId(LOG_ID);
         return ctx;
     }
 
