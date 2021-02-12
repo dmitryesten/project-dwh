@@ -8,9 +8,11 @@ import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(uses = ConvertMapper.class)
-public interface WorklogMapper {
+public abstract class WorklogMapper {
 
-    WorklogMapper INSTANCE = Mappers.getMapper(WorklogMapper.class);
+    public static WorklogMapper INSTANCE = Mappers.getMapper(WorklogMapper.class);
+
+    private static final String KEY_STRING_PART = "JIRAUSER";
 
     @Mappings({
             @Mapping(target = "id", ignore = true),
@@ -19,15 +21,15 @@ public interface WorklogMapper {
             @Mapping(target = "updated", source = "jiraWorklogDto.updated"),
             @Mapping(target = "timeSpentSecond", source = "jiraWorklogDto.timeSpentSeconds")
     })
-    Worklog dtoToModel(JiraWorklogDto jiraWorklogDto, @Context TransferContext ctx);
+    public abstract Worklog dtoToModel(JiraWorklogDto jiraWorklogDto, @Context TransferContext ctx);
 
     @AfterMapping
-    default void afterDtoToModel(JiraWorklogDto source, @MappingTarget Worklog target, @Context TransferContext ctx) {
+    void afterDtoToModel(JiraWorklogDto source, @MappingTarget Worklog target, @Context TransferContext ctx) {
         JiraUserDto jiraUserDto = source.getUpdateAuthor();
         if (jiraUserDto != null) {
-            // TODO: keys have non-Integer values ("JIRAUSER10901" format)
-            // TODO: change column type or remove non-Integer part of key
-            target.setUserId(Integer.valueOf(jiraUserDto.getKey()));
+            // Keys have "JIRAUSER10901" format
+            String userId = jiraUserDto.getKey().replace(KEY_STRING_PART, "").trim();
+            target.setUserId(Integer.valueOf(userId));
         }
         if (ctx != null) {
             target.setSid(ctx.getSource().getValue());
