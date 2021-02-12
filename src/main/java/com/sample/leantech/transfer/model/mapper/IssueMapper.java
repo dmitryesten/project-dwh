@@ -9,7 +9,7 @@ import org.mapstruct.factory.Mappers;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-@Mapper
+@Mapper(uses = ConvertMapper.class)
 public interface IssueMapper {
 
     IssueMapper INSTANCE = Mappers.getMapper(IssueMapper.class);
