@@ -15,9 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class WorklogMapperTest extends AbstractMapperTest {
 
-    private static final String JIRA_USER = "JIRAUSER";
-    private static final String USER_ID = "10001";
-
     @Test
     public void testDtoToModel() {
         JiraWorklogDto worklogDto = jiraWorklogDto();
@@ -48,7 +45,7 @@ class WorklogMapperTest extends AbstractMapperTest {
 
     private JiraUserDto jiraUserDto() {
         JiraUserDto dto = new JiraUserDto();
-        dto.setKey(JIRA_USER + USER_ID);
+        dto.setKey(JIRA_USER_PREFIX + USER_ID);
         dto.setName("Name-Test-1");
         return dto;
     }

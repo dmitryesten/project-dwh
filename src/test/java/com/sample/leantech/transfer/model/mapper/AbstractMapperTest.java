@@ -9,6 +9,8 @@ import org.springframework.test.context.ActiveProfiles;
 public abstract class AbstractMapperTest {
 
     static final Integer LOG_ID = 1;
+    static final String JIRA_USER_PREFIX = "JIRAUSER";
+    static final String USER_ID = "10001";
 
     TransferContext transferContext() {
         TransferContext ctx = new JiraTransferContext(Source.JIRA);
