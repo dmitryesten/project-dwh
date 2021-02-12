@@ -3,6 +3,7 @@ package com.sample.leantech.transfer.service.repository;
 import com.sample.leantech.transfer.model.db.User;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
+import org.apache.spark.sql.Row;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,6 +54,12 @@ class UserSparkRepositoryTest extends AbstractRepositoryTest {
     public void testGetUsersWithJoinedByMaxLogid() {
         repository.getUserWithMaxLogIdBySourceId().show();
         Assertions.assertNotNull(repository.getGroupedUserMaxLogIdByKey());
+    }
+
+    @Test
+    public void testGetUserById() {
+        Row row = repository.getUserByKey("JIRAUSER10909");
+        Assertions.assertNotNull(row.get(0));
     }
 
 }

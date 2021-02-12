@@ -66,4 +66,9 @@ class WorklogSparkRepositoryTest extends AbstractRepositoryTest {
         Assertions.assertNotNull(repository.getWorklogWithMaxLogIdBySourceId());
     }
 
+    @Test
+    public void testWorklog(){
+
+    }
+
 }

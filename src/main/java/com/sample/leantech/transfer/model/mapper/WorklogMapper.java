@@ -17,6 +17,7 @@ public interface WorklogMapper {
             @Mapping(target = "sourceId", source = "jiraWorklogDto.id"),
             @Mapping(target = "updated", source = "jiraWorklogDto.updated"),
             @Mapping(target = "timeSpentSecond", source = "jiraWorklogDto.timeSpentSeconds")
+            //@Mapping(target = "userKey", source = "jiraWorklogDto.updateAuthor.key")
     })
     Worklog dtoToModel(JiraWorklogDto jiraWorklogDto, @Context TransferContext ctx);
 

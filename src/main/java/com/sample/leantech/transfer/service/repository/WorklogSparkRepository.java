@@ -73,7 +73,9 @@ public class WorklogSparkRepository implements IRepository {
                     .where((datasetWorklogOfDb.col("sourceId").isNull())
                             .or(datasetWorklogOfDb.col("timeSpentSecond").notEqual(datasetWorklog.col("timeSpentSecond")))
                             .or(datasetWorklogOfDb.col("updated").notEqual(datasetWorklog.col("updated")))
-                    ).select(datasetWorklog.col("issueId"),
+
+                    )
+                    .select(datasetWorklog.col("issueId"),
                             datasetWorklog.col("logId"),
                             datasetWorklog.col("sid"),
                             datasetWorklog.col("sourceId"),

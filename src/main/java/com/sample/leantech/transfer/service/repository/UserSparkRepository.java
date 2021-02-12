@@ -84,4 +84,11 @@ public class UserSparkRepository implements IRepository{
                 .as(Encoders.bean(User.class));
     }
 
+    public Row getUserByKey(String userKey) {
+        return sparkSession.read()
+                .jdbc(postgresProperties.getProperty("url"), "users", postgresProperties)
+                .where(col("key").equalTo(userKey))
+                .first();
+    }
+
 }

@@ -24,6 +24,16 @@ class WorklogMapperTest extends AbstractMapperTest {
         Assertions.assertEquals(jiraWorklogDto.getUpdated().toInstant(), worklog.getUpdated().toInstant());
     }
 
+    @Test
+    public void testMappingJira() {
+        JiraWorklogDto jiraWorklogDto = worklogDto();
+        TransferContext ctx = transferContext();
+        Worklog worklog = WorklogMapper.INSTANCE.dtoToModel(jiraWorklogDto, ctx);
+
+        Assertions.assertNotNull(worklog);
+        //Assertions.assertEquals(jiraWorklogDto.getUpdateAuthor().getKey(), worklog.getUserKey());
+    }
+
     private JiraWorklogDto worklogDto(){
         JiraWorklogDto jiraWorklogDto = new JiraWorklogDto();
         jiraWorklogDto.setId("123");
