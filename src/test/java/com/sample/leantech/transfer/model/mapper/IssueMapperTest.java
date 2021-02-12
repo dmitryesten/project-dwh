@@ -54,33 +54,4 @@ class IssueMapperTest extends AbstractMapperTest {
         assertThat(issue.getHid()).isEqualTo(Integer.valueOf(issueDto.getFields().getParent().getId()));
     }
 
-    private JiraIssueDto jiraIssueDto() {
-        JiraIssueDto dto = new JiraIssueDto();
-        dto.setId("1400");
-        dto.setKey("Key-123-test");
-
-        JiraIssueDto.Fields fields = new JiraIssueDto.Fields();
-        fields.setSummary("Test-Summery");
-
-        JiraIssueDto.Fields.IssueType issueType = new JiraIssueDto.Fields.IssueType();
-        issueType.setName("Test-Issue-Type");
-        fields.setIssuetype(issueType);
-
-        JiraIssueDto.Fields.Parent project = new JiraIssueDto.Fields.Parent();
-        project.setId("10001");
-        fields.setProject(project);
-
-        JiraIssueDto.Fields.Parent epic = new JiraIssueDto.Fields.Parent();
-        epic.setId("10002");
-        fields.setEpic(epic);
-
-        JiraIssueDto.Fields.Parent parent = new JiraIssueDto.Fields.Parent();
-        parent.setId("10003");
-        fields.setParent(parent);
-
-        dto.setFields(fields);
-
-        return dto;
-    }
-
 }

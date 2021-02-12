@@ -24,11 +24,4 @@ class UserMapperTest extends AbstractMapperTest {
         assertThat(user.getName()).isEqualTo(userDto.getName());
     }
 
-    private JiraUserDto jiraUserDto(){
-        JiraUserDto dto = new JiraUserDto();
-        dto.setKey(JIRA_USER_PREFIX + USER_ID);
-        dto.setName("Name-Test-1");
-        return dto;
-    }
-
 }

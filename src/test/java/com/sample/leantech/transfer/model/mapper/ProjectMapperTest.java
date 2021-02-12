@@ -25,11 +25,4 @@ class ProjectMapperTest extends AbstractMapperTest {
         assertThat(project.getName()).isEqualTo(projectDto.getName());
     }
 
-    private JiraProjectDto jiraProjectDto(){
-        JiraProjectDto dto = new JiraProjectDto();
-        dto.setId("123");
-        dto.setName("Test_jira-Project");
-        return dto;
-    }
-
 }

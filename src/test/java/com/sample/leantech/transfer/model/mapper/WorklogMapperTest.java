@@ -2,13 +2,11 @@ package com.sample.leantech.transfer.model.mapper;
 
 import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.db.Worklog;
-import com.sample.leantech.transfer.model.dto.request.JiraUserDto;
 import com.sample.leantech.transfer.model.dto.request.JiraWorklogDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.Timestamp;
-import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,23 +29,6 @@ class WorklogMapperTest extends AbstractMapperTest {
         assertThat(worklog.getTimeSpentSecond()).isEqualTo(worklogDto.getTimeSpentSeconds().intValue());
         assertThat(worklog.getUsername()).isNull();
         assertThat(worklog.getUserId()).isEqualTo(Integer.valueOf(USER_ID));
-    }
-
-    private JiraWorklogDto jiraWorklogDto() {
-        JiraWorklogDto dto = new JiraWorklogDto();
-        dto.setId("123");
-        dto.setIssueId("444");
-        dto.setTimeSpentSeconds(202L);
-        dto.setUpdateAuthor(jiraUserDto());
-        dto.setUpdated(ZonedDateTime.now());
-        return dto;
-    }
-
-    private JiraUserDto jiraUserDto() {
-        JiraUserDto dto = new JiraUserDto();
-        dto.setKey(JIRA_USER_PREFIX + USER_ID);
-        dto.setName("Name-Test-1");
-        return dto;
     }
 
 }
