@@ -28,7 +28,7 @@ public abstract class WorklogMapper {
         JiraUserDto jiraUserDto = source.getUpdateAuthor();
         if (jiraUserDto != null) {
             // Keys have "JIRAUSER10901" format
-            String userId = jiraUserDto.getKey().replaceAll(KEY_STRING_PART_REGEX, "").trim();
+            String userId = jiraUserDto.getKey().replaceAll(KEY_STRING_PART_REGEX, "");
             target.setUserId(Integer.valueOf(userId));
         }
         if (ctx != null) {
