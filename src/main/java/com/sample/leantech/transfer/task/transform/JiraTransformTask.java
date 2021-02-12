@@ -5,14 +5,17 @@ import com.sample.leantech.transfer.model.db.Issue;
 import com.sample.leantech.transfer.model.db.Project;
 import com.sample.leantech.transfer.model.db.User;
 import com.sample.leantech.transfer.model.db.Worklog;
+import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
 import com.sample.leantech.transfer.model.mapper.IssueMapper;
 import com.sample.leantech.transfer.model.mapper.ProjectMapper;
 import com.sample.leantech.transfer.model.mapper.UserMapper;
 import com.sample.leantech.transfer.model.mapper.WorklogMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component("jiraTransformTask")
 public class JiraTransformTask implements TransformTask<JiraTransferContext> {
@@ -40,9 +43,11 @@ public class JiraTransformTask implements TransformTask<JiraTransferContext> {
     }
 
     private void transformIssues(JiraTransferContext ctx) {
-        List<Issue> issues = ctx.getJiraResult()
-                .getIssues()
-                .stream()
+        List<Issue> issues = Stream.<List<JiraIssueDto>>builder()
+                .add(ctx.getJiraResult().getEpics())
+                .add(ctx.getJiraResult().getIssues())
+                .build()
+                .flatMap(Collection::stream)
                 .map(issue -> IssueMapper.INSTANCE.dtoToModel(issue, ctx))
                 .collect(Collectors.toList());
         ctx.getDatabaseModel().getIssues().addAll(issues);
