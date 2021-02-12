@@ -12,7 +12,7 @@ public abstract class WorklogMapper {
 
     public static WorklogMapper INSTANCE = Mappers.getMapper(WorklogMapper.class);
 
-    private static final String KEY_STRING_PART = "JIRAUSER";
+    private static final String KEY_STRING_PART_REGEX = "[^\\d]";
 
     @Mappings({
             @Mapping(target = "id", ignore = true),
@@ -28,7 +28,7 @@ public abstract class WorklogMapper {
         JiraUserDto jiraUserDto = source.getUpdateAuthor();
         if (jiraUserDto != null) {
             // Keys have "JIRAUSER10901" format
-            String userId = jiraUserDto.getKey().replace(KEY_STRING_PART, "").trim();
+            String userId = jiraUserDto.getKey().replaceAll(KEY_STRING_PART_REGEX, "").trim();
             target.setUserId(Integer.valueOf(userId));
         }
         if (ctx != null) {
