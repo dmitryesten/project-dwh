@@ -2,7 +2,6 @@ package com.sample.leantech.transfer.service.repository;
 
 import com.sample.leantech.transfer.model.db.EntityDB;
 import com.sample.leantech.transfer.model.db.Issue;
-import com.sample.leantech.transfer.model.db.User;
 import com.sample.leantech.transfer.model.db.Worklog;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.sql.*;
@@ -10,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -104,4 +101,5 @@ public class WorklogSparkRepository implements IRepository {
                 .mode(SaveMode.Append)
                 .jdbc(postgresProperties.getProperty("url"), "worklogs", postgresProperties);
     }
+
 }

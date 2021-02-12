@@ -6,23 +6,31 @@ import com.sample.leantech.transfer.model.dto.request.JiraUserDto;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
-public interface UserMapper {
+@Mapper(uses = ConvertMapper.class)
+public abstract class UserMapper {
 
-    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+    public static UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+
+    private static final String USER_KEY_STRING_PART_REGEX = "[^\\d]";
 
     @Mappings({
             @Mapping(target = "id", ignore = true),
-            @Mapping(target = "key", source = "jiraUserDto.key"),
+            @Mapping(target = "key", ignore = true),
             @Mapping(target = "name", source = "jiraUserDto.name")
     })
-    User dtoToModel(JiraUserDto jiraUserDto, @Context TransferContext ctx);
+    public abstract User dtoToModel(JiraUserDto jiraUserDto, @Context TransferContext ctx);
 
     @AfterMapping
-    default void afterDtoToModel(JiraUserDto source, @MappingTarget User target, @Context TransferContext ctx) {
+    void afterDtoToModel(JiraUserDto source, @MappingTarget User target, @Context TransferContext ctx) {
+        target.setKey(truncatedUserKey(source.getKey()));
         if (ctx != null) {
             target.setLogId(ctx.getLogInfo().getLogId());
         }
+    }
+
+    String truncatedUserKey(String userKey) {
+        // Keys have "JIRAUSER10001" format
+        return userKey.replaceAll(USER_KEY_STRING_PART_REGEX, "");
     }
 
 }
