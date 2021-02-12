@@ -15,6 +15,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class WorklogMapperTest extends AbstractMapperTest {
 
+    private static final String JIRA_USER = "JIRAUSER";
+    private static final String USER_ID = "10001";
+
     @Test
     public void testDtoToModel() {
         JiraWorklogDto worklogDto = jiraWorklogDto();
@@ -30,7 +33,7 @@ class WorklogMapperTest extends AbstractMapperTest {
         assertThat(worklog.getUpdated()).isEqualTo(Timestamp.valueOf(worklogDto.getUpdated().toLocalDateTime()));
         assertThat(worklog.getTimeSpentSecond()).isEqualTo(worklogDto.getTimeSpentSeconds().intValue());
         assertThat(worklog.getUsername()).isNull();
-        assertThat(worklog.getUserId()).isEqualTo(Integer.valueOf(worklogDto.getUpdateAuthor().getKey()));
+        assertThat(worklog.getUserId()).isEqualTo(Integer.valueOf(USER_ID));
     }
 
     private JiraWorklogDto jiraWorklogDto() {
@@ -45,7 +48,7 @@ class WorklogMapperTest extends AbstractMapperTest {
 
     private JiraUserDto jiraUserDto() {
         JiraUserDto dto = new JiraUserDto();
-        dto.setKey("10001");
+        dto.setKey(JIRA_USER + USER_ID);
         dto.setName("Name-Test-1");
         return dto;
     }
