@@ -29,7 +29,7 @@ public abstract class UserMapper {
     }
 
     String truncatedUserKey(String userKey) {
-        // Keys have "JIRAUSER10901" format
+        // Keys have "JIRAUSER10001" format
         return userKey.replaceAll(USER_KEY_STRING_PART_REGEX, "");
     }
 
