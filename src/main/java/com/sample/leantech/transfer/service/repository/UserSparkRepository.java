@@ -44,7 +44,7 @@ public class UserSparkRepository implements IRepository{
         Dataset<User> getDatasetOfDb = getUserWithMaxLogIdByKey();
         Dataset<Row> datasetLeftResult;
 
-        if(getDatasetOfDb.isEmpty()){
+        if(getDatasetOfDb.isEmpty()) {
             datasetLeftResult = datasetUsers.toDF();
         } else {
             datasetLeftResult = datasetUsers
@@ -72,15 +72,15 @@ public class UserSparkRepository implements IRepository{
     }
 
     public Dataset<User> getUserWithMaxLogIdByKey() {
-        Dataset<Row> groupedProject = getGroupedUserMaxLogIdByKey();
-        Dataset<User> datasetProject = getDataset();
-        return datasetProject.join(groupedProject,
-                datasetProject.col("key").equalTo(groupedProject.col("key"))
-                        .and(datasetProject.col("logId").equalTo(groupedProject.col("logId"))))
-                .select(datasetProject.col("id"),
-                        datasetProject.col("key"),
-                        datasetProject.col("logId"),
-                        datasetProject.col("name"))
+        Dataset<Row> groupedUser = getGroupedUserMaxLogIdByKey();
+        Dataset<User> datasetUser = getDataset();
+        return datasetUser.join(groupedUser,
+                datasetUser.col("key").equalTo(groupedUser.col("key"))
+                        .and(datasetUser.col("logId").equalTo(groupedUser.col("logId"))))
+                .select(datasetUser.col("id"),
+                        datasetUser.col("key"),
+                        datasetUser.col("logId"),
+                        datasetUser.col("name"))
                 .as(Encoders.bean(User.class));
     }
 

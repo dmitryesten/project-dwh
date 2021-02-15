@@ -27,7 +27,7 @@ class WorklogMapperTest extends AbstractMapperTest {
         assertThat(worklog.getSourceId()).isEqualTo(Integer.valueOf(worklogDto.getId()));
         assertThat(worklog.getUpdated()).isEqualTo(Timestamp.valueOf(worklogDto.getUpdated().toLocalDateTime()));
         assertThat(worklog.getTimeSpentSecond()).isEqualTo(worklogDto.getTimeSpentSeconds().intValue());
-        assertThat(worklog.getUsername()).isNull();
+        assertThat(worklog.getUsername()).isEqualTo(worklogDto.getUpdateAuthor().getName());
         assertThat(worklog.getUserId()).isEqualTo(Integer.valueOf(USER_ID));
     }
 

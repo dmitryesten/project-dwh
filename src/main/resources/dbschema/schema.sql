@@ -111,8 +111,8 @@ create table worklogs (
 	constraint pk_id_worklogs primary key (id),
 	constraint fk_id_issues foreign key (issue_id) references issues(id),
 	constraint fk_id_logs_worklogs foreign key (log_id) references logs(id),
-	constraint fk_id_sources_worklogs foreign key (sid) references sources(id),
-	constraint fk_id_users_worklogs foreign key (user_id) references users(id)
+	constraint fk_id_sources_worklogs foreign key (sid) references sources(id)
+	--,constraint fk_id_users_worklogs foreign key (user_id) references users(id)
 );
 comment on table worklogs is 'Table about users of source data';
 comment on column worklogs.issue_id is 'issue id';

@@ -23,6 +23,7 @@ public abstract class UserMapper {
     @AfterMapping
     void afterDtoToModel(JiraUserDto source, @MappingTarget User target, @Context TransferContext ctx) {
         target.setKey(truncatedUserKey(source.getKey()));
+        target.setName(source.getName());
         if (ctx != null) {
             target.setLogId(ctx.getLogInfo().getLogId());
         }

@@ -64,7 +64,6 @@ public class WorklogSparkRepository implements IRepository {
             datasetLeftResult =
                     datasetWorklog.join(datasetIssueOfDb,
                             datasetWorklog.col("issueId").equalTo(datasetIssueOfDb.col("sourceId")) )
-                            .join(datasetUser, datasetUser.col("name").equalTo(datasetWorklog.col("username")))
                             .select(datasetIssueOfDb.col("id").as("issueId"),
                                     datasetWorklog.col("logId"),
                                     datasetWorklog.col("sid"),
@@ -72,12 +71,11 @@ public class WorklogSparkRepository implements IRepository {
                                     datasetWorklog.col("updated"),
                                     datasetWorklog.col("timeSpentSecond"),
                                     datasetWorklog.col("username"),
-                                    datasetUser.col("id").as("userId"));
+                                    datasetWorklog.col("userId"));
         } else {
             log.info("Dataset of DB is not empty");
             datasetLeftResult = datasetWorklog.join(datasetWorklogOfDb,
                     datasetWorklog.col("sourceId").equalTo(datasetWorklogOfDb.col("sourceId")), "left")
-                    .join(datasetUser, datasetUser.col("name").equalTo(datasetWorklog.col("username")))
                     .where((datasetWorklogOfDb.col("sourceId").isNull())
                             .or(datasetWorklogOfDb.col("timeSpentSecond").notEqual(datasetWorklog.col("timeSpentSecond")))
                             .or(datasetWorklogOfDb.col("updated").notEqual(datasetWorklog.col("updated"))))
@@ -88,7 +86,7 @@ public class WorklogSparkRepository implements IRepository {
                             datasetWorklog.col("updated"),
                             datasetWorklog.col("timeSpentSecond"),
                             datasetWorklog.col("username"),
-                            datasetUser.col("id").as("userId"));
+                            datasetWorklog.col("userId"));
             datasetLeftResult.show();
 
             datasetLeftResult =
