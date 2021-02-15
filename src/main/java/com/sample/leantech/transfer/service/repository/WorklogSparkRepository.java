@@ -28,6 +28,9 @@ public class WorklogSparkRepository implements IRepository {
     @Autowired
     IssueSparkRepository issueSparkRepository;
 
+    @Autowired
+    UserSparkRepository userSparkRepository;
+
     public Dataset<Worklog> getDataset() {
         return sparkSession.read()
                 .jdbc(postgresProperties.getProperty("url"), "worklogs", postgresProperties)
@@ -52,6 +55,7 @@ public class WorklogSparkRepository implements IRepository {
         Dataset<Worklog> datasetWorklog = sparkSession.createDataset(list, Encoders.bean(Worklog.class));
         Dataset<Worklog> datasetWorklogOfDb = getWorklogWithMaxLogIdBySourceId();
         Dataset<Issue> datasetIssueOfDb = issueSparkRepository.getDataset();
+        Dataset<User> datasetUser = userSparkRepository.getUserWithMaxLogIdBySourceId();
         Dataset<Row> datasetLeftResult;
 
         if(datasetWorklogOfDb.isEmpty()) {
@@ -59,17 +63,20 @@ public class WorklogSparkRepository implements IRepository {
             datasetLeftResult =
                     datasetWorklog.join(datasetIssueOfDb,
                             datasetWorklog.col("issueId").equalTo(datasetIssueOfDb.col("sourceId")) )
+                            .join(datasetUser, datasetUser.col("name").equalTo(datasetWorklog.col("username")))
                             .select(datasetIssueOfDb.col("id").as("issueId"),
                                     datasetWorklog.col("logId"),
                                     datasetWorklog.col("sid"),
                                     datasetWorklog.col("sourceId"),
                                     datasetWorklog.col("updated"),
                                     datasetWorklog.col("timeSpentSecond"),
-                                    datasetWorklog.col("userId"));
+                                    datasetWorklog.col("username"),
+                                    datasetUser.col("id").as("userId"));
         } else {
             log.info("Dataset of DB is not empty");
             datasetLeftResult = datasetWorklog.join(datasetWorklogOfDb,
                     datasetWorklog.col("sourceId").equalTo(datasetWorklogOfDb.col("sourceId")), "left")
+                    .join(datasetUser, datasetUser.col("name").equalTo(datasetWorklog.col("username")))
                     .where((datasetWorklogOfDb.col("sourceId").isNull())
                             .or(datasetWorklogOfDb.col("timeSpentSecond").notEqual(datasetWorklog.col("timeSpentSecond")))
                             .or(datasetWorklogOfDb.col("updated").notEqual(datasetWorklog.col("updated")))
@@ -81,7 +88,8 @@ public class WorklogSparkRepository implements IRepository {
                             datasetWorklog.col("sourceId"),
                             datasetWorklog.col("updated"),
                             datasetWorklog.col("timeSpentSecond"),
-                            datasetWorklog.col("userId"));
+                            datasetWorklog.col("username"),
+                            datasetUser.col("id").as("userId"));
             datasetLeftResult.show();
 
             datasetLeftResult =
@@ -93,11 +101,12 @@ public class WorklogSparkRepository implements IRepository {
                                     datasetWorklog.col("sourceId"),
                                     datasetWorklog.col("updated"),
                                     datasetWorklog.col("timeSpentSecond"),
+                                    datasetWorklog.col("username"),
                                     datasetWorklog.col("userId"));
         }
 
         datasetLeftResult
-                .select("issueId", "logId", "sid", "sourceId", "updated", "timeSpentSecond", "userId")
+                .select("issueId", "logId", "sid", "sourceId", "updated", "timeSpentSecond", "username", "userId")
                 .withColumnRenamed("issueId", "issue_id")
                 .withColumnRenamed("logId", "log_id")
                 .withColumnRenamed("sourceId", "source_id")
