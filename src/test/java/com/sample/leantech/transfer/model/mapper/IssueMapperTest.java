@@ -3,135 +3,55 @@ package com.sample.leantech.transfer.model.mapper;
 import com.sample.leantech.transfer.model.context.TransferContext;
 import com.sample.leantech.transfer.model.db.Issue;
 import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class IssueMapperTest extends AbstractMapperTest {
 
     @Test
-    public void dtoToModeEpicIssue() {
-        JiraIssueDto jiraIssueDto = issueEpicDto();
+    public void testDtoToModelEpic() {
+        JiraIssueDto issueDto = jiraIssueDto();
+        issueDto.getFields().setParent(null);
+        issueDto.getFields().setEpic(null);
         TransferContext ctx = transferContext();
-        Issue issue = IssueMapper.INSTANCE.dtoToModel(jiraIssueDto, ctx);
-        Assertions.assertEquals(jiraIssueDto.getId(), String.valueOf(issue.getSourceId()));
-        Assertions.assertEquals(jiraIssueDto.getKey(), issue.getName());
-        Assertions.assertEquals(
-                jiraIssueDto.getFields().getEpic().getId(),
-                String.valueOf(issue.getHid())
-        );
+
+        Issue issue = IssueMapper.INSTANCE.dtoToModel(issueDto, ctx);
+
+        assertThat(issue.getId()).isNull();
+        assertThat(issue.getPid()).isEqualTo(Integer.valueOf(issueDto.getFields().getProject().getId()));
+        assertThat(issue.getSid()).isEqualTo(ctx.getSource().getValue());
+        assertThat(issue.getLogId()).isEqualTo(ctx.getLogInfo().getLogId());
+        assertThat(issue.getHid()).isNull();
+        assertThat(issue.getSourceId()).isEqualTo(Integer.valueOf(issueDto.getId()));
+        assertThat(issue.getType()).isEqualTo(issueDto.getFields().getIssuetype().getName());
+        assertThat(issue.getName()).isEqualTo(issueDto.getKey());
+        assertThat(issue.getSummery()).isEqualTo(issueDto.getFields().getSummary());
+        assertThat(issue.getCreateDt()).isNull();
     }
 
     @Test
-    public void dtoToModelParentIssue() {
-        JiraIssueDto jiraIssueDto = issueParentDto();
+    public void testDtoToModelEpicIssue() {
+        JiraIssueDto issueDto = jiraIssueDto();
+        issueDto.getFields().setParent(null);
         TransferContext ctx = transferContext();
-        Issue issue = IssueMapper.INSTANCE.dtoToModel(jiraIssueDto, ctx);
 
-        Assertions.assertEquals(jiraIssueDto.getId(), String.valueOf(issue.getSourceId()));
-        Assertions.assertEquals(jiraIssueDto.getKey(), issue.getName());
-        Assertions.assertEquals(
-                jiraIssueDto.getFields().getProject().getId(),
-                String.valueOf(issue.getPid())
-        );
-        Assertions.assertEquals(
-                jiraIssueDto.getFields().getParent().getId(),
-                String.valueOf(issue.getHid())
-        );
+        Issue issue = IssueMapper.INSTANCE.dtoToModel(issueDto, ctx);
+
+        assertThat(issue.getHid()).isEqualTo(Integer.valueOf(issueDto.getFields().getEpic().getId()));
     }
 
     @Test
-    public void dtoToModelIssueWithoutEpicAndParent() {
-        JiraIssueDto jiraIssueDto = issueDtoNoParentAndEpic();
+    public void testDtoToModelNonEpicIssue() {
+        JiraIssueDto issueDto = jiraIssueDto();
+        issueDto.getFields().setEpic(null);
         TransferContext ctx = transferContext();
-        Issue issue = IssueMapper.INSTANCE.dtoToModel(jiraIssueDto, ctx);
 
-        Assertions.assertEquals(jiraIssueDto.getId(), String.valueOf(issue.getSourceId()));
-        Assertions.assertEquals(jiraIssueDto.getKey(), issue.getName());
-        Assertions.assertEquals(
-                jiraIssueDto.getFields().getProject().getId(),
-                String.valueOf(issue.getPid())
-        );
-        Assertions.assertEquals(
-                jiraIssueDto.getFields().getProject().getId(),
-                String.valueOf(issue.getHid())
-        );
+        Issue issue = IssueMapper.INSTANCE.dtoToModel(issueDto, ctx);
 
-    }
-
-    @Test
-    public void testRddStreamMapping(){
-        JiraIssueDto jiraIssueDto = issueEpicDto();
-        List<JiraIssueDto> issues = Arrays.asList(jiraIssueDto);
-        TransferContext ctx = transferContext();
-        List<Issue> listIssuesConverted = issues
-                .stream()
-                .map(issue -> IssueMapper.INSTANCE.dtoToModel(issue, ctx))
-                .collect(Collectors.toList());
-
-        Assertions.assertNotNull(listIssuesConverted);
-        //Assertions.assertEquals(1, listIssuesConverted.size());
-    }
-
-    private JiraIssueDto issueEpicDto(){
-        JiraIssueDto jiraIssueDto = new JiraIssueDto();
-            jiraIssueDto.setId("1400");
-            jiraIssueDto.setKey("Key-123-test");
-        JiraIssueDto.Fields fields = new JiraIssueDto.Fields();
-            JiraIssueDto.Fields.Parent project = new JiraIssueDto.Fields.Parent();
-                project.setId(String.valueOf(10000));
-            JiraIssueDto.Fields.IssueType issueType = new JiraIssueDto.Fields.IssueType();
-                issueType.setName("Test-Issue-Type");
-            JiraIssueDto.Fields.Parent epic = new JiraIssueDto.Fields.Parent();
-                epic.setId(String.valueOf(40001));
-        fields.setProject(project);
-        fields.setEpic(epic);
-        fields.setIssuetype(issueType);
-        fields.setSummary("Test-Summery");
-        jiraIssueDto.setFields(fields);
-
-        return jiraIssueDto;
-    }
-
-    private JiraIssueDto issueParentDto(){
-        JiraIssueDto jiraIssueDto = new JiraIssueDto();
-        jiraIssueDto.setId("1400");
-        jiraIssueDto.setKey("Key-123-test");
-        JiraIssueDto.Fields fields = new JiraIssueDto.Fields();
-        JiraIssueDto.Fields.Parent project = new JiraIssueDto.Fields.Parent();
-        project.setId(String.valueOf(10000));
-        JiraIssueDto.Fields.Parent parent = new JiraIssueDto.Fields.Parent();
-            parent.setId(String.valueOf(100015));
-        JiraIssueDto.Fields.IssueType issueType = new JiraIssueDto.Fields.IssueType();
-        issueType.setName("Test-Issue-Type");
-        fields.setProject(project);
-        fields.setParent(parent);
-        fields.setIssuetype(issueType);
-        fields.setSummary("Test-Summery");
-        jiraIssueDto.setFields(fields);
-
-        return jiraIssueDto;
-
-    }
-
-    private JiraIssueDto issueDtoNoParentAndEpic(){
-        JiraIssueDto jiraIssueDto = new JiraIssueDto();
-        jiraIssueDto.setId("1400");
-        jiraIssueDto.setKey("Key-123-test");
-        JiraIssueDto.Fields fields = new JiraIssueDto.Fields();
-        JiraIssueDto.Fields.Parent project = new JiraIssueDto.Fields.Parent();
-        project.setId(String.valueOf(10000));
-        JiraIssueDto.Fields.IssueType issueType = new JiraIssueDto.Fields.IssueType();
-        issueType.setName("Test-Issue-Type");
-        fields.setProject(project);
-        fields.setIssuetype(issueType);
-        fields.setSummary("Test-Summery");
-        jiraIssueDto.setFields(fields);
-        return jiraIssueDto;
+        assertThat(issue.getHid()).isEqualTo(Integer.valueOf(issueDto.getFields().getParent().getId()));
     }
 
 }

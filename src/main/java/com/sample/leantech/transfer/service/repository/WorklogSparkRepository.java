@@ -1,16 +1,19 @@
 package com.sample.leantech.transfer.service.repository;
 
+
 import com.sample.leantech.transfer.model.db.*;
+import com.sample.leantech.transfer.model.db.EntityDB;
+import com.sample.leantech.transfer.model.db.Issue;
+import com.sample.leantech.transfer.model.db.Worklog;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.sql.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
-
 import java.util.*;
-
 import static org.apache.spark.sql.functions.col;
 import static org.apache.spark.sql.functions.max;
+
 
 @Slf4j
 @Repository
