@@ -19,5 +19,4 @@ public class Worklog extends EntityDB {
     private Integer timeSpentSecond;
     private String username;
     private Integer userId;
-    //private String userKey;
 }

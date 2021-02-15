@@ -41,7 +41,7 @@ public class UserSparkRepository implements IRepository{
     public void save(Collection<? extends EntityDB> entities) {
         List<User> listUserOfResourceData = (List<User>) entities;
         Dataset<User> datasetUsers = sparkSession.createDataset(listUserOfResourceData, Encoders.bean(User.class));
-        Dataset<User> getDatasetOfDb = getUserWithMaxLogIdBySourceId();
+        Dataset<User> getDatasetOfDb = getUserWithMaxLogIdByKey();
         Dataset<Row> datasetLeftResult;
 
         if(getDatasetOfDb.isEmpty()){
@@ -71,7 +71,7 @@ public class UserSparkRepository implements IRepository{
                 .agg(max("logId").as("logId"));
     }
 
-    public Dataset<User> getUserWithMaxLogIdBySourceId() {
+    public Dataset<User> getUserWithMaxLogIdByKey() {
         Dataset<Row> groupedProject = getGroupedUserMaxLogIdByKey();
         Dataset<User> datasetProject = getDataset();
         return datasetProject.join(groupedProject,

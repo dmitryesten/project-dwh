@@ -31,7 +31,7 @@ class WorklogMapperTest extends AbstractMapperTest {
         Worklog worklog = WorklogMapper.INSTANCE.dtoToModel(jiraWorklogDto, ctx);
 
         Assertions.assertNotNull(worklog);
-        //Assertions.assertEquals(jiraWorklogDto.getUpdateAuthor().getKey(), worklog.getUserKey());
+        Assertions.assertEquals(jiraWorklogDto.getUpdateAuthor().getName(), worklog.getUsername());
     }
 
     private JiraWorklogDto worklogDto(){
@@ -41,6 +41,7 @@ class WorklogMapperTest extends AbstractMapperTest {
         jiraWorklogDto.setTimeSpentSeconds(202L);
         jiraWorklogDto.setUpdateAuthor(userDtoFirst());
         jiraWorklogDto.setUpdated(ZonedDateTime.now());
+        jiraWorklogDto.setUpdateAuthor(userDtoFirst());
         Timestamp timestamp = Timestamp.valueOf(jiraWorklogDto.getUpdated().toLocalDateTime());
         return jiraWorklogDto;
     }

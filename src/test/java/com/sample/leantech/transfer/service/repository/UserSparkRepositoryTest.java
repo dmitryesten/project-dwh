@@ -52,7 +52,7 @@ class UserSparkRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void testGetUsersWithJoinedByMaxLogid() {
-        repository.getUserWithMaxLogIdBySourceId().show();
+        repository.getUserWithMaxLogIdByKey().show();
         Assertions.assertNotNull(repository.getGroupedUserMaxLogIdByKey());
     }
 
