@@ -1,9 +1,13 @@
-version: '2'
+version: '3.8'
 
+networks:
+  backend:
+    name: app
+    driver: bridge
 services:
   db:
     image: 'postgres:13.1-alpine'
-    container_name: db
+    container_name: postgres-db
     restart: always
     ports:
       - "5432:5432"
@@ -11,14 +15,13 @@ services:
       - POSTGRES_DB=project_dwh
       - POSTGRES_USER=spring
       - POSTGRES_PASSWORD=123
-    healthcheck:
-      test: pg_isready -U project_dwh
-      interval: 1m
-      timeout: 10s
-      retries: 2
+    networks:
+      - backend
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
   app:
     build: .
-    container_name: neojira
+    container_name: neojira-service
     ports:
       - "8080:8080"
     depends_on:
@@ -27,3 +30,5 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/project_dwh
       - SPRING_DATASOURCE_USERNAME=spring
       - SPRING_DATASOURCE_PASSWORD=123
+    networks:
+      - backend

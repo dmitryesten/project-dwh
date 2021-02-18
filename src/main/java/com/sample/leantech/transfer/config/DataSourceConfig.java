@@ -39,7 +39,7 @@ public class DataSourceConfig {
     public Properties getPostgresProperties() {
         Properties properties = new Properties();
             properties.setProperty("driver", "org.postgresql.Driver");
-            properties.setProperty("url", "jdbc:postgresql://localhost:5432/project_dwh");
+            properties.setProperty("url", "jdbc:postgresql://db:5432/project_dwh");
             properties.setProperty("user", "spring");
             properties.setProperty("password", "123");
         return properties;
