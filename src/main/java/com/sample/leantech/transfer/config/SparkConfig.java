@@ -33,6 +33,7 @@ public class SparkConfig {
     public SparkSession sparkSession(@Autowired SparkContext sparkCtx) {
         return new SparkSession.Builder()
                 .sparkContext(sparkCtx)
+                .config("spark.driver.memory", "512m")
                 .getOrCreate();
     }
 

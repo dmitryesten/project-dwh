@@ -1,7 +1,3 @@
-create role spring with password '123' superuser createdb createrole login inherit;
-
-create database project_dwh owner spring encoding 'UTF-8';
-
 create sequence seq_table increment by 1 start with 1;
 
 create table sources (
