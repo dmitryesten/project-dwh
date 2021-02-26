@@ -10,7 +10,7 @@ services:
     container_name: postgres-db
     restart: always
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       - POSTGRES_DB=project_dwh
       - POSTGRES_USER=spring
@@ -27,7 +27,7 @@ services:
     depends_on:
       - db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/project_dwh
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5433/project_dwh
       - SPRING_DATASOURCE_USERNAME=spring
       - SPRING_DATASOURCE_PASSWORD=123
     networks:

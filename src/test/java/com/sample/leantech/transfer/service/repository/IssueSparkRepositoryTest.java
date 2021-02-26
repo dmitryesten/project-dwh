@@ -1,6 +1,7 @@
 package com.sample.leantech.transfer.service.repository;
 
 import com.sample.leantech.transfer.model.db.Issue;
+import org.apache.spark.sql.Dataset;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,8 +49,17 @@ class IssueSparkRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void testJoinIssueAndGroupedIssue() {
-        repository.getIssueWithMaxLogIdBySourceId().show();
-        Assertions.assertNotNull(repository.getIssueWithMaxLogIdBySourceId());
+        List<Integer> listSourceId = Arrays.asList(10594, 10780);
+        repository.getIssueWithMaxLogIdBySourceId(listSourceId).show();
+        Assertions.assertNotNull(repository.getIssueWithMaxLogIdBySourceId(listSourceId));
+    }
+
+    @Test
+    public void testInCollection(){
+        List<Integer> listSourceId = Arrays.asList(10594, 10780);
+        Dataset<Issue> datasetFilteredIssues = repository.getDatasetByListId(listSourceId);
+        datasetFilteredIssues.show();
+        Assertions.assertEquals(listSourceId.size(), datasetFilteredIssues.count());
     }
 
 }

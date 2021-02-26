@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
+import static org.apache.spark.sql.functions.*;
 import static org.apache.spark.sql.functions.col;
-import static org.apache.spark.sql.functions.max;
 
 @Slf4j
 @Repository
@@ -38,6 +40,10 @@ public class IssueSparkRepository implements IRepository {
                 .as(Encoders.bean(Issue.class));
     }
 
+    public Dataset<Issue> getDatasetByListId(List<Integer> listId) {
+        return getDataset().where(col("sourceId").isInCollection(listId));
+    }
+
     @Override
     public Collection<? extends EntityDB> get() {
         return getDataset().collectAsList();
@@ -45,8 +51,14 @@ public class IssueSparkRepository implements IRepository {
 
     @Override
     public void save(Collection<? extends EntityDB> entities) {
-        Dataset<Issue> datasetIssue = sparkSession.createDataset((List<Issue>) entities, Encoders.bean(Issue.class));
-        Dataset<Issue> datasetIssueOfDb = getIssueWithMaxLogIdBySourceId();
+        List<Issue> issues = (List<Issue>) entities;
+        Dataset<Issue> datasetIssue = sparkSession.createDataset(issues, Encoders.bean(Issue.class));
+        List<Integer> listSourceIdIssue =
+                issues.stream().map(Issue::getSourceId)
+                        .collect(Collectors.toCollection(LinkedList::new));
+        issues.clear();
+        Dataset<Issue> datasetIssueOfDb = getIssueWithMaxLogIdBySourceId(listSourceIdIssue);
+        listSourceIdIssue.clear();
         Dataset<Project> datasetProject = projectSparkRepository.getDataset();
         Dataset<Row> datasetLeftResult;
 
@@ -97,13 +109,16 @@ public class IssueSparkRepository implements IRepository {
 
         }
 
-        datasetLeftResult
-                .select("pid", "sid", "logId", "hid", "sourceId", "type", "name", "summery")
-                .withColumnRenamed("logId", "log_id")
-                .withColumnRenamed("sourceId", "source_id")
-                .write()
-                .mode(SaveMode.Append)
-                .jdbc(postgresProperties.getProperty("url"), "issues", postgresProperties);
+        if(!datasetLeftResult.isEmpty()) {
+            datasetLeftResult
+                    .select("pid", "sid", "logId", "hid", "sourceId", "type", "name", "summery")
+                    .withColumnRenamed("logId", "log_id")
+                    .withColumnRenamed("sourceId", "source_id")
+                    .write()
+                    .mode(SaveMode.Append)
+                    .jdbc(postgresProperties.getProperty("url"), "issues", postgresProperties);
+        }
+
     }
 
     public Dataset<Row> getGroupedIssueMaxLogIdBySourceId() {
@@ -112,9 +127,9 @@ public class IssueSparkRepository implements IRepository {
                 .agg(max("logId").as("logId"));
     }
 
-    public Dataset<Issue> getIssueWithMaxLogIdBySourceId() {
+    public Dataset<Issue> getIssueWithMaxLogIdBySourceId(List<Integer> listSourceId) {
         Dataset<Row> groupedIssues = getGroupedIssueMaxLogIdBySourceId();
-        Dataset<Issue> issues = getDataset();
+        Dataset<Issue> issues = getDatasetByListId(listSourceId);
         return issues.join(groupedIssues,
                         issues.col("sourceId").equalTo(groupedIssues.col("sourceId"))
                         .and(issues.col("logId").equalTo(groupedIssues.col("logId"))))
