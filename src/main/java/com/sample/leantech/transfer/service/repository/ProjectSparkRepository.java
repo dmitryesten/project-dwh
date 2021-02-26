@@ -1,6 +1,7 @@
 package com.sample.leantech.transfer.service.repository;
 
 import com.sample.leantech.transfer.model.db.EntityDB;
+import com.sample.leantech.transfer.model.db.Issue;
 import com.sample.leantech.transfer.model.db.Project;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.sql.*;
@@ -8,9 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.apache.spark.sql.functions.col;
 import static org.apache.spark.sql.functions.max;
@@ -36,6 +36,10 @@ public class ProjectSparkRepository implements IRepository{
                 .as(Encoders.bean(Project.class));
     }
 
+    public Dataset<Project> getDatasetByListId(List<Integer> listId) {
+        return getDataset().where(col("sourceId").isInCollection(listId));
+    }
+
     @Override
     public Collection<? extends EntityDB> get() {
         return getDataset().collectAsList();
@@ -43,8 +47,14 @@ public class ProjectSparkRepository implements IRepository{
 
     @Override
     public void save(Collection<? extends EntityDB> entities) {
-        Dataset<Project> datasetProject = sparkSession.createDataset((List<Project>) entities, Encoders.bean(Project.class));
-        Dataset<Project> datasetOfDb = getProjectsWithMaxLogIdBySourceId();
+        List<Project> projects = (List<Project>) entities;
+        Dataset<Project> datasetProject = sparkSession.createDataset(projects, Encoders.bean(Project.class));
+        List<Integer> listSourceIdIssue =
+                projects.stream().map(Project::getSourceId)
+                        .collect(Collectors.toCollection(LinkedList::new));
+        projects.clear();
+        Dataset<Project> datasetOfDb = getProjectsWithMaxLogIdBySourceId(listSourceIdIssue);
+        listSourceIdIssue.clear();
         Dataset<Row> datasetLeftResult;
 
         if(datasetOfDb.isEmpty()) {
@@ -60,14 +70,15 @@ public class ProjectSparkRepository implements IRepository{
                             datasetProject.col("sourceId"),
                             datasetProject.col("name"));
         }
-
-        datasetLeftResult
-                .select("sid", "logId", "sourceId", "name")
-                .withColumnRenamed("sourceId", "source_id")
-                .withColumnRenamed("logId", "log_id")
-                .write()
-                .mode(SaveMode.Append)
-                .jdbc(postgresProperties.getProperty("url"), "projects", postgresProperties);
+        if(!datasetLeftResult.isEmpty()) {
+            datasetLeftResult
+                    .select("sid", "logId", "sourceId", "name")
+                    .withColumnRenamed("sourceId", "source_id")
+                    .withColumnRenamed("logId", "log_id")
+                    .write()
+                    .mode(SaveMode.Append)
+                    .jdbc(postgresProperties.getProperty("url"), "projects", postgresProperties);
+        }
     }
 
     public Dataset<Row> getGroupedProjectMaxLogIdBySourceId() {
@@ -76,9 +87,9 @@ public class ProjectSparkRepository implements IRepository{
                 .agg(max("logId").as("logId"));
     }
 
-    public Dataset<Project> getProjectsWithMaxLogIdBySourceId() {
+    public Dataset<Project> getProjectsWithMaxLogIdBySourceId(List<Integer> listSourceId) {
         Dataset<Row> groupedProject = getGroupedProjectMaxLogIdBySourceId();
-        Dataset<Project> datasetProject = getDataset();
+        Dataset<Project> datasetProject = getDatasetByListId(listSourceId);
         return datasetProject.join(groupedProject,
                 datasetProject.col("sourceId").equalTo(groupedProject.col("sourceId"))
                         .and(datasetProject.col("logId").equalTo(groupedProject.col("logId"))))
@@ -89,4 +100,5 @@ public class ProjectSparkRepository implements IRepository{
                         datasetProject.col("name"))
                 .as(Encoders.bean(Project.class));
     }
+
 }

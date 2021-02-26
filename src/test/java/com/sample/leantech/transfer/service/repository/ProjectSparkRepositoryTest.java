@@ -1,6 +1,7 @@
 package com.sample.leantech.transfer.service.repository;
 
 import com.sample.leantech.transfer.model.db.Project;
+import org.apache.spark.sql.Dataset;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,11 @@ class ProjectSparkRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void testGetProjectsWithMaxTimeBySourceId() {
-        Assertions.assertNotNull(repository.getProjectsWithMaxLogIdBySourceId());
+        List<Integer> listIdProjectJira = Arrays.asList(10200, 10201);
+        Dataset<Project> datasetProject = repository.getProjectsWithMaxLogIdBySourceId(listIdProjectJira);
+        datasetProject.show();
+        Assertions.assertNotNull(datasetProject);
+        Assertions.assertEquals(listIdProjectJira.size(), datasetProject.count());
     }
 
 }
