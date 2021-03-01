@@ -13,6 +13,7 @@ import com.sample.leantech.transfer.model.mapper.WorklogMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,6 +41,8 @@ public class JiraTransformTask implements TransformTask<JiraTransferContext> {
                 .map(project -> ProjectMapper.INSTANCE.dtoToModel(project, ctx))
                 .collect(Collectors.toList());
         ctx.getDatabaseModel().getProjects().addAll(projects);
+        projects.clear();
+        ctx.getJiraResult().getProjects().clear();
     }
 
     private void transformIssues(JiraTransferContext ctx) {
@@ -49,8 +52,11 @@ public class JiraTransformTask implements TransformTask<JiraTransferContext> {
                 .build()
                 .flatMap(Collection::stream)
                 .map(issue -> IssueMapper.INSTANCE.dtoToModel(issue, ctx))
+                .sorted(Comparator.comparing(Issue::getSourceId))
                 .collect(Collectors.toList());
         ctx.getDatabaseModel().getIssues().addAll(issues);
+        issues.clear();
+        ctx.getJiraResult().getIssues().clear();
     }
 
     private void transformWorklogs(JiraTransferContext ctx) {
@@ -60,6 +66,8 @@ public class JiraTransformTask implements TransformTask<JiraTransferContext> {
                 .map(worklog -> WorklogMapper.INSTANCE.dtoToModel(worklog, ctx))
                 .collect(Collectors.toList());
         ctx.getDatabaseModel().getWorklogs().addAll(worklogs);
+        worklogs.clear();
+        ctx.getJiraResult().getWorklogs().clear();
     }
 
     private void transformUsers(JiraTransferContext ctx) {
@@ -69,6 +77,8 @@ public class JiraTransformTask implements TransformTask<JiraTransferContext> {
                 .map(user -> UserMapper.INSTANCE.dtoToModel(user, ctx))
                 .collect(Collectors.toList());
         ctx.getDatabaseModel().getUsers().addAll(users);
+        users.clear();
+        ctx.getJiraResult().getWorklogs().clear();
     }
 
 }
