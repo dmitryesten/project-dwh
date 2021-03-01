@@ -36,6 +36,16 @@ public class ProjectSparkRepository implements IRepository{
                 .as(Encoders.bean(Project.class));
     }
 
+    public Dataset<Project> getDataset(List<Integer> listSourceIdProject) {
+        return sparkSession.read()
+                .jdbc(postgresProperties.getProperty("url"), "projects", postgresProperties)
+                .where(col("source_id").isInCollection(listSourceIdProject))
+                .withColumnRenamed("source_id", "sourceId")
+                .withColumnRenamed("log_id", "logId")
+                .withColumnRenamed("create_dt", "createDt")
+                .as(Encoders.bean(Project.class));
+    }
+
     public Dataset<Project> getDatasetByListId(List<Integer> listId) {
         return getDataset().where(col("sourceId").isInCollection(listId));
     }
@@ -63,13 +73,13 @@ public class ProjectSparkRepository implements IRepository{
             datasetLeftResult = datasetProject
                     .join(datasetOfDb, datasetOfDb.col("sourceId").equalTo(datasetProject.col("sourceId")), "left")
                     .where((datasetOfDb.col("sourceId").isNull())
-                            .or(datasetOfDb.col("name").notEqual(datasetProject.col("name")) )
-                    )
+                            .or(datasetOfDb.col("name").notEqual(datasetProject.col("name")) ))
                     .select(datasetProject.col("logId"),
                             datasetProject.col("sid"),
                             datasetProject.col("sourceId"),
                             datasetProject.col("name"));
         }
+
         if(!datasetLeftResult.isEmpty()) {
             datasetLeftResult
                     .select("sid", "logId", "sourceId", "name")

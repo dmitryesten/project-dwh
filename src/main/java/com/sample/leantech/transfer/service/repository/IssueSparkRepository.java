@@ -33,7 +33,16 @@ public class IssueSparkRepository implements IRepository {
     public Dataset<Issue> getDataset() {
         return sparkSession.read()
                 .jdbc(postgresProperties.getProperty("url"), "issues", postgresProperties)
-                .toDF()
+                .withColumnRenamed("log_id", "logId")
+                .withColumnRenamed("source_id", "sourceId")
+                .withColumnRenamed("create_dt", "createDt")
+                .as(Encoders.bean(Issue.class));
+    }
+
+    public Dataset<Issue> getDataset(List<Integer> listSourceId) {
+        return sparkSession.read()
+                .jdbc(postgresProperties.getProperty("url"), "issues", postgresProperties)
+                .where(col("source_id").isInCollection(listSourceId))
                 .withColumnRenamed("log_id", "logId")
                 .withColumnRenamed("source_id", "sourceId")
                 .withColumnRenamed("create_dt", "createDt")
@@ -56,10 +65,16 @@ public class IssueSparkRepository implements IRepository {
         List<Integer> listSourceIdIssue =
                 issues.stream().map(Issue::getSourceId)
                         .collect(Collectors.toCollection(LinkedList::new));
-        issues.clear();
         Dataset<Issue> datasetIssueOfDb = getIssueWithMaxLogIdBySourceId(listSourceIdIssue);
         listSourceIdIssue.clear();
-        Dataset<Project> datasetProject = projectSparkRepository.getDataset();
+
+        List<Integer> listSourceIdProjects =
+                issues.stream().map(Issue::getPid)
+                        .collect(Collectors.toCollection(LinkedList::new));
+        Dataset<Project> datasetProject = projectSparkRepository.getDataset(listSourceIdProjects);
+        issues.clear();
+        listSourceIdProjects.clear();
+
         Dataset<Row> datasetLeftResult;
 
 

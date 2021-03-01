@@ -52,14 +52,22 @@ class UserSparkRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void testGetUsersWithJoinedByMaxLogid() {
-        repository.getUserWithMaxLogIdByKey().show();
-        Assertions.assertNotNull(repository.getGroupedUserMaxLogIdByKey());
+        List<Integer> listNumberKey = Arrays.asList(10909, 10911);
+        //repository.getUserWithMaxLogIdByKey(listNumberKey).show();
+        //Assertions.assertNotNull(repository.getGroupedUserMaxLogIdByKey());
     }
 
     @Test
     public void testGetUserById() {
         Row row = repository.getUserByKey("JIRAUSER10909");
         Assertions.assertNotNull(row.get(0));
+    }
+
+    @Test
+    public void testGetDatasetByListId(){
+        List<Integer> listNumberKey = Arrays.asList(10909, 10911);
+        repository.getDataset(listNumberKey).show();
+        Assertions.assertEquals(listNumberKey.size(), repository.getDataset(listNumberKey).count());
     }
 
 }

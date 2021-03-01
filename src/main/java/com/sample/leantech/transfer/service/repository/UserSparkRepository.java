@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import static org.apache.spark.sql.functions.col;
 import static org.apache.spark.sql.functions.max;
@@ -27,7 +29,14 @@ public class UserSparkRepository implements IRepository{
     public Dataset<User> getDataset() {
         return sparkSession.read()
                 .jdbc(postgresProperties.getProperty("url"), "users", postgresProperties)
-                .toDF()
+                .withColumnRenamed("log_id", "logId")
+                .as(Encoders.bean(User.class));
+    }
+
+    public Dataset<User> getDataset(List<Integer> listNumberKey) {
+        return sparkSession.read()
+                .jdbc(postgresProperties.getProperty("url"), "users", postgresProperties)
+                .where(col("key").isInCollection(listNumberKey))
                 .withColumnRenamed("log_id", "logId")
                 .as(Encoders.bean(User.class));
     }
@@ -41,7 +50,11 @@ public class UserSparkRepository implements IRepository{
     public void save(Collection<? extends EntityDB> entities) {
         List<User> listUserOfResourceData = (List<User>) entities;
         Dataset<User> datasetUsers = sparkSession.createDataset(listUserOfResourceData, Encoders.bean(User.class));
-        Dataset<User> getDatasetOfDb = getUserWithMaxLogIdByKey();
+        List<Integer> listUserKey =
+                listUserOfResourceData.stream().map(User::getKey).map(Integer::valueOf)
+                        .collect(Collectors.toCollection(LinkedList::new));
+        Dataset<User> getDatasetOfDb = getUserWithMaxLogIdByKey(listUserKey);
+        listUserKey.clear();
         Dataset<Row> datasetLeftResult;
 
         if(getDatasetOfDb.isEmpty()) {
@@ -56,13 +69,15 @@ public class UserSparkRepository implements IRepository{
                             datasetUsers.col("name"));
         }
 
-        datasetLeftResult
-                .select("key", "logId", "name")
-                .withColumnRenamed("logId", "log_id")
-                .toDF()
-                .write()
-                .mode(SaveMode.Append)
-                .jdbc(postgresProperties.getProperty("url"), "users", postgresProperties);
+        if(!datasetLeftResult.isEmpty()) {
+            datasetLeftResult
+                    .select("key", "logId", "name")
+                    .withColumnRenamed("logId", "log_id")
+                    .toDF()
+                    .write()
+                    .mode(SaveMode.Append)
+                    .jdbc(postgresProperties.getProperty("url"), "users", postgresProperties);
+        }
     }
 
     public Dataset<Row> getGroupedUserMaxLogIdByKey() {
@@ -71,9 +86,9 @@ public class UserSparkRepository implements IRepository{
                 .agg(max("logId").as("logId"));
     }
 
-    public Dataset<User> getUserWithMaxLogIdByKey() {
+    public Dataset<User> getUserWithMaxLogIdByKey(List<Integer> listUserKey) {
         Dataset<Row> groupedUser = getGroupedUserMaxLogIdByKey();
-        Dataset<User> datasetUser = getDataset();
+        Dataset<User> datasetUser = getDataset(listUserKey);
         return datasetUser.join(groupedUser,
                 datasetUser.col("key").equalTo(groupedUser.col("key"))
                         .and(datasetUser.col("logId").equalTo(groupedUser.col("logId"))))

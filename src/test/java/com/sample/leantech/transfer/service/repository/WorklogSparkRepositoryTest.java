@@ -61,13 +61,17 @@ class WorklogSparkRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void testGetWorklogWithMaxLogIdBySourceId() {
-        repository.getWorklogWithMaxLogIdBySourceId().show();
-        Assertions.assertNotNull(repository.getWorklogWithMaxLogIdBySourceId());
+        List<Integer> listWorklogs = Arrays.asList(12263, 12045);
+        repository.getWorklogWithMaxLogIdBySourceId(listWorklogs).show();
+        Assertions.assertNotNull(repository.getWorklogWithMaxLogIdBySourceId(listWorklogs));
+        Assertions.assertEquals(listWorklogs.size(), repository.getWorklogWithMaxLogIdBySourceId(listWorklogs).count());
     }
 
     @Test
-    public void testWorklog(){
-
+    public void testWorklogBySourceId() {
+        List<Integer> listWorklogs = Arrays.asList(12263, 12045);
+        repository.getDataset(listWorklogs).show();
+        Assertions.assertEquals(listWorklogs.size(), repository.getDataset(listWorklogs).count());
     }
 
 }

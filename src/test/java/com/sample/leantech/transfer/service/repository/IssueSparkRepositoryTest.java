@@ -62,4 +62,12 @@ class IssueSparkRepositoryTest extends AbstractRepositoryTest {
         Assertions.assertEquals(listSourceId.size(), datasetFilteredIssues.count());
     }
 
+    @Test
+    public void testGetDatasetInCollection(){
+        List<Integer> listSourceId = Arrays.asList(10594, 10780);
+        Dataset<Issue> datasetFilteredIssues = repository.getDataset(listSourceId);
+        datasetFilteredIssues.show();
+        Assertions.assertEquals(listSourceId.size(), datasetFilteredIssues.count());
+    }
+
 }
