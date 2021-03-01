@@ -26,6 +26,7 @@ public class WorklogLoadTask implements LoadTask {
     public void load(TransferContext ctx) {
         Collection<Worklog> worklogs = ctx.getDatabaseModel().getWorklogs();
         worklogRepository.save(worklogs);
+        worklogs.clear();
     }
 
 }

@@ -26,6 +26,7 @@ public class ProjectLoadTask implements LoadTask {
     public void load(TransferContext ctx) {
         Collection<Project> projects = ctx.getDatabaseModel().getProjects();
         projectSparkRepository.save(projects);
+        projects.clear();
     }
 
 }

@@ -25,6 +25,7 @@ public class UserLoadTask implements LoadTask {
     public void load(TransferContext ctx) {
         Collection<User> users = ctx.getDatabaseModel().getUsers();
         userRepository.save(users);
+        users.clear();
     }
 
 }

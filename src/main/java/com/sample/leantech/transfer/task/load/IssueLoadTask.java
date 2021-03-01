@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Slf4j
@@ -26,6 +27,7 @@ public class IssueLoadTask implements LoadTask  {
     public void load(TransferContext ctx) {
         Collection<Issue> issues = ctx.getDatabaseModel().getIssues();
         issueSparkRepository.save(issues);
+        issues.clear();
     }
 
 }
