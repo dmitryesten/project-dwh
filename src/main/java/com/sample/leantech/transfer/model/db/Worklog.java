@@ -16,6 +16,7 @@ public class Worklog extends EntityDB {
     private Integer sid;
     private Integer sourceId;
     private Timestamp updated;
+    private Timestamp started;
     private Integer timeSpentSecond;
     private String username;
     private Integer userId;

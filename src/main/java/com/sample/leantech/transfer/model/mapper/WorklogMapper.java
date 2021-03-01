@@ -19,6 +19,7 @@ public interface WorklogMapper {
             @Mapping(target = "issueId", source = "jiraWorklogDto.issueId"),
             @Mapping(target = "sourceId", source = "jiraWorklogDto.id"),
             @Mapping(target = "updated", source = "jiraWorklogDto.updated"),
+            @Mapping(target = "started", source = "jiraWorklogDto.started"),
             @Mapping(target = "timeSpentSecond", source = "jiraWorklogDto.timeSpentSeconds"),
             @Mapping(target = "username", source = "jiraWorklogDto.updateAuthor.name")
     })

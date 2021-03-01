@@ -42,6 +42,7 @@ public class WorklogSparkRepository implements IRepository {
                 .withColumnRenamed("log_id", "logId")
                 .withColumnRenamed("source_id", "sourceId")
                 .withColumnRenamed("updated_dt", "updated")
+                .withColumnRenamed("started_dt", "started")
                 .withColumnRenamed("time_spent", "timeSpentSecond")
                 .withColumnRenamed("user_id", "userId")
                 .as(Encoders.bean(Worklog.class));
@@ -56,6 +57,7 @@ public class WorklogSparkRepository implements IRepository {
                 .withColumnRenamed("log_id", "logId")
                 .withColumnRenamed("source_id", "sourceId")
                 .withColumnRenamed("updated_dt", "updated")
+                .withColumnRenamed("started_dt", "started")
                 .withColumnRenamed("time_spent", "timeSpentSecond")
                 .withColumnRenamed("user_id", "userId")
                 .as(Encoders.bean(Worklog.class));
@@ -100,6 +102,7 @@ public class WorklogSparkRepository implements IRepository {
                                     datasetWorklog.col("sid"),
                                     datasetWorklog.col("sourceId"),
                                     datasetWorklog.col("updated"),
+                                    datasetWorklog.col("started"),
                                     datasetWorklog.col("timeSpentSecond"),
                                     datasetWorklog.col("username"),
                                     datasetWorklog.col("userId"));
@@ -115,6 +118,7 @@ public class WorklogSparkRepository implements IRepository {
                             datasetWorklog.col("sid"),
                             datasetWorklog.col("sourceId"),
                             datasetWorklog.col("updated"),
+                            datasetWorklog.col("started"),
                             datasetWorklog.col("timeSpentSecond"),
                             datasetWorklog.col("username"),
                             datasetWorklog.col("userId"));
@@ -128,6 +132,7 @@ public class WorklogSparkRepository implements IRepository {
                                     datasetWorklog.col("sid"),
                                     datasetWorklog.col("sourceId"),
                                     datasetWorklog.col("updated"),
+                                    datasetWorklog.col("started"),
                                     datasetWorklog.col("timeSpentSecond"),
                                     datasetWorklog.col("username"),
                                     datasetWorklog.col("userId"));
@@ -135,11 +140,12 @@ public class WorklogSparkRepository implements IRepository {
 
         if(!datasetLeftResult.isEmpty()) {
             datasetLeftResult
-                    .select("issueId", "logId", "sid", "sourceId", "updated", "timeSpentSecond", "username", "userId")
+                    .select("issueId", "logId", "sid", "sourceId", "updated", "started", "timeSpentSecond", "username", "userId")
                     .withColumnRenamed("issueId", "issue_id")
                     .withColumnRenamed("logId", "log_id")
                     .withColumnRenamed("sourceId", "source_id")
                     .withColumnRenamed("updated", "updated_dt")
+                    .withColumnRenamed("started", "started_dt")
                     .withColumnRenamed("timeSpentSecond", "time_spent")
                     .withColumnRenamed("userId", "user_id")
                     .write()
@@ -166,6 +172,7 @@ public class WorklogSparkRepository implements IRepository {
                         datasetProject.col("sid"),
                         datasetProject.col("sourceId"),
                         datasetProject.col("updated"),
+                        datasetProject.col("started"),
                         datasetProject.col("timeSpentSecond"),
                         datasetProject.col("username"),
                         datasetProject.col("userId"))

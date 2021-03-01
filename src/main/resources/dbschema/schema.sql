@@ -104,6 +104,7 @@ create table worklogs (
 	sid integer,
 	source_id integer,
 	updated_dt timestamp,
+	started_dt timestamp,
 	time_spent integer,
 	username varchar,
 	user_id integer,
@@ -114,33 +115,16 @@ create table worklogs (
 	constraint fk_id_sources_worklogs foreign key (sid) references sources(id)
 	--,constraint fk_id_users_worklogs foreign key (user_id) references users(id)
 );
-comment on table worklogs is 'Table about users of source data';
+comment on table worklogs is 'Table about worklogs of source data';
 comment on column worklogs.issue_id is 'issue id';
 comment on column worklogs.log_id is 'log id';
 comment on column worklogs.sid is 'source id';
 comment on column worklogs.source_id is 'inside id of source data entity';
 comment on column worklogs.updated_dt is 'time of updated worklogs';
+comment on column worklogs.started_dt is 'time of started worklogs';
 comment on column worklogs.time_spent is 'time spending by worklogs';
 comment on column worklogs.username is 'username';
 comment on column worklogs.user_id is 'user id of source data';
 
 
 INSERT INTO public.sources("id", "name") VALUES(1, 'JIRA_1');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
