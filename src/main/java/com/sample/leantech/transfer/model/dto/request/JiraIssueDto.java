@@ -1,6 +1,10 @@
 package com.sample.leantech.transfer.model.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class JiraIssueDto {
@@ -19,6 +23,12 @@ public class JiraIssueDto {
         private String summary;
         private JiraWorklogResponseDto worklog;
 
+        @JsonProperty("customfield_10300")
+        private Customfield customfield;
+
+        @JsonProperty("components")
+        private List<Component> components;
+
         @Data
         public static class IssueType {
 
@@ -32,5 +42,18 @@ public class JiraIssueDto {
             private String id;
 
         }
+
+        @Data
+        public static class Customfield {
+            private String id;
+            private String value;
+        }
+
+        @Data
+        public static class Component {
+            private String id;
+            private String name;
+        }
+
     }
 }
