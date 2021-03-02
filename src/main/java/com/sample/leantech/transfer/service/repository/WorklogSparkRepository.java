@@ -42,7 +42,7 @@ public class WorklogSparkRepository implements IRepository {
                 .withColumnRenamed("log_id", "logId")
                 .withColumnRenamed("source_id", "sourceId")
                 .withColumnRenamed("updated_dt", "updated")
-                .withColumnRenamed("started_dt", "started")
+                .withColumnRenamed("date", "started")
                 .withColumnRenamed("time_spent", "timeSpentSecond")
                 .withColumnRenamed("user_id", "userId")
                 .as(Encoders.bean(Worklog.class));
@@ -57,7 +57,7 @@ public class WorklogSparkRepository implements IRepository {
                 .withColumnRenamed("log_id", "logId")
                 .withColumnRenamed("source_id", "sourceId")
                 .withColumnRenamed("updated_dt", "updated")
-                .withColumnRenamed("started_dt", "started")
+                .withColumnRenamed("date", "started")
                 .withColumnRenamed("time_spent", "timeSpentSecond")
                 .withColumnRenamed("user_id", "userId")
                 .as(Encoders.bean(Worklog.class));
@@ -145,7 +145,7 @@ public class WorklogSparkRepository implements IRepository {
                     .withColumnRenamed("logId", "log_id")
                     .withColumnRenamed("sourceId", "source_id")
                     .withColumnRenamed("updated", "updated_dt")
-                    .withColumnRenamed("started", "started_dt")
+                    .withColumnRenamed("started", "date")
                     .withColumnRenamed("timeSpentSecond", "time_spent")
                     .withColumnRenamed("userId", "user_id")
                     .write()
