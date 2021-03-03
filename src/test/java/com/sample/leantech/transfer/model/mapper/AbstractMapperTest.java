@@ -55,6 +55,11 @@ public abstract class AbstractMapperTest {
         parent.setId("10003");
         fields.setParent(parent);
 
+        JiraIssueDto.Fields.Customfield customfield = new JiraIssueDto.Fields.Customfield();
+        customfield.setId("10004");
+        customfield.setValue("customfield_value_test");
+        fields.setCustomfield(customfield);
+
         dto.setFields(fields);
 
         return dto;

@@ -1,15 +1,10 @@
 package com.sample.leantech.transfer.task.transform;
 
 import com.sample.leantech.transfer.model.context.*;
-import com.sample.leantech.transfer.model.db.Issue;
-import com.sample.leantech.transfer.model.db.Project;
-import com.sample.leantech.transfer.model.db.User;
-import com.sample.leantech.transfer.model.db.Worklog;
+import com.sample.leantech.transfer.model.db.*;
 import com.sample.leantech.transfer.model.dto.request.JiraIssueDto;
-import com.sample.leantech.transfer.model.mapper.IssueMapper;
-import com.sample.leantech.transfer.model.mapper.ProjectMapper;
-import com.sample.leantech.transfer.model.mapper.UserMapper;
-import com.sample.leantech.transfer.model.mapper.WorklogMapper;
+import com.sample.leantech.transfer.model.mapper.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -18,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 @Component("jiraTransformTask")
 public class JiraTransformTask implements TransformTask<JiraTransferContext> {
 
@@ -30,6 +26,7 @@ public class JiraTransformTask implements TransformTask<JiraTransferContext> {
     public void transform(JiraTransferContext ctx) {
         transformProjects(ctx);
         transformIssues(ctx);
+        transformIssueFields(ctx);
         transformWorklogs(ctx);
         transformUsers(ctx);
     }
@@ -55,8 +52,22 @@ public class JiraTransformTask implements TransformTask<JiraTransferContext> {
                 .sorted(Comparator.comparing(Issue::getSourceId))
                 .collect(Collectors.toList());
         ctx.getDatabaseModel().getIssues().addAll(issues);
-        issues.clear();
-        ctx.getJiraResult().getIssues().clear();
+        //issues.clear();
+        //ctx.getJiraResult().getIssues().clear();
+    }
+
+    private void transformIssueFields(JiraTransferContext ctx) {
+        List<IssueField> issueFields = Stream.<List<JiraIssueDto>>builder()
+                .add(ctx.getJiraResult().getEpics())
+                .add(ctx.getJiraResult().getIssues())
+                .build()
+                .flatMap(Collection::stream)
+                .filter(issueDto -> issueDto.getFields().getIssuetype().getName().equals("Project"))
+                .map(issueDto -> IssueFieldMapper.INSTANCE.dtoToModel(issueDto, ctx))
+                .collect(Collectors.toList());
+
+        issueFields.stream().forEach(issueField -> log.info(issueField.toString()));
+        ctx.getDatabaseModel().getIssueFields().addAll(issueFields);
     }
 
     private void transformWorklogs(JiraTransferContext ctx) {
