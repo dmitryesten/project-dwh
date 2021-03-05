@@ -35,6 +35,7 @@ public interface IssueFieldMapper {
             try {
                 target.setField(JiraIssueDto.Fields.class.getDeclaredField("component").getName());
                 target.setType(JiraIssueDto.Fields.Component.class.getDeclaredField("name").getGenericType().getTypeName());
+                target.setValue(null);
             } catch (NoSuchFieldException e) {
                 target.setField(null);
                 target.setType(null);
