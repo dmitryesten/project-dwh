@@ -41,7 +41,7 @@ public class IssueFieldSparkRepository implements IRepository {
                 .jdbc(postgresProperties.getProperty("url"), "issue_fields", postgresProperties)
                 .withColumnRenamed("issue_id", "issueId")
                 .withColumnRenamed("log_id", "logId")
-                .withColumnRenamed("source_id", "issueSourceId")
+                .withColumnRenamed("issue_source_id", "issueSourceId")
                 .withColumnRenamed("create_dt", "createDt")
                 .as(Encoders.bean(IssueField.class));
     }
@@ -110,7 +110,7 @@ public class IssueFieldSparkRepository implements IRepository {
                 .select("issueId", "sid", "logId", "issueSourceId", "field", "type", "name", "value")
                 .withColumnRenamed("issueId", "issue_id")
                 .withColumnRenamed("logId", "log_id")
-                .withColumnRenamed("issueSourceId", "source_id")
+                .withColumnRenamed("issueSourceId", "issue_source_id")
                 .write()
                 .mode(SaveMode.Append)
                 .jdbc(postgresProperties.getProperty("url"), "issue_fields", postgresProperties);

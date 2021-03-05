@@ -86,22 +86,22 @@ create table issue_fields (
 	issue_id integer,
 	sid integer,
 	log_id integer,
-	source_id integer not null,
+	issue_source_id integer not null,
 	field varchar,
 	type varchar,
 	name varchar,
 	value varchar,
 	create_dt timestamp default current_timestamp
 );
-comment on table issue_fields is 'Table issue_fields is containg additional data about issues';
-comment on column issue_fields.id is 'issues id';
-comment on column issue_fields.issue_id is 'fk of primary key issues table';
-comment on column issue_fields.sid is 'source id';
+comment on table issue_fields is 'Table issue_fields contains additional data about issues';
+comment on column issue_fields.id is 'row id';
+comment on column issue_fields.issue_id is 'foreign key by issues table';
+comment on column issue_fields.sid is 'id source data system';
 comment on column issue_fields.log_id is 'log id of retrieved data process';
-comment on column issue_fields.source_id is 'source id of source data';
-comment on column issue_fields.field is 'field  key of json';
+comment on column issue_fields.issue_source_id is 'inside issues source id of source data system';
+comment on column issue_fields.field is 'key name of json';
 comment on column issue_fields.type is 'data type of value json''s jira';
-comment on column issue_fields.name is 'name in source system';
+comment on column issue_fields.name is 'name type of field''s issue [Бизнес|Подсистема|Заказчик]';
 comment on column issue_fields.value is 'value key of json';
 
 create table users (
