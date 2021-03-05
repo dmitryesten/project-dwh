@@ -16,7 +16,8 @@ public interface IssueFieldMapper {
             @Mapping(target = "id", ignore = true),
             @Mapping(target = "issueId", ignore = true, source = "jiraIssueDto.id"),
             @Mapping(target = "issueSourceId", source = "jiraIssueDto.id"),
-            @Mapping(target = "value", source = "jiraIssueDto.fields.customfield.value")
+            @Mapping(target = "value", source = "jiraIssueDto.fields.customfield.value"),
+            @Mapping(target = "name", source = "jiraIssueDto.fields.component.name")
     })
     IssueField dtoToModel(JiraIssueDto jiraIssueDto, @Context TransferContext ctx);
 
@@ -25,6 +26,20 @@ public interface IssueFieldMapper {
         if (ctx != null) {
             target.setSid(ctx.getSource().getValue());
             target.setLogId(ctx.getLogInfo().getLogId());
+            switcherField(source, target);
+        }
+    }
+
+    private void switcherField(JiraIssueDto source, IssueField target) {
+        if(source.getFields().getComponent() != null) {
+            try {
+                target.setField(JiraIssueDto.Fields.class.getDeclaredField("component").getName());
+                target.setType(JiraIssueDto.Fields.Component.class.getDeclaredField("name").getGenericType().getTypeName());
+            } catch (NoSuchFieldException e) {
+                target.setField(null);
+                target.setType(null);
+            }
+        } else {
             try {
                 target.setField(JiraIssueDto.Fields.class.getDeclaredField("customfield").getName());
                 target.setType(JiraIssueDto.Fields.Customfield.class.getDeclaredField("value").getGenericType().getTypeName());

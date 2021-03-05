@@ -10,6 +10,7 @@ import com.sample.leantech.transfer.model.dto.request.JiraWorklogDto;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 
 @ActiveProfiles(value = {"tests", "default"})
 public abstract class AbstractMapperTest {
@@ -59,6 +60,17 @@ public abstract class AbstractMapperTest {
         customfield.setId("10004");
         customfield.setValue("customfield_value_test");
         fields.setCustomfield(customfield);
+
+        JiraIssueDto.Fields.Component component1 = new JiraIssueDto.Fields.Component();
+        component1.setId("34");
+        component1.setName("Component1-test");
+        JiraIssueDto.Fields.Component component2 = new JiraIssueDto.Fields.Component();
+        component1.setId("44");
+        component1.setName("Component2-test");
+        JiraIssueDto.Fields.Component component3 = new JiraIssueDto.Fields.Component();
+        component1.setId("55");
+        component1.setName("Component3-test");
+        fields.setComponents(Arrays.asList(component1, component2, component3));
 
         dto.setFields(fields);
 

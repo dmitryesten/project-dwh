@@ -7,9 +7,7 @@ import com.sample.leantech.transfer.model.mapper.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -57,17 +55,38 @@ public class JiraTransformTask implements TransformTask<JiraTransferContext> {
     }
 
     private void transformIssueFields(JiraTransferContext ctx) {
-        List<IssueField> issueFields = Stream.<List<JiraIssueDto>>builder()
+        List<JiraIssueDto> issueFields = Stream.<List<JiraIssueDto>>builder()
                 .add(ctx.getJiraResult().getEpics())
                 .add(ctx.getJiraResult().getIssues())
                 .build()
                 .flatMap(Collection::stream)
                 .filter(issueDto -> issueDto.getFields().getIssuetype().getName().equals("Project"))
-                .map(issueDto -> IssueFieldMapper.INSTANCE.dtoToModel(issueDto, ctx))
-                .collect(Collectors.toList());
+                .peek(issueDto -> {
+                    if(!issueDto.getFields().getComponents().isEmpty()) {
+                        issueDto.getFields().getComponents()
+                                .forEach(component -> { component.setIssueId(issueDto.getId()); });
+                    }
+                }).collect(Collectors.toList());
 
-        issueFields.stream().forEach(issueField -> log.info(issueField.toString()));
-        ctx.getDatabaseModel().getIssueFields().addAll(issueFields);
+        List<IssueField> issueFieldsCustomfield =
+                issueFields.stream().filter(issueDto -> Optional.ofNullable(issueDto.getFields().getCustomfield()).isPresent())
+                .map(issueDto -> IssueFieldMapper.INSTANCE.dtoToModel(issueDto, ctx))
+                .collect(Collectors.toCollection(LinkedList::new));
+
+        List<JiraIssueDto.Fields.Component> issueComponentsDto = issueFields.stream()
+                .map(issueDto -> issueDto.getFields().getComponents())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toCollection(LinkedList::new));
+
+        List<IssueField> issueFieldsWithComponent = issueComponentsDto.stream()
+                .flatMap(componentDto -> issueFields.stream()
+                        .filter(issueDto -> issueDto.getId().equals(componentDto.getIssueId()))
+                        .peek(issueDto -> {issueDto.getFields().setComponent(componentDto);}))
+                .map(issueDto -> IssueFieldMapper.INSTANCE.dtoToModel(issueDto, ctx))
+                .collect(Collectors.toCollection(LinkedList::new));
+
+        ctx.getDatabaseModel().getIssueFields().addAll(issueFieldsCustomfield);
+        ctx.getDatabaseModel().getIssueFields().addAll(issueFieldsWithComponent);
     }
 
     private void transformWorklogs(JiraTransferContext ctx) {

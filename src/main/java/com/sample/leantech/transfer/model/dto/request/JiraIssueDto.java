@@ -1,7 +1,6 @@
 package com.sample.leantech.transfer.model.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 
 import java.util.List;
@@ -28,7 +27,8 @@ public class JiraIssueDto {
 
         @JsonProperty("components")
         private List<Component> components;
-
+        @JsonIgnore
+        private Component component;
         @Data
         public static class IssueType {
 
@@ -53,6 +53,7 @@ public class JiraIssueDto {
         public static class Component {
             private String id;
             private String name;
+            private String issueId;
         }
 
     }
