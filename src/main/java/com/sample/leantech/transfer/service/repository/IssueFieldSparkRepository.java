@@ -79,10 +79,11 @@ public class IssueFieldSparkRepository implements IRepository {
         } else {
             datasetLeftResult = datasetIssueField
                     .join(datasetIssueFieldOfDb,
-                            datasetIssueField.col("issueSourceId").equalTo(datasetIssueFieldOfDb.col("issueSourceId")),
+                            datasetIssueFieldOfDb.col("issueSourceId").equalTo(datasetIssueField.col("issueSourceId")),
                             "left")
                     .where((datasetIssueFieldOfDb.col("issueSourceId").isNull())
-                            .or(datasetIssueFieldOfDb.col("value").notEqual(datasetIssueField.col("value"))))
+                            .or(datasetIssueFieldOfDb.col("value").notEqual(datasetIssueField.col("value"))
+                                .or(datasetIssueFieldOfDb.col("name").notEqual(datasetIssueField.col("name")) )) )
                     .select(datasetIssueField.col("issueId"),
                             datasetIssueField.col("sid"),
                             datasetIssueField.col("logId"),
@@ -92,8 +93,7 @@ public class IssueFieldSparkRepository implements IRepository {
                             datasetIssueField.col("name"),
                             datasetIssueField.col("value"));
 
-            datasetLeftResult =
-                    datasetLeftResult.toDF()
+            datasetLeftResult = datasetLeftResult.toDF()
                             .join(datasetIssueDb,
                                     datasetIssueField.col("issueSourceId").equalTo(datasetIssueDb.col("sourceId")))
                             .select(datasetIssueDb.col("id").as("issueId"),
@@ -106,20 +106,22 @@ public class IssueFieldSparkRepository implements IRepository {
                                     datasetIssueField.col("value"));
         }
 
-        datasetLeftResult
-                .select("issueId", "sid", "logId", "issueSourceId", "field", "type", "name", "value")
-                .withColumnRenamed("issueId", "issue_id")
-                .withColumnRenamed("logId", "log_id")
-                .withColumnRenamed("issueSourceId", "issue_source_id")
-                .write()
-                .mode(SaveMode.Append)
-                .jdbc(postgresProperties.getProperty("url"), "issue_fields", postgresProperties);
+        if(!datasetLeftResult.isEmpty()) {
+            datasetLeftResult
+                    .select("issueId", "sid", "logId", "issueSourceId", "field", "type", "name", "value")
+                    .withColumnRenamed("issueId", "issue_id")
+                    .withColumnRenamed("logId", "log_id")
+                    .withColumnRenamed("issueSourceId", "issue_source_id")
+                    .write()
+                    .mode(SaveMode.Append)
+                    .jdbc(postgresProperties.getProperty("url"), "issue_fields", postgresProperties);
+        }
 
     }
 
     public Dataset<Row> getGroupedIssueFieldMaxLogIdBySourceId() {
         return getDataset()
-                .groupBy(col("issueSourceId"))
+                .groupBy(col("issueSourceId"), col("name"))
                 .agg(max("logId").as("logId"));
     }
 

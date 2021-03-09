@@ -52,7 +52,8 @@ public class JiraIssueDto {
         @Data
         public static class Component {
             private String id;
-            private String name;
+            @JsonProperty("name")
+            private String value;
             private String issueId;
         }
 
