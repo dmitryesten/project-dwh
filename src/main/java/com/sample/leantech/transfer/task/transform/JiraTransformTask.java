@@ -50,8 +50,6 @@ public class JiraTransformTask implements TransformTask<JiraTransferContext> {
                 .sorted(Comparator.comparing(Issue::getSourceId))
                 .collect(Collectors.toList());
         ctx.getDatabaseModel().getIssues().addAll(issues);
-        //issues.clear();
-        //ctx.getJiraResult().getIssues().clear();
     }
 
     private void transformIssueFields(JiraTransferContext ctx) {
@@ -87,6 +85,12 @@ public class JiraTransformTask implements TransformTask<JiraTransferContext> {
 
         ctx.getDatabaseModel().getIssueFields().addAll(issueFieldsCustomfield);
         ctx.getDatabaseModel().getIssueFields().addAll(issueFieldsWithComponent);
+
+        issueFields.clear();
+        issueFieldsCustomfield.clear();
+        issueComponentsDto.clear();
+        issueFieldsWithComponent.clear();
+        ctx.getJiraResult().getIssues().clear();
     }
 
     private void transformWorklogs(JiraTransferContext ctx) {

@@ -63,13 +63,13 @@ public abstract class AbstractMapperTest {
 
         JiraIssueDto.Fields.Component component1 = new JiraIssueDto.Fields.Component();
         component1.setId("34");
-        component1.setName("Component1-test");
+        component1.setValue("Component1-test");
         JiraIssueDto.Fields.Component component2 = new JiraIssueDto.Fields.Component();
         component1.setId("44");
-        component1.setName("Component2-test");
+        component1.setValue("Component2-test");
         JiraIssueDto.Fields.Component component3 = new JiraIssueDto.Fields.Component();
         component1.setId("55");
-        component1.setName("Component3-test");
+        component1.setValue("Component3-test");
         fields.setComponents(Arrays.asList(component1, component2, component3));
 
         dto.setFields(fields);

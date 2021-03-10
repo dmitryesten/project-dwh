@@ -98,8 +98,8 @@ public class IssueSparkRepository implements IRepository {
                             "left")
                     .where((datasetIssueOfDb.col("sourceId").isNull())
                             .or(datasetIssueOfDb.col("summery").notEqual(datasetIssue.col("summery"))
-                            .or(datasetIssueOfDb.col("type").notEqual(datasetIssue.col("type"))
-                            .or(datasetIssueOfDb.col("name").notEqual(datasetIssue.col("name")) )))
+                                .or(datasetIssueOfDb.col("type").notEqual(datasetIssue.col("type"))
+                                .or(datasetIssueOfDb.col("name").notEqual(datasetIssue.col("name")) )) )
                     ).select(datasetIssue.col("pid"),
                             datasetIssue.col("sid"),
                             datasetIssue.col("logId"),

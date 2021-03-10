@@ -21,7 +21,9 @@ public class SparkConfig {
     public SparkConf sparkConf(){
         return new SparkConf()
                 .setAppName(appname)
-                .setMaster(master);
+                .setMaster(master)
+                .set("spark.driver.memory", "512M")
+                .set("spark.executor.memory", "512M");
     }
 
     @Bean
@@ -33,7 +35,6 @@ public class SparkConfig {
     public SparkSession sparkSession(@Autowired SparkContext sparkCtx) {
         return new SparkSession.Builder()
                 .sparkContext(sparkCtx)
-                .config("spark.driver.memory", "512m")
                 .getOrCreate();
     }
 

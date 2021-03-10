@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import static org.apache.spark.sql.functions.col;
-import static org.apache.spark.sql.functions.max;
+import static org.apache.spark.sql.functions.*;
 
 @Slf4j
 @Repository
@@ -67,31 +66,52 @@ public class IssueFieldSparkRepository implements IRepository {
             datasetLeftResult =
                    datasetIssueField.toDF()
                    .join(datasetIssueDb, datasetIssueField.col("issueSourceId").equalTo(datasetIssueDb.col("sourceId")))
-                   .select(datasetIssueDb.col("id").as("issueId"),
-                           datasetIssueField.col("sid"),
-                           datasetIssueField.col("logId"),
-                           datasetIssueField.col("issueSourceId"),
-                           datasetIssueField.col("field"),
-                           datasetIssueField.col("type"),
-                           datasetIssueField.col("name"),
-                           datasetIssueField.col("value"));
+                   .select(datasetIssueDb.col("id").as("issueId")
+                           ,datasetIssueField.col("sid")
+                           ,datasetIssueField.col("logId")
+                           ,datasetIssueField.col("issueSourceId")
+                           ,datasetIssueField.col("field")
+                           ,datasetIssueField.col("type")
+                           ,datasetIssueField.col("name")
+                           ,datasetIssueField.col("value"));
 
         } else {
-            datasetLeftResult = datasetIssueField
-                    .join(datasetIssueFieldOfDb,
-                            datasetIssueFieldOfDb.col("issueSourceId").equalTo(datasetIssueField.col("issueSourceId")),
+            Dataset<Row> datasetWithUniqueConcatRowOfSourceList =
+                    datasetIssueField.toDF().withColumn("concatSourceOfSourceList",
+                            concat(datasetIssueField.toDF().col("issueSourceId")
+                                    ,datasetIssueField.toDF().col("field")
+                                    ,datasetIssueField.toDF().col("type")
+                                    ,datasetIssueField.toDF().col("name")
+                                    ));
+            //datasetWithUniqueConcatRowOfSourceList.show();
+
+            Dataset<Row> datasetWithUniqueConcatRowOfDb =
+                    datasetIssueFieldOfDb.toDF().withColumn("concatSourceOfDb",
+                    concat(datasetIssueFieldOfDb.col("issueSourceId")
+                            ,datasetIssueFieldOfDb.col("field")
+                            ,datasetIssueFieldOfDb.col("type")
+                            ,datasetIssueFieldOfDb.col("name")
+                            ));
+
+
+            datasetLeftResult = datasetWithUniqueConcatRowOfSourceList
+                    .join(datasetWithUniqueConcatRowOfDb,
+                            datasetWithUniqueConcatRowOfSourceList.col("concatSourceOfSourceList").equalTo(
+                                    datasetWithUniqueConcatRowOfDb.col("concatSourceOfDb")),
                             "left")
-                    .where((datasetIssueFieldOfDb.col("issueSourceId").isNull())
-                            .or(datasetIssueFieldOfDb.col("value").notEqual(datasetIssueField.col("value"))
-                                .or(datasetIssueFieldOfDb.col("name").notEqual(datasetIssueField.col("name")) )) )
-                    .select(datasetIssueField.col("issueId"),
-                            datasetIssueField.col("sid"),
-                            datasetIssueField.col("logId"),
-                            datasetIssueField.col("issueSourceId"),
-                            datasetIssueField.col("field"),
-                            datasetIssueField.col("type"),
-                            datasetIssueField.col("name"),
-                            datasetIssueField.col("value"));
+                    .where((datasetWithUniqueConcatRowOfDb.col("issueSourceId").isNull())
+                            .or(datasetWithUniqueConcatRowOfDb.col("value").notEqual(
+                                    datasetWithUniqueConcatRowOfSourceList.col("value")) ) )
+                    .select(datasetWithUniqueConcatRowOfSourceList.col("issueId")
+                            ,datasetWithUniqueConcatRowOfSourceList.col("sid")
+                            ,datasetWithUniqueConcatRowOfSourceList.col("logId")
+                            ,datasetWithUniqueConcatRowOfSourceList.col("issueSourceId")
+                            ,datasetWithUniqueConcatRowOfSourceList.col("field")
+                            ,datasetWithUniqueConcatRowOfSourceList.col("type")
+                            ,datasetWithUniqueConcatRowOfSourceList.col("name")
+                            ,datasetWithUniqueConcatRowOfSourceList.col("value"));
+            datasetLeftResult.show();
+            System.out.println("TEST_PRINT3");
 
             datasetLeftResult = datasetLeftResult.toDF()
                             .join(datasetIssueDb,
@@ -104,6 +124,9 @@ public class IssueFieldSparkRepository implements IRepository {
                                     datasetIssueField.col("type"),
                                     datasetIssueField.col("name"),
                                     datasetIssueField.col("value"));
+
+            datasetLeftResult.show();
+            System.out.println("TEST_PRINT4");
         }
 
         if(!datasetLeftResult.isEmpty()) {
@@ -120,16 +143,29 @@ public class IssueFieldSparkRepository implements IRepository {
     }
 
     public Dataset<Row> getGroupedIssueFieldMaxLogIdBySourceId() {
-        return getDataset()
-                .groupBy(col("issueSourceId"), col("name"))
+        Dataset<Row> datasetWithConcatGrouped = getDataset().toDF()
+                .withColumn("concatGroupedSourceOfDb",
+                        concat(col("issueSourceId")
+                                ,col("field")
+                                ,col("type")
+                                ,col("name")));
+
+        return datasetWithConcatGrouped
+                .groupBy(col("concatGroupedSourceOfDb"))
                 .agg(max("logId").as("logId"));
     }
 
     public Dataset<IssueField> getIssueFieldWithMaxLogIdBySourceId(List<Integer> listSourceId) {
         Dataset<Row> groupedIssueFields = getGroupedIssueFieldMaxLogIdBySourceId();
-        Dataset<IssueField> filteredIssueFields = getDatasetByListId(listSourceId);
+        Dataset<Row> filteredIssueFields = getDatasetByListId(listSourceId).toDF()
+                .withColumn("concatSourceOfSourceList",
+                concat(col("issueSourceId")
+                        ,col("field")
+                        ,col("type")
+                        ,col("name")
+                ));
         return filteredIssueFields.join(groupedIssueFields,
-                filteredIssueFields.col("issueSourceId").equalTo(groupedIssueFields.col("issueSourceId"))
+                filteredIssueFields.col("concatSourceOfSourceList").equalTo(groupedIssueFields.col("concatGroupedSourceOfDb"))
                         .and(filteredIssueFields.col("logId").equalTo(groupedIssueFields.col("logId"))))
                 .select(filteredIssueFields.col("id"),
                         filteredIssueFields.col("issueId"),
